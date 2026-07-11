@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TheTom's Better Popup - 扩展展示</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #e0e0e0;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: rgba(30, 30, 46, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(15, 52, 96, 0.3);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+            pointer-events: none;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            opacity: 0.95;
+            font-size: 1.2em;
+            position: relative;
+            z-index: 1;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .info-section {
+            margin-bottom: 30px;
+            padding: 25px;
+            background: rgba(40, 40, 58, 0.6);
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .info-section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-section p {
+            line-height: 1.8;
+            margin-bottom: 10px;
+            color: #d0d0d0;
+        }
+
+        .info-section ul {
+            margin-left: 25px;
+            line-height: 1.8;
+            color: #d0d0d0;
+        }
+
+        .info-section li {
+            margin-bottom: 8px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .feature-card {
+            background: rgba(40, 40, 58, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+
+        .feature-card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .feature-card p {
+            color: #b0b0b0;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 20px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1;
+            min-width: 200px;
+            padding: 18px 35px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+        }
+
+        .btn-secondary {
+            background: rgba(60, 60, 80, 0.8);
+            color: #e0e0e0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(80, 80, 100, 0.9);
+            border-color: rgba(102, 126, 234, 0.5);
+            transform: translateY(-3px);
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .tech-tag {
+            padding: 6px 15px;
+            background: rgba(102, 126, 234, 0.2);
+            color: #667eea;
+            border-radius: 20px;
+            font-size: 0.9em;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: rgba(40, 40, 58, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #b0b0b0;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 id="mainTitle">🎨 TheTom's Better Popup</h1>
+            <p id="mainSubtitle">更强大的Scratch弹窗扩展 - 让交互更丰富</p>
+            <div style="margin-top: 20px;">
+                <select id="languageSelector" style="padding: 8px 15px; border-radius: 8px; border: 2px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: white; font-size: 14px; cursor: pointer; backdrop-filter: blur(5px);">
+                    <option value="en">🇬🇧 English</option>
+                    <option value="zh">🇨🇳 中文</option>
+                    <option value="es">🇪🇸 Español</option>
+                    <option value="hi">🇮🇳 हिन्दी</option>
+                    <option value="ar">🇸🇦 العربية</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- 基本信息 -->
+            <div class="info-section">
+                <h2 id="introTitle">📋 扩展简介</h2>
+                <p id="introText1">
+                    <strong>TheTom's Better Popup</strong> 是一个为Scratch设计的高级弹窗扩展，提供了比原生弹窗更强大、更灵活的交互功能。
+                    支持多种弹窗类型、自定义样式、用户输入、行为追踪等特性，让你的Scratch项目拥有更专业的用户体验。
+                </p>
+                <p id="introText2">
+                    该扩展完全兼容CCW和TurboWarp双平台，支持中英文双语，并且提供了丰富的API接口，
+                    让你可以轻松创建各种类型的弹窗、对话框和交互界面。
+                </p>
+            </div>
+
+            <!-- 核心功能 -->
+            <div class="info-section">
+                <h2 id="featuresTitle">✨ 核心功能</h2>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h3 id="feature1Title">🎯 多种弹窗类型</h3>
+                        <p id="feature1Text">支持Alert、Confirm、Prompt、Toast等多种弹窗类型，满足不同场景需求</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3 id="feature2Title">🎨 自定义样式</h3>
+                        <p id="feature2Text">完全自定义弹窗的颜色、字体、边框、阴影等样式，打造独特风格</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3 id="feature3Title">⌨️ 快捷键支持</h3>
+                        <p id="feature3Text">支持键盘快捷键操作，提升用户体验和操作效率</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3 id="feature4Title">📊 行为追踪</h3>
+                        <p id="feature4Text">追踪用户操作行为，记录按钮点击、输入操作等数据</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3 id="feature5Title">🌍 多语言支持</h3>
+                        <p id="feature5Text">完整的中英文翻译系统，支持国际化项目</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3 id="feature6Title">🔄 双平台兼容</h3>
+                        <p id="feature6Text">同时支持CCW和TurboWarp平台，一次编写到处运行</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 技术特性 -->
+            <div class="info-section">
+                <h2 id="techTitle">🔧 技术特性</h2>
+                <p id="techText">
+                    <strong id="compatLabel">平台兼容性：</strong> CCW、TurboWarp、Scratch 3.0
+                </p>
+                <div class="tech-stack">
+                    <span class="tech-tag">CCW</span>
+                    <span class="tech-tag">响应式设计</span>
+                </div>
+            </div>
+
+            <!-- 数据统计 -->
+            <div class="info-section">
+                <h2 id="statsTitle">📈 扩展数据</h2>
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-number">50+</div>
+                        <div class="stat-label" id="stat1Label">积木数量</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">10+</div>
+                        <div class="stat-label" id="stat2Label">弹窗类型</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">1</div>
+                        <div class="stat-label" id="stat3Label">支持平台</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">100%</div>
+                        <div class="stat-label" id="stat4Label">开源免费</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 使用说明 -->
+            <div class="info-section">
+                <h2 id="usageTitle">📖 使用说明</h2>
+                <ul id="usageList">
+                    <li><strong>安装扩展：</strong> 在CCW Gandi编辑器中点击“扩展”, 打开自定义扩展, 点击“从URL加载”，输入扩展ID “theTomsBetterPopup” 即可</li>
+                    <li><strong>基础使用：</strong> 使用 “显示弹窗” 积木创建基本弹窗，设置标题、内容和按钮</li>
+                    <li><strong>高级功能：</strong> 通过 “设置弹窗样式” 积木自定义弹窗外观，使用 “获取用户输入” 获取输入值</li>
+                    <li><strong>样式编辑器：</strong> 点击扩展中的 “样式编辑器” 按钮，可视化编辑弹窗样式</li>
+                    <li><strong>行为追踪：</strong> 启用行为追踪功能，记录和分析用户操作数据</li>
+                </ul>
+            </div>
+
+            <!-- 操作按钮 -->
+            <div class="button-group">
+                <a href="https://assets.ccw.site/extension/theTomsBetterPopup" 
+                   class="btn btn-primary" 
+                   target="_blank"
+                   rel="noopener noreferrer" id="btnCCW">
+                    🚀 前往CCW查看
+                </a>
+                <a href="https://tomlct2015.github.io/theTomsBetterPopup/styleEditor/" 
+                   class="btn btn-secondary" 
+                   target="_blank"
+                   rel="noopener noreferrer" id="btnEditor">
+                    🎨 样式编辑器
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 多语言翻译数据
+        const translations = {
+            en: {
+                title: "Better Popup",
+                subtitle: 'More powerful Scratch popup extension - Richer interactions',
+                introTitle: '📋 Extension Introduction',
+                introText1: "<strong>Better Popup</strong> is an advanced popup extension designed for Scratch, providing more powerful and flexible interactive features than native popups. It supports multiple popup types, custom styles, user input, behavior tracking, and more, giving your Scratch projects a more professional user experience.",
+                introText2: 'This extension is fully compatible with both CCW and TurboWarp platforms, supports bilingual Chinese and English, and provides rich API interfaces, allowing you to easily create various types of popups, dialogs, and interactive interfaces.',
+                featuresTitle: '✨ Core Features',
+                feature1Title: '🎯 Multiple Popup Types',
+                feature1Text: 'Supports various popup types including Alert, Confirm, Prompt, Toast to meet different scenario needs',
+                feature2Title: '🎨 Custom Styles',
+                feature2Text: 'Fully customize popup colors, fonts, borders, shadows, and other styles to create a unique look',
+                feature3Title: '⌨️ Keyboard Shortcuts',
+                feature3Text: 'Supports keyboard shortcut operations to improve user experience and efficiency',
+                feature4Title: '📊 Behavior Tracking',
+                feature4Text: 'Track user operations and record button clicks, input operations, and other data',
+                feature5Title: '🌍 Multilingual Support',
+                feature5Text: 'Complete Chinese and English translation system for international projects',
+                feature6Title: '🔄 Dual Platform Compatible',
+                feature6Text: 'Supports both CCW and TurboWarp platforms, write once and run anywhere',
+                techTitle: '🔧 Technical Features',
+                compatLabel: 'Platform Compatibility:',
+                techText: 'CCW, TurboWarp, Scratch 3.0',
+                statsTitle: '📈 Extension Statistics',
+                stat1Label: 'Number of Blocks',
+                stat2Label: 'Popup Types',
+                stat3Label: 'Supported Platforms',
+                stat4Label: 'Open Source',
+                usageTitle: '📖 Usage Instructions',
+                usageList: [
+                    '<strong>Install Extension:</strong> Click "Extensions" in CCW Gandi editor, open custom extensions, click "Load from URL", and enter the extension ID "theTomsBetterPopup"',
+                    '<strong>Basic Usage:</strong> Use the "Show Popup" block to create basic popups, set titles, content, and buttons',
+                    '<strong>Advanced Features:</strong> Customize popup appearance with the "Set Popup Style" block, get input values with "Get User Input"',
+                    '<strong>Style Editor:</strong> Click the "Style Editor" button in the extension to visually edit popup styles',
+                    '<strong>Behavior Tracking:</strong> Enable behavior tracking to record and analyze user operation data'
+                ],
+                btnCCW: '🚀 View on CCW',
+                btnEditor: '🎨 Style Editor'
+            },
+            zh: {
+                title: "Better Popup",
+                subtitle: '更强大的Scratch弹窗扩展 - 让交互更丰富',
+                introTitle: '📋 扩展简介',
+                introText1: "<strong>BETTER弹窗</strong> 是一个为Scratch设计的高级弹窗扩展，提供了比原生弹窗更强大、更灵活的交互功能。支持多种弹窗类型、自定义样式、用户输入、行为追踪等特性，让你的Scratch项目拥有更专业的用户体验。",
+                introText2: '该扩展完全兼容CCW和TurboWarp双平台，支持中英文双语，并且提供了丰富的API接口，让你可以轻松创建各种类型的弹窗、对话框和交互界面。',
+                featuresTitle: '✨ 核心功能',
+                feature1Title: '🎯 多种弹窗类型',
+                feature1Text: '支持Alert、Confirm、Prompt、Toast等多种弹窗类型，满足不同场景需求',
+                feature2Title: '🎨 自定义样式',
+                feature2Text: '完全自定义弹窗的颜色、字体、边框、阴影等样式，打造独特风格',
+                feature3Title: '⌨️ 快捷键支持',
+                feature3Text: '支持键盘快捷键操作，提升用户体验和操作效率',
+                feature4Title: '📊 行为追踪',
+                feature4Text: '追踪用户操作行为，记录按钮点击、输入操作等数据',
+                feature5Title: '🌍 多语言支持',
+                feature5Text: '完整的中英文翻译系统，支持国际化项目',
+                feature6Title: '🔄 双平台兼容',
+                feature6Text: '同时支持CCW和TurboWarp平台，一次编写到处运行',
+                techTitle: '🔧 技术特性',
+                compatLabel: '平台兼容性：',
+                techText: 'CCW、TurboWarp、Scratch 3.0',
+                statsTitle: '📈 扩展数据',
+                stat1Label: '积木数量',
+                stat2Label: '弹窗类型',
+                stat3Label: '支持平台',
+                stat4Label: '开源免费',
+                usageTitle: '📖 使用说明',
+                usageList: [
+                    '<strong>安装扩展：</strong> 在CCW Gandi编辑器中点击“扩展”, 打开自定义扩展, 点击“从URL加载”，输入扩展ID “theTomsBetterPopup” 即可',
+                    '<strong>基础使用：</strong> 使用 “显示弹窗” 积木创建基本弹窗，设置标题、内容和按钮',
+                    '<strong>高级功能：</strong> 通过 “设置弹窗样式” 积木自定义弹窗外观，使用 “获取用户输入” 获取输入值',
+                    '<strong>样式编辑器：</strong> 点击扩展中的 “样式编辑器” 按钮，可视化编辑弹窗样式',
+                    '<strong>行为追踪：</strong> 启用行为追踪功能，记录和分析用户操作数据'
+                ],
+                btnCCW: '🚀 前往CCW查看',
+                btnEditor: '🎨 样式编辑器'
+            },
+            es: {
+                title: "Better Popup",
+                subtitle: 'Extensión de popup más potente para Scratch - Interacciones más ricas',
+                introTitle: '📋 Introducción de la extensión',
+                introText1: "<strong>Better Popup</strong> es una extensión avanzada de popup diseñada para Scratch, que ofrece funciones interactivas más potentes y flexibles que los popups nativos. Soporta múltiples tipos de popup, estilos personalizados, entrada de usuario, seguimiento de comportamiento y más, dando a tus proyectos de Scratch una experiencia de usuario más profesional.",
+                introText2: 'Esta extensión es totalmente compatible con las plataformas CCW y TurboWarp, soporta bilingüe chino e inglés, y proporciona interfaces API ricas, permitiéndote crear fácilmente varios tipos de popups, diálogos e interfaces interactivas.',
+                featuresTitle: '✨ Características principales',
+                feature1Title: '🎯 Múltiples tipos de popup',
+                feature1Text: 'Soporta varios tipos de popup incluyendo Alert, Confirm, Prompt, Toast para satisfacer diferentes necesidades de escenario',
+                feature2Title: '🎨 Estilos personalizados',
+                feature2Text: 'Personaliza completamente colores, fuentes, bordes, sombras y otros estilos de popup para crear un aspecto único',
+                feature3Title: '⌨️ Atajos de teclado',
+                feature3Text: 'Soporta operaciones de atajos de teclado para mejorar la experiencia del usuario y la eficiencia',
+                feature4Title: '📊 Seguimiento de comportamiento',
+                feature4Text: 'Rastrea operaciones de usuario y registra clics de botones, operaciones de entrada y otros datos',
+                feature5Title: '🌍 Soporte multilingüe',
+                feature5Text: 'Sistema completo de traducción chino e inglés para proyectos internacionales',
+                feature6Title: '🔄 Compatible con doble plataforma',
+                feature6Text: 'Soporta ambas plataformas CCW y TurboWarp, escribe una vez y ejecuta en cualquier lugar',
+                techTitle: '🔧 Características técnicas',
+                compatLabel: 'Compatibilidad de plataforma:',
+                techText: 'CCW, TurboWarp, Scratch 3.0',
+                statsTitle: '📈 Estadísticas de la extensión',
+                stat1Label: 'Número de bloques',
+                stat2Label: 'Tipos de popup',
+                stat3Label: 'Plataformas soportadas',
+                stat4Label: 'Código abierto',
+                usageTitle: '📖 Instrucciones de uso',
+                usageList: [
+                    '<strong>Instalar extensión:</strong> Haz clic en "Extensiones" en el editor CCW Gandi, abre extensiones personalizadas, haz clic en "Cargar desde URL" e introduce el ID de extensión "theTomsBetterPopup"',
+                    '<strong>Uso básico:</strong> Usa el bloque "Mostrar popup" para crear popups básicos, establece títulos, contenido y botones',
+                    '<strong>Funciones avanzadas:</strong> Personaliza la apariencia del popup con el bloque "Establecer estilo de popup", obtén valores de entrada con "Obtener entrada de usuario"',
+                    '<strong>Editor de estilos:</strong> Haz clic en el botón "Editor de estilos" en la extensión para editar visualmente los estilos de popup',
+                    '<strong>Seguimiento de comportamiento:</strong> Habilita el seguimiento de comportamiento para registrar y analizar datos de operaciones de usuario'
+                ],
+                btnCCW: '🚀 Ver en CCW',
+                btnEditor: '🎨 Editor de estilos'
+            },
+            hi: {
+                title: "Better Popup",
+                subtitle: 'अधिक शक्तिशाली Scratch पॉपअप एक्सटेंशन - समृद्ध अंतःक्रियाएं',
+                introTitle: '📋 एक्सटेंशन परिचय',
+                introText1: "<strong>Better Popup</strong> Scratch के लिए डिज़ाइन किया गया एक उन्नत पॉपअप एक्सटेंशन है, जो नेटिव पॉपअप की तुलना में अधिक शक्तिशाली और लचीली इंटरैक्टिव सुविधाएं प्रदान करता है। यह कई पॉपअप प्रकारों, कस्टम शैलियों, उपयोगकर्ता इनपुट, व्यवहार ट्रैकिंग और बहुत कुछ का समर्थन करता है, जो आपकी Scratch परियोजनाओं को अधिक पेशेवर उपयोगकर्ता अनुभव देता है।",
+                introText2: 'यह एक्सटेंशन CCW और TurboWarp दोनों प्लेटफॉर्म के साथ पूरी तरह से संगत है, द्विभाषी चीनी और अंग्रेजी का समर्थन करता है, और समृद्ध API इंटरफेस प्रदान करता है, जो आपको विभिन्न प्रकार के पॉपअप, संवाद और इंटरैक्टिव इंटरफेस आसानी से बनाने की अनुमति देता है।',
+                featuresTitle: '✨ मुख्य विशेषताएं',
+                feature1Title: '🎯 कई पॉपअप प्रकार',
+                feature1Text: 'विभिन्न परिदृश्य आवश्यकताओं को पूरा करने के लिए Alert, Confirm, Prompt, Toast सहित विभिन्न पॉपअप प्रकारों का समर्थन करता है',
+                feature2Title: '🎨 कस्टम शैलियां',
+                feature2Text: 'एक अनूठा रूप बनाने के लिए पॉपअप रंगों, फोंट, बॉर्डर, छाया और अन्य शैलियों को पूरी तरह से कस्टमाइज़ करें',
+                feature3Title: '⌨️ कीबोर्ड शॉर्टकट',
+                feature3Text: 'उपयोगकर्ता अनुभव और दक्षता में सुधार के लिए कीबोर्ड शॉर्टकट संचालन का समर्थन करता है',
+                feature4Title: '📊 व्यवहार ट्रैकिंग',
+                feature4Text: 'उपयोगकर्ता संचालन को ट्रैक करता है और बटन क्लिक, इनपुट संचालन और अन्य डेटा रिकॉर्ड करता है',
+                feature5Title: '🌍 बहुभाषी समर्थन',
+                feature5Text: 'अंतर्राष्ट्रीय परियोजनाओं के लिए पूर्ण चीनी और अंग्रेजी अनुवाद प्रणाली',
+                feature6Title: '🔄 दोहरी प्लेटफॉर्म संगत',
+                feature6Text: 'CCW और TurboWarp दोनों प्लेटफॉर्म का समर्थन करता है, एक बार लिखें और कहीं भी चलाएं',
+                techTitle: '🔧 तकनीकी विशेषताएं',
+                compatLabel: 'प्लेटफॉर्म संगतता:',
+                techText: 'CCW, TurboWarp, Scratch 3.0',
+                statsTitle: '📈 एक्सटेंशन सांख्यिकी',
+                stat1Label: 'ब्लॉकों की संख्या',
+                stat2Label: 'पॉपअप प्रकार',
+                stat3Label: 'समर्थित प्लेटफॉर्म',
+                stat4Label: 'ओपन सोर्स',
+                usageTitle: '📖 उपयोग के निर्देश',
+                usageList: [
+                    '<strong>एक्सटेंशन इंस्टॉल करें:</strong> CCW Gandi संपादक में "एक्सटेंशन" पर क्लिक करें, कस्टम एक्सटेंशन खोलें, "URL से लोड करें" पर क्लिक करें और एक्सटेंशन ID "theTomsBetterPopup" दर्ज करें',
+                    '<strong>बुनियादी उपयोग:</strong> बुनियादी पॉपअप बनाने के लिए "Show Popup" ब्लॉक का उपयोग करें, शीर्षक, सामग्री और बटन सेट करें',
+                    '<strong>उन्नत सुविधाएं:</strong> "Set Popup Style" ब्लॉक के साथ पॉपअप उपस्थिति को कस्टमाइज़ करें, "Get User Input" के साथ इनपुट मान प्राप्त करें',
+                    '<strong>शैली संपादक:</strong> पॉपअप शैलियों को दृश्य रूप से संपादित करने के लिए एक्सटेंशन में "Style Editor" बटन पर क्लिक करें',
+                    '<strong>व्यवहार ट्रैकिंग:</strong> उपयोगकर्ता संचालन डेटा रिकॉर्ड और विश्लेषण करने के लिए व्यवहार ट्रैकिंग सक्षम करें'
+                ],
+                btnCCW: '🚀 CCW पर देखें',
+                btnEditor: '🎨 शैली संपादक'
+            },
+            ar: {
+                title: "Better Popup",
+                subtitle: 'امتداد نافذة منبثقة أكثر قوة لـ Scratch - تفاعلات أغنى',
+                introTitle: '📋 مقدمة الامتداد',
+                introText1: "<strong>Better Popup</strong> هو امتداد نافذة منبثقة متقدم مصمم لـ Scratch، يوفر ميزات تفاعلية أكثر قوة ومرونة من النوافذ المنبثقة الأصلية. يدعم أنواعًا متعددة من النوافذ المنبثقة، وأنماطًا مخصصة، وإدخال المستخدم، وتتبع السلوك، والمزيد، مما يمنح مشاريع Scratch الخاصة بك تجربة مستخدم أكثر احترافية.",
+                introText2: 'هذا الامتداد متوافق تمامًا مع منصتي CCW و TurboWarp، ويدعم اللغتين الصينية والإنجليزية، ويوفر واجهات برمجة تطبيقات غنية، مما يتيح لك إنشاء أنواع مختلفة من النوافذ المنبثقة ومربعات الحوار وواجهات التفاعل بسهولة.',
+                featuresTitle: '✨ الميزات الرئيسية',
+                feature1Title: '🎯 أنواع متعددة من النوافذ المنبثقة',
+                feature1Text: 'يدعم أنواعًا متعددة من النوافذ المنبثقة بما في ذلك Alert و Confirm و Prompt و Toast لتلبية احتياجات سيناريوهات مختلفة',
+                feature2Title: '🎨 أنماط مخصصة',
+                feature2Text: 'خصص تمامًا ألوان النوافذ المنبثقة والخطوط والحدود والظلال وأنماط أخرى لإنشاء مظهر فريد',
+                feature3Title: '⌨️ اختصارات لوحة المفاتيح',
+                feature3Text: 'يدعم عمليات اختصارات لوحة المفاتيح لتحسين تجربة المستخدم والكفاءة',
+                feature4Title: '📊 تتبع السلوك',
+                feature4Text: 'يتتبع عمليات المستخدم ويسجل نقرات الأزرار وعمليات الإدخال والبيانات الأخرى',
+                feature5Title: '🌍 دعم متعدد اللغات',
+                feature5Text: 'نظام ترجمة كامل للصينية والإنجليزية للمشاريع الدولية',
+                feature6Title: '🔄 متوافق مع منصة مزدوجة',
+                feature6Text: 'يدعم كل من منصتي CCW و TurboWarp، اكتب مرة واحدة وشغل في أي مكان',
+                techTitle: '🔧 الميزات التقنية',
+                compatLabel: 'توافق المنصة:',
+                techText: 'CCW، TurboWarp، Scratch 3.0',
+                statsTitle: '📈 إحصائيات الامتداد',
+                stat1Label: 'عدد الكتل',
+                stat2Label: 'أنواع النوافذ المنبثقة',
+                stat3Label: 'المنصات المدعومة',
+                stat4Label: 'مفتوح المصدر',
+                usageTitle: '📖 تعليمات الاستخدام',
+                usageList: [
+                    '<strong>تثبيت الامتداد:</strong> انقر على "الامتدادات" في محرر CCW Gandi، افتح الامتدادات المخصصة، انقر على "تحميل من URL" وأدخل معرف الامتداد "theTomsBetterPopup"',
+                    '<strong>الاستخدام الأساسي:</strong> استخدم كتلة "Show Popup" لإنشاء نوافذ منبثقة أساسية، قم بتعيين العناوين والمحتوى والأزرار',
+                    '<strong>الميزات المتقدمة:</strong> قم بتخصيص مظهر النافذة المنبثقة باستخدام كتلة "Set Popup Style"، واحصل على قيم الإدخال باستخدام "Get User Input"',
+                    '<strong>محرر الأنماط:</strong> انقر على زر "Style Editor" في الامتداد لتحرير أنماط النوافذ المنبثقة بصريًا',
+                    '<strong>تتبع السلوك:</strong> قم بتمكين تتبع السلوك لتسجيل وتحليل بيانات عمليات المستخدم'
+                ],
+                btnCCW: '🚀 عرض على CCW',
+                btnEditor: '🎨 محرر الأنماط'
+            }
+        };
+
+        let currentLanguage = 'en';
+
+        // 切换语言
+        function switchLanguage(lang) {
+            currentLanguage = lang;
+            const t = translations[lang];
+            
+            // 更新标题和副标题
+            document.getElementById('mainTitle').textContent = t.title;
+            document.getElementById('mainSubtitle').textContent = t.subtitle;
+            
+            // 更新简介
+            document.getElementById('introTitle').textContent = t.introTitle;
+            document.getElementById('introText1').innerHTML = t.introText1;
+            document.getElementById('introText2').textContent = t.introText2;
+            
+            // 更新核心功能
+            document.getElementById('featuresTitle').textContent = t.featuresTitle;
+            for (let i = 1; i <= 6; i++) {
+                document.getElementById(`feature${i}Title`).textContent = t[`feature${i}Title`];
+                document.getElementById(`feature${i}Text`).textContent = t[`feature${i}Text`];
+            }
+            
+            // 更新技术特性
+            document.getElementById('techTitle').textContent = t.techTitle;
+            document.getElementById('compatLabel').textContent = t.compatLabel;
+            
+            // 更新统计数据
+            document.getElementById('statsTitle').textContent = t.statsTitle;
+            document.getElementById('stat1Label').textContent = t.stat1Label;
+            document.getElementById('stat2Label').textContent = t.stat2Label;
+            document.getElementById('stat3Label').textContent = t.stat3Label;
+            document.getElementById('stat4Label').textContent = t.stat4Label;
+            
+            // 更新使用说明
+            document.getElementById('usageTitle').textContent = t.usageTitle;
+            const usageList = document.getElementById('usageList');
+            usageList.innerHTML = '';
+            t.usageList.forEach(item => {
+                const li = document.createElement('li');
+                li.innerHTML = item;
+                usageList.appendChild(li);
+            });
+            
+            // 更新按钮文本
+            document.getElementById('btnCCW').textContent = t.btnCCW;
+            document.getElementById('btnEditor').textContent = t.btnEditor;
+            
+            // RTL支持
+            if (lang === 'ar') {
+                document.body.style.direction = 'rtl';
+            } else {
+                document.body.style.direction = 'ltr';
+            }
+        }
+
+        // 添加卡片悬停效果
+        document.querySelectorAll('.feature-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px)';
+            });
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+        
+        // 语言选择器事件
+        document.getElementById('languageSelector').addEventListener('change', (e) => {
+            switchLanguage(e.target.value);
+        });
+        
+        // 初始化 - 默认英语
+        switchLanguage('en');
+
+        // 控制台欢迎信息
+        console.log('%c🎨 TheTom\'s Better Popup', 'color: #667eea; font-size: 24px; font-weight: bold;');
+        console.log('%c更强大的Scratch弹窗扩展', 'color: #764ba2; font-size: 14px;');
+        console.log('%c访问CCW页面: https://assets.ccw.site/extension/theTomsBetterPopup', 'color: #667eea; font-size: 12px;');
+    </script>
+</body>
+</html>
