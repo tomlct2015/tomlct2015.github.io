@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CCW - Cocreat Coding World</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: #0a0a0f;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+
+        /* 语言选择器 */
+        .language-selector {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .language-selector select {
+            padding: 10px 20px;
+            border-radius: 25px;
+            border: 2px solid rgba(102, 126, 234, 0.5);
+            background: rgba(20, 20, 35, 0.9);
+            color: #e0e0e0;
+            font-size: 14px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+
+        .language-selector select:hover {
+            border-color: #667eea;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.4);
+        }
+
+        /* 头部区域 */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%);
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 50%);
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 1;
+            padding: 20px;
+        }
+
+        .logo {
+            font-size: 5em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .tagline {
+            font-size: 1.8em;
+            color: #b0b0b0;
+            margin-bottom: 30px;
+            animation: fadeInUp 1s ease-out 0.2s backwards;
+        }
+
+        .description {
+            font-size: 1.2em;
+            color: #808080;
+            max-width: 800px;
+            margin: 0 auto 40px;
+            line-height: 1.8;
+            animation: fadeInUp 1s ease-out 0.4s backwards;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease-out 0.6s backwards;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .btn {
+            padding: 18px 40px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateY(-3px);
+        }
+
+        /* 特性区域 */
+        .features {
+            padding: 100px 20px;
+            background: linear-gradient(180deg, #0a0a0f 0%, #1a1a2e 100%);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3em;
+            margin-bottom: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: rgba(30, 30, 46, 0.6);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(102, 126, 234, 0.5);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.2);
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+
+        .feature-title {
+            font-size: 1.5em;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .feature-desc {
+            color: #b0b0b0;
+            line-height: 1.8;
+            font-size: 1em;
+        }
+
+        /* 扩展区域 */
+        .extensions {
+            padding: 100px 20px;
+            background: linear-gradient(180deg, #1a1a2e 0%, #0a0a0f 100%);
+        }
+
+        .extensions-desc {
+            text-align: center;
+            font-size: 1.2em;
+            color: #b0b0b0;
+            max-width: 800px;
+            margin: -30px auto 60px;
+            line-height: 1.8;
+        }
+
+        .extensions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .extension-card {
+            background: rgba(30, 30, 46, 0.8);
+            padding: 40px;
+            border-radius: 20px;
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .extension-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+        }
+
+        .extension-card:hover {
+            transform: translateY(-15px);
+            border-color: rgba(102, 126, 234, 0.6);
+            box-shadow: 0 25px 50px rgba(102, 126, 234, 0.3);
+        }
+
+        .extension-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .extension-title {
+            font-size: 1.8em;
+            color: #667eea;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .extension-desc {
+            color: #b0b0b0;
+            line-height: 1.8;
+            font-size: 1.05em;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .extension-btn {
+            display: block;
+            width: 100%;
+            text-align: center;
+        }
+
+        /* 数据统计 */
+        .stats {
+            padding: 100px 20px;
+            background: rgba(20, 20, 35, 0.5);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 30px;
+            background: rgba(30, 30, 46, 0.6);
+            border-radius: 15px;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: scale(1.05);
+            border-color: rgba(102, 126, 234, 0.5);
+        }
+
+        .stat-number {
+            font-size: 3em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: #b0b0b0;
+            font-size: 1.1em;
+        }
+
+        /* 底部 */
+        .footer {
+            padding: 60px 20px;
+            text-align: center;
+            background: #0a0a0f;
+            border-top: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .footer-text {
+            color: #808080;
+            font-size: 1em;
+        }
+
+        /* 动画效果 */
+        .fade-in {
+            opacity: 0;
+            animation: fadeIn 1s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 3em;
+            }
+
+            .tagline {
+                font-size: 1.3em;
+            }
+
+            .section-title {
+                font-size: 2em;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 语言选择器 -->
+    <div class="language-selector">
+        <select id="languageSelector">
+            <option value="en">🇬🇧 English</option>
+            <option value="zh">🇨🇳 中文</option>
+            <option value="es">🇪🇸 Español</option>
+            <option value="hi">🇮🇳 हिन्दी</option>
+            <option value="ar">🇸🇦 العربية</option>
+        </select>
+    </div>
+
+    <!-- 头部区域 -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="logo" id="logo">CCW</h1>
+            <p class="tagline" id="tagline">Creative Coding World</p>
+            <p class="description" id="description">
+                CCW是一个创新的编程教育平台，致力于让编程变得简单、有趣、富有创意。
+                通过可视化的编程工具和丰富的扩展生态系统，帮助每一个创作者实现他们的想法。
+            </p>
+            <div class="cta-buttons">
+                <a href="https://ccw.site" class="btn btn-primary" id="btnStart" target="_blank" rel="noopener noreferrer">
+                    开始创作
+                </a>
+                <a href="#features" class="btn btn-secondary" id="btnLearn">
+                    了解更多
+                </a>
+                <a href="https://tomlct2015.github.io/ccwWorkTool" class="btn btn-secondary" id="btnTool" target="_blank" rel="noopener noreferrer">
+                    CCW作品工具
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 扩展区域 -->
+    <section class="extensions" id="extensions">
+        <h2 class="section-title" id="extensionsTitle">扩展生态</h2>
+        <p class="extensions-desc" id="extensionsDesc">
+            探索精心打造的扩展生态系统，为您的创作无限赋能
+        </p>
+        <div class="extensions-grid">
+            <div class="extension-card">
+                <div class="extension-icon">🎨</div>
+                <h3 class="extension-title" id="ext1Title">theTomsBetterPopup</h3>
+                <p class="extension-desc" id="ext1Desc">
+                    更强大的Scratch弹窗扩展，提供多种弹窗类型、自定义样式支持等丰富功能
+                </p>
+                <a href="https://tomlct2015.github.io/theTomsBetterPopup" 
+                   class="btn btn-secondary extension-btn" 
+                   id="ext1Btn"
+                   target="_blank" 
+                   rel="noopener noreferrer">
+                    查看详情
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 特性区域 -->
+    <section class="features" id="features">
+        <h2 class="section-title" id="featuresTitle">核心特性</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🎨</div>
+                <h3 class="feature-title" id="feature1Title">可视化编程</h3>
+                <p class="feature-desc" id="feature1Desc">
+                    基于积木的直观编程界面，无需记忆复杂语法，拖拽即可创建精彩作品
+                </p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🧩</div>
+                <h3 class="feature-title" id="feature2Title">扩展生态</h3>
+                <p class="feature-desc" id="feature2Desc">
+                    丰富的社区扩展库，支持自定义扩展开发，无限扩展创作可能性
+                </p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🌍</div>
+                <h3 class="feature-title" id="feature3Title">全球社区</h3>
+                <p class="feature-desc" id="feature3Desc">
+                    连接全球创作者，分享作品，互相学习，共同成长
+                </p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3 class="feature-title" id="feature4Title">高性能引擎</h3>
+                <p class="feature-desc" id="feature4Desc">
+                    优化的运行引擎，流畅执行复杂项目，提供最佳创作体验
+                </p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <h3 class="feature-title" id="feature5Title">跨平台支持</h3>
+                <p class="feature-desc" id="feature5Desc">
+                    支持Web、移动端等多种平台，随时随地创作和分享
+                </p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎓</div>
+                <h3 class="feature-title" id="feature6Title">教育资源</h3>
+                <p class="feature-desc" id="feature6Desc">
+                    完善的教学资源，丰富的教程和案例，适合各年龄段学习者
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 数据统计 -->
+    <section class="stats">
+        <h2 class="section-title" id="statsTitle">平台数据</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">100K+</div>
+                <div class="stat-label" id="stat1Label">活跃用户</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">500K+</div>
+                <div class="stat-label" id="stat2Label">创作作品</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">1000+</div>
+                <div class="stat-label" id="stat3Label">社区扩展</div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // 多语言翻译数据
+        const translations = {
+            en: {
+                logo: 'CCW',
+                tagline: 'Creative Coding World',
+                description: 'CCW is an innovative programming education platform dedicated to making programming simple, fun, and creative. Through visual programming tools and a rich extension ecosystem, we help every creator realize their ideas.',
+                btnStart: 'Start Creating',
+                btnLearn: 'Learn More',
+                btnTool: 'CCW Work Tool',
+                extensionsTitle: 'Extension Ecosystem',
+                extensionsDesc: 'Explore our carefully crafted extension ecosystem to empower your creations',
+                ext1Title: 'theTomsBetterPopup',
+                ext1Desc: 'More powerful Scratch popup extension, providing multiple popup types, custom styles, keyboard shortcuts support and other rich features',
+                ext1Btn: 'View Details',
+                featuresTitle: 'Core Features',
+                feature1Title: 'Visual Programming',
+                feature1Desc: 'Intuitive block-based programming interface, no need to memorize complex syntax, just drag and drop to create amazing works',
+                feature2Title: 'Extension Ecosystem',
+                feature2Desc: 'Rich community extension library, supports custom extension development, infinitely expanding creative possibilities',
+                feature3Title: 'Global Community',
+                feature3Desc: 'Connect with creators worldwide, share works, learn from each other, and grow together',
+                feature4Title: 'High-Performance Engine',
+                feature4Desc: 'Optimized runtime engine, smooth execution of complex projects, providing the best creative experience',
+                feature5Title: 'Cross-Platform Support',
+                feature5Desc: 'Supports Web, mobile, and other platforms, create and share anytime, anywhere',
+                feature6Title: 'Educational Resources',
+                feature6Desc: 'Complete teaching resources, rich tutorials and cases, suitable for learners of all ages',
+                statsTitle: 'Platform Statistics',
+                stat1Label: 'Active Users',
+                stat2Label: 'Created Works',
+                stat3Label: 'Community Extensions',
+                stat4Label: 'Supported Countries',
+                footerText: '© 2024 CCW - Creative Coding World. All rights reserved.'
+            },
+            zh: {
+                logo: 'CCW',
+                tagline: '创意编程世界',
+                description: 'CCW是一个创新的编程教育平台，致力于让编程变得简单、有趣、富有创意。通过可视化的编程工具和丰富的扩展生态系统，帮助每一个创作者实现他们的想法。',
+                btnStart: '开始创作',
+                btnLearn: '了解更多',
+                btnTool: 'CCW作品工具',
+                extensionsTitle: '扩展生态',
+                extensionsDesc: '探索我们精心打造的扩展生态系统，为您的创作无限赋能',
+                ext1Title: 'theTomsBetterPopup',
+                ext1Desc: '更强大的Scratch弹窗扩展，提供多种弹窗类型、自定义样式、快捷键支持等丰富功能',
+                ext1Btn: '查看详情',
+                featuresTitle: '核心特性',
+                feature1Title: '可视化编程',
+                feature1Desc: '基于积木的直观编程界面，无需记忆复杂语法，拖拽即可创建精彩作品',
+                feature2Title: '扩展生态',
+                feature2Desc: '丰富的社区扩展库，支持自定义扩展开发，无限扩展创作可能性',
+                feature3Title: '全球社区',
+                feature3Desc: '连接全球创作者，分享作品，互相学习，共同成长',
+                feature4Title: '高性能引擎',
+                feature4Desc: '优化的运行引擎，流畅执行复杂项目，提供最佳创作体验',
+                feature5Title: '跨平台支持',
+                feature5Desc: '支持Web、移动端等多种平台，随时随地创作和分享',
+                feature6Title: '教育资源',
+                feature6Desc: '完善的教学资源，丰富的教程和案例，适合各年龄段学习者',
+                statsTitle: '平台数据',
+                stat1Label: '活跃用户',
+                stat2Label: '创作作品',
+                stat3Label: '社区扩展',
+                stat4Label: '支持国家',
+                footerText: '© 2024 CCW - Creative Coding World. 保留所有权利。'
+            },
+            es: {
+                logo: 'CCW',
+                tagline: 'Mundo de Programación Creativa',
+                description: 'CCW es una plataforma innovadora de educación en programación dedicada a hacer que la programación sea simple, divertida y creativa. A través de herramientas de programación visual y un rico ecosistema de extensiones, ayudamos a cada creador a realizar sus ideas.',
+                btnStart: 'Empezar a crear',
+                btnLearn: 'Saber más',
+                btnTool: 'Herramienta CCW Work',
+                extensionsTitle: 'Ecosistema de extensiones',
+                extensionsDesc: 'Explora nuestro ecosistema de extensiones cuidadosamente creado para empoderar tus creaciones',
+                ext1Title: 'theTomsBetterPopup',
+                ext1Desc: 'Extensión de popup más potente para Scratch, que proporciona múltiples tipos de popup, estilos personalizados, soporte de atajos de teclado y otras características ricas',
+                ext1Btn: 'Ver detalles',
+                featuresTitle: 'Características principales',
+                feature1Title: 'Programación visual',
+                feature1Desc: 'Interfaz de programación intuitiva basada en bloques, sin necesidad de memorizar sintaxis compleja, solo arrastra y suelta para crear obras increíbles',
+                feature2Title: 'Ecosistema de extensiones',
+                feature2Desc: 'Rica biblioteca de extensiones comunitarias, soporta desarrollo de extensiones personalizadas, expandiendo infinitamente las posibilidades creativas',
+                feature3Title: 'Comunidad global',
+                feature3Desc: 'Conecta con creadores de todo el mundo, comparte obras, aprende de otros y crece juntos',
+                feature4Title: 'Motor de alto rendimiento',
+                feature4Desc: 'Motor de ejecución optimizado, ejecución fluida de proyectos complejos, proporcionando la mejor experiencia creativa',
+                feature5Title: 'Soporte multiplataforma',
+                feature5Desc: 'Soporta Web, móvil y otras plataformas, crea y comparte en cualquier momento y lugar',
+                feature6Title: 'Recursos educativos',
+                feature6Desc: 'Recursos de enseñanza completos, tutoriales y casos ricos, adecuados para estudiantes de todas las edades',
+                statsTitle: 'Estadísticas de la plataforma',
+                stat1Label: 'Usuarios activos',
+                stat2Label: 'Obras creadas',
+                stat3Label: 'Extensiones comunitarias',
+                stat4Label: 'Países soportados',
+                footerText: '© 2024 CCW - Creative Coding World. Todos los derechos reservados.'
+            },
+            hi: {
+                logo: 'CCW',
+                tagline: 'रचनात्मक कोडिंग विश्व',
+                description: 'CCW एक नवीन प्रोग्रामिंग शिक्षा मंच है जो प्रोग्रामिंग को सरल, मजेदार और रचनात्मक बनाने के लिए समर्पित है। विज़ुअल प्रोग्रामिंग टूल्स और समृद्ध एक्सटेंशन इकोसिस्टम के माध्यम से, हम हर रचनाकार को उनके विचारों को साकार करने में मदद करते हैं।',
+                btnStart: 'रचना शुरू करें',
+                btnLearn: 'और जानें',
+                btnTool: 'CCW वर्क टूल',
+                extensionsTitle: 'एक्सटेंशन इकोसिस्टम',
+                extensionsDesc: 'अपनी रचनाओं को सशक्त बनाने के लिए हमारे सावधानीपूर्वक तैयार किए गए एक्सटेंशन इकोसिस्टम का अन्वेषण करें',
+                ext1Title: 'theTomsBetterPopup',
+                ext1Desc: 'अधिक शक्तिशाली Scratch पॉपअप एक्सटेंशन, कई पॉपअप प्रकार, कस्टम शैलियाँ, कीबोर्ड शॉर्टकट समर्थन और अन्य समृद्ध सुविधाएं प्रदान करता है',
+                ext1Btn: 'विवरण देखें',
+                featuresTitle: 'मुख्य विशेषताएं',
+                feature1Title: 'विज़ुअल प्रोग्रामिंग',
+                feature1Desc: 'ब्लॉक-आधारित सहज प्रोग्रामिंग इंटरफेस, जटिल सिंटैक्स याद करने की आवश्यकता नहीं, बस ड्रैग एंड ड्रॉप करके अद्भुत कार्य बनाएं',
+                feature2Title: 'एक्सटेंशन इकोसिस्टम',
+                feature2Desc: 'समृद्ध सामुदायिक एक्सटेंशन लाइब्रेरी, कस्टम एक्सटेंशन विकास का समर्थन करती है, रचनात्मक संभावनाओं को असीमित रूप से विस्तारित करती है',
+                feature3Title: 'वैश्विक समुदाय',
+                feature3Desc: 'दुनिया भर के रचनाकारों से जुड़ें, कार्यों को साझा करें, एक-दूसरे से सीखें और एक साथ बढ़ें',
+                feature4Title: 'उच्च-प्रदर्शन इंजन',
+                feature4Desc: 'अनुकूलित रनटाइम इंजन, जटिल परियोजनाओं का सुचारु निष्पादन, सर्वोत्तम रचनात्मक अनुभव प्रदान करता है',
+                feature5Title: 'क्रॉस-प्लेटफ़ॉर्म समर्थन',
+                feature5Desc: 'Web, मोबाइल और अन्य प्लेटफ़ॉर्म का समर्थन करता है, कभी भी, कहीं भी बनाएं और साझा करें',
+                feature6Title: 'शैक्षिक संसाधन',
+                feature6Desc: 'पूर्ण शिक्षण संसाधन, समृद्ध ट्यूटोरियल और मामले, सभी उम्र के शिक्षार्थियों के लिए उपयुक्त',
+                statsTitle: 'मंच सांख्यिकी',
+                stat1Label: 'सक्रिय उपयोगकर्ता',
+                stat2Label: 'बनाए गए कार्य',
+                stat3Label: 'सामुदायिक एक्सटेंशन',
+                stat4Label: 'समर्थित देश',
+                footerText: '© 2024 CCW - Creative Coding World. सर्वाधिकार सुरक्षित।'
+            },
+            ar: {
+                logo: 'CCW',
+                tagline: 'عالم البرمجة الإبداعية',
+                description: 'CCW هي منصة تعليم برمجة مبتكرة مكرسة لجعل البرمجة بسيطة وممتعة وإبداعية. من خلال أدوات البرمجة المرئية ونظام بيئي غني بالامتدادات، نساعد كل مبدع على تحقيق أفكاره.',
+                btnStart: 'ابدأ الإبداع',
+                btnLearn: 'تعرف على المزيد',
+                btnTool: 'أداة CCW Work',
+                extensionsTitle: 'نظام بيئي للامتدادات',
+                extensionsDesc: 'استكشف نظامنا البيئي للامتدادات المصمم بعناية لتمكين إبداعاتك',
+                ext1Title: 'theTomsBetterPopup',
+                ext1Desc: 'امتداد نافذة منبثقة أكثر قوة لـ Scratch، يوفر أنواعًا متعددة من النوافذ المنبثقة، وأنماطًا مخصصة، ودعم اختصارات لوحة المفاتيح وميزات غنية أخرى',
+                ext1Btn: 'عرض التفاصيل',
+                featuresTitle: 'الميزات الرئيسية',
+                feature1Title: 'البرمجة المرئية',
+                feature1Desc: 'واجهة برمجة بديهية تعتمد على الكتل، لا حاجة لحفظ الصيغ المعقدة، فقط اسحب وأفلت لإنشاء أعمال مذهلة',
+                feature2Title: 'نظام بيئي للامتدادات',
+                feature2Desc: 'مكتبة امتدادات مجتمعية غنية، تدعم تطوير امتدادات مخصصة، توسيع الإمكانيات الإبداعية بلا حدود',
+                feature3Title: 'مجتمع عالمي',
+                feature3Desc: 'تواصل مع المبدعين حول العالم، شارك الأعمال، تعلم من الآخرين، وانمُ معهم',
+                feature4Title: 'محرك عالي الأداء',
+                feature4Desc: 'محرك تنفيذ محسن، تنفيذ سلس للمشاريع المعقدة، يوفر أفضل تجربة إبداعية',
+                feature5Title: 'دعم متعدد المنصات',
+                feature5Desc: 'يدعم Web والجوال ومنصات أخرى، أنشئ وشارك في أي وقت وأي مكان',
+                feature6Title: 'موارد تعليمية',
+                feature6Desc: 'موارد تعليمية كاملة، ودروس وحالات غنية، مناسبة للمتعلمين من جميع الأعمار',
+                statsTitle: 'إحصائيات المنصة',
+                stat1Label: 'المستخدمون النشطون',
+                stat2Label: 'الأعمال المُنشأة',
+                stat3Label: 'امتدادات المجتمع',
+                stat4Label: 'البلدان المدعومة',
+                footerText: '© 2024 CCW - Creative Coding World. جميع الحقوق محفوظة.'
+            }
+        };
+
+        let currentLanguage = 'en';
+
+        // 切换语言
+        function switchLanguage(lang) {
+            currentLanguage = lang;
+            const t = translations[lang];
+            
+            document.getElementById('logo').textContent = t.logo;
+            document.getElementById('tagline').textContent = t.tagline;
+            document.getElementById('description').textContent = t.description;
+            document.getElementById('btnStart').textContent = t.btnStart;
+            document.getElementById('btnLearn').textContent = t.btnLearn;
+            document.getElementById('btnTool').textContent = t.btnTool;
+            document.getElementById('extensionsTitle').textContent = t.extensionsTitle;
+            document.getElementById('extensionsDesc').textContent = t.extensionsDesc;
+            document.getElementById('ext1Title').textContent = t.ext1Title;
+            document.getElementById('ext1Desc').textContent = t.ext1Desc;
+            document.getElementById('ext1Btn').textContent = t.ext1Btn;
+            document.getElementById('featuresTitle').textContent = t.featuresTitle;
+            
+            for (let i = 1; i <= 6; i++) {
+                document.getElementById(`feature${i}Title`).textContent = t[`feature${i}Title`];
+                document.getElementById(`feature${i}Desc`).textContent = t[`feature${i}Desc`];
+            }
+            
+            document.getElementById('statsTitle').textContent = t.statsTitle;
+            document.getElementById('stat1Label').textContent = t.stat1Label;
+            document.getElementById('stat2Label').textContent = t.stat2Label;
+            document.getElementById('stat3Label').textContent = t.stat3Label;
+            document.getElementById('stat4Label').textContent = t.stat4Label;
+            document.getElementById('footerText').textContent = t.footerText;
+            
+            // RTL支持
+            if (lang === 'ar') {
+                document.body.style.direction = 'rtl';
+            } else {
+                document.body.style.direction = 'ltr';
+            }
+        }
+
+        // 语言选择器事件
+        document.getElementById('languageSelector').addEventListener('change', (e) => {
+            switchLanguage(e.target.value);
+        });
+
+        // 初始化 - 默认英语
+        switchLanguage('en');
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // 控制台欢迎信息
+        console.log('%c🌍 CCW - Creative Coding World', 'color: #667eea; font-size: 24px; font-weight: bold;');
+        console.log('%c创新的编程教育平台', 'color: #764ba2; font-size: 14px;');
+    </script>
+</body>
+</html>
