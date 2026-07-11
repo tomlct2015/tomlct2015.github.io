@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS样式可视化编辑器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #e0e0e0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #0f0f1e;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #ffffff;
+            padding: 30px;
+            text-align: center;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        /* 左侧：控制面板 */
+        .control-panel {
+            background: #1a1a2e;
+            padding: 25px;
+            border-radius: 15px;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid #2a2a3e;
+        }
+
+        .control-group {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #2a2a3e;
+        }
+
+        .control-group:last-child {
+            border-bottom: none;
+        }
+
+        .control-group h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .control-group h3::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 20px;
+            background: #667eea;
+            border-radius: 2px;
+        }
+
+        .control-item {
+            margin-bottom: 15px;
+        }
+
+        .control-item label {
+            display: block;
+            margin-bottom: 5px;
+            color: #b0b0b0;
+            font-weight: 500;
+        }
+
+        .control-item input[type="text"],
+        .control-item input[type="number"],
+        .control-item input[type="color"],
+        .control-item select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #2a2a3e;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+            background: #0f0f1e;
+            color: #e0e0e0;
+        }
+
+        .control-item input:focus,
+        .control-item select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+
+        .control-item input[type="color"] {
+            height: 45px;
+            cursor: pointer;
+        }
+
+        .control-item input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #2a2a3e;
+            outline: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+
+        .control-item input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .control-item input[type="range"]::-webkit-slider-thumb:hover {
+            background: #764ba2;
+            transform: scale(1.2);
+        }
+
+        .range-value {
+            display: inline-block;
+            margin-left: 10px;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        /* 右侧：预览和代码 */
+        .preview-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .preview-box {
+            background: #1a1a2e;
+            border: 3px solid #667eea;
+            border-radius: 15px;
+            padding: 40px;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .preview-element {
+            width: 200px;
+            height: 150px;
+            background: #0f0f1e;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #e0e0e0;
+            transition: all 0.3s;
+        }
+
+        .code-box {
+            background: #0a0a1a;
+            border-radius: 15px;
+            padding: 20px;
+            position: relative;
+            border: 1px solid #2a2a3e;
+        }
+
+        .code-box h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .code-output {
+            background: #0f0f1e;
+            border-radius: 8px;
+            padding: 15px;
+            color: #b0b0b0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #2a2a3e;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .copy-btn:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .copy-btn:active {
+            transform: translateY(0);
+        }
+
+        .copy-btn.copied {
+            background: #4caf50;
+        }
+
+        /* 快捷操作 */
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .quick-btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 12px;
+            border: 2px solid #667eea;
+            background: #1a1a2e;
+            color: #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .quick-btn:hover {
+            background: #667eea;
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        /* 响应式 */
+        @media (max-width: 968px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 滚动条美化 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a1a2e;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #764ba2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 id="mainTitle">🎨 CSS Style Visual Editor</h1>
+            <p id="mainSubtitle">Real-time preview, one-click CSS code copy</p>
+            <div style="margin-top: 20px;">
+                <select id="languageSelector" style="padding: 8px 15px; border-radius: 8px; border: 2px solid #667eea; background: #1a1a2e; color: #e0e0e0; font-size: 14px; cursor: pointer;">
+                    <option value="en">🇬🇧 English</option>
+                    <option value="zh">🇨🇳 中文</option>
+                    <option value="es">🇪🇸 Español</option>
+                    <option value="hi">🇮🇳 हिन्दी</option>
+                    <option value="ar">🇸🇦 العربية</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <!-- 左侧：控制面板 -->
+            <div class="control-panel">
+                <!-- 快捷操作 -->
+                <div class="quick-actions">
+                    <button class="quick-btn" onclick="resetAll()" id="resetBtn">🔄 Reset</button>
+                </div>
+
+                <!-- 背景样式 -->
+                <div class="control-group">
+                    <h3 id="bgTitle">Background Style</h3>
+                    <div class="control-item">
+                        <label id="bgColorLabel">Background Color</label>
+                        <input type="color" id="bgColor" value="#f0f0f0">
+                    </div>
+                    <div class="control-item">
+                        <label id="bgGradientLabel">Background Gradient</label>
+                        <input type="text" id="bgGradient" placeholder="linear-gradient(135deg, #667eea, #764ba2)">
+                    </div>
+                </div>
+
+                <!-- 边框样式 -->
+                <div class="control-group">
+                    <h3 id="borderTitle">Border Style</h3>
+                    <div class="control-item">
+                        <label id="borderWidthLabel">Border Width: <span class="range-value" id="borderWidthValue">2</span>px</label>
+                        <input type="range" id="borderWidth" min="0" max="20" value="2">
+                    </div>
+                    <div class="control-item">
+                        <label id="borderColorLabel">Border Color</label>
+                        <input type="color" id="borderColor" value="#667eea">
+                    </div>
+                    <div class="control-item">
+                        <label id="borderStyleLabel">Border Style</label>
+                        <select id="borderStyle">
+                            <option value="solid" id="borderSolid">Solid</option>
+                            <option value="dashed" id="borderDashed">Dashed</option>
+                            <option value="dotted" id="borderDotted">Dotted</option>
+                            <option value="double" id="borderDouble">Double</option>
+                            <option value="none" id="borderNone">None</option>
+                        </select>
+                    </div>
+                    <div class="control-item">
+                        <label id="borderRadiusLabel">Border Radius: <span class="range-value" id="borderRadiusValue">10</span>px</label>
+                        <input type="range" id="borderRadius" min="0" max="50" value="10">
+                    </div>
+                </div>
+
+                <!-- 阴影效果 -->
+                <div class="control-group">
+                    <h3 id="shadowTitle">Shadow Effect</h3>
+                    <div class="control-item">
+                        <label id="shadowColorLabel">Shadow Color</label>
+                        <input type="color" id="shadowColor" value="#000000">
+                    </div>
+                    <div class="control-item">
+                        <label id="shadowXLabel">Horizontal Offset: <span class="range-value" id="shadowXValue">0</span>px</label>
+                        <input type="range" id="shadowX" min="-50" max="50" value="0">
+                    </div>
+                    <div class="control-item">
+                        <label id="shadowYLabel">Vertical Offset: <span class="range-value" id="shadowYValue">5</span>px</label>
+                        <input type="range" id="shadowY" min="-50" max="50" value="5">
+                    </div>
+                    <div class="control-item">
+                        <label id="shadowBlurLabel">Blur Radius: <span class="range-value" id="shadowBlurValue">15</span>px</label>
+                        <input type="range" id="shadowBlur" min="0" max="50" value="15">
+                    </div>
+                    <div class="control-item">
+                        <label id="shadowSpreadLabel">Shadow Spread: <span class="range-value" id="shadowSpreadValue">0</span>px</label>
+                        <input type="range" id="shadowSpread" min="-50" max="50" value="0">
+                    </div>
+                </div>
+
+                <!-- 文字样式 -->
+                <div class="control-group">
+                    <h3 id="textTitle">Text Style</h3>
+                    <div class="control-item">
+                        <label id="textColorLabel">Text Color</label>
+                        <input type="color" id="textColor" value="#333333">
+                    </div>
+                    <div class="control-item">
+                        <label id="fontSizeLabel">Font Size: <span class="range-value" id="fontSizeValue">18</span>px</label>
+                        <input type="range" id="fontSize" min="12" max="48" value="18">
+                    </div>
+                    <div class="control-item">
+                        <label id="fontWeightLabel">Font Weight</label>
+                        <select id="fontWeight">
+                            <option value="normal" id="weightNormal">Normal</option>
+                            <option value="bold" id="weightBold">Bold</option>
+                        </select>
+                    </div>
+                    <div class="control-item">
+                        <label id="textAlignLabel">Text Align</label>
+                        <select id="textAlign">
+                            <option value="center" id="alignCenter">Center</option>
+                            <option value="left" id="alignLeft">Left</option>
+                            <option value="right" id="alignRight">Right</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 其他样式 -->
+                <div class="control-group">
+                    <h3 id="otherTitle">Other Styles</h3>
+                    <div class="control-item">
+                        <label id="paddingLabel">Padding: <span class="range-value" id="paddingValue">20</span>px</label>
+                        <input type="range" id="padding" min="0" max="50" value="20">
+                    </div>
+                    <div class="control-item">
+                        <label id="marginLabel">Margin: <span class="range-value" id="marginValue">10</span>px</label>
+                        <input type="range" id="margin" min="0" max="50" value="10">
+                    </div>
+                    <div class="control-item">
+                        <label id="opacityLabel">Opacity: <span class="range-value" id="opacityValue">100</span>%</label>
+                        <input type="range" id="opacity" min="0" max="100" value="100">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右侧：预览和代码 -->
+            <div class="preview-panel">
+                <div class="preview-box">
+                    <div class="preview-element" id="previewElement">
+                        预览元素
+                    </div>
+                </div>
+
+                <div class="code-box">
+                    <h3 id="codeTitle">💻 CSS Code</h3>
+                    <button class="copy-btn" onclick="copyCSS()" id="copyBtn">📋 Copy CSS</button>
+                    <div class="code-output" id="codeOutput"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 多语言翻译数据
+        const translations = {
+            en: {
+                title: '🎨 CSS Style Visual Editor',
+                subtitle: 'Real-time preview, one-click CSS code copy',
+                resetBtn: '🔄 Reset',
+                bgTitle: 'Background Style',
+                bgColorLabel: 'Background Color',
+                bgGradientLabel: 'Background Gradient',
+                borderTitle: 'Border Style',
+                borderWidthLabel: 'Border Width:',
+                borderColorLabel: 'Border Color',
+                borderStyleLabel: 'Border Style',
+                borderRadiusLabel: 'Border Radius:',
+                shadowTitle: 'Shadow Effect',
+                shadowColorLabel: 'Shadow Color',
+                shadowXLabel: 'Horizontal Offset:',
+                shadowYLabel: 'Vertical Offset:',
+                shadowBlurLabel: 'Blur Radius:',
+                shadowSpreadLabel: 'Shadow Spread:',
+                textTitle: 'Text Style',
+                textColorLabel: 'Text Color',
+                fontSizeLabel: 'Font Size:',
+                fontWeightLabel: 'Font Weight',
+                textAlignLabel: 'Text Align',
+                otherTitle: 'Other Styles',
+                paddingLabel: 'Padding:',
+                marginLabel: 'Margin:',
+                opacityLabel: 'Opacity:',
+                codeTitle: '💻 CSS Code',
+                copyBtn: '📋 Copy CSS',
+                copied: '✓ Copied!',
+                copyFail: 'Copy failed, please copy manually',
+                solid: 'Solid',
+                dashed: 'Dashed',
+                dotted: 'Dotted',
+                double: 'Double',
+                none: 'None',
+                normal: 'Normal',
+                bold: 'Bold',
+                center: 'Center',
+                left: 'Left',
+                right: 'Right'
+            },
+            zh: {
+                title: '🎨 CSS样式可视化编辑器',
+                subtitle: '实时预览，一键复制CSS代码',
+                resetBtn: '🔄 重置',
+                bgTitle: '背景样式',
+                bgColorLabel: '背景颜色',
+                bgGradientLabel: '背景渐变',
+                borderTitle: '边框样式',
+                borderWidthLabel: '边框宽度:',
+                borderColorLabel: '边框颜色',
+                borderStyleLabel: '边框样式',
+                borderRadiusLabel: '圆角:',
+                shadowTitle: '阴影效果',
+                shadowColorLabel: '阴影颜色',
+                shadowXLabel: '水平偏移:',
+                shadowYLabel: '垂直偏移:',
+                shadowBlurLabel: '模糊半径:',
+                shadowSpreadLabel: '阴影大小:',
+                textTitle: '文字样式',
+                textColorLabel: '文字颜色',
+                fontSizeLabel: '字体大小:',
+                fontWeightLabel: '字重',
+                textAlignLabel: '文字对齐',
+                otherTitle: '其他样式',
+                paddingLabel: '内边距:',
+                marginLabel: '外边距:',
+                opacityLabel: '透明度:',
+                codeTitle: '💻 CSS代码',
+                copyBtn: '📋 复制CSS',
+                copied: '✓ 已复制!',
+                copyFail: '复制失败，请手动复制',
+                solid: '实线',
+                dashed: '虚线',
+                dotted: '点线',
+                double: '双线',
+                none: '无',
+                normal: '正常',
+                bold: '粗体',
+                center: '居中',
+                left: '左对齐',
+                right: '右对齐'
+            },
+            es: {
+                title: '🎨 Editor Visual de Estilos CSS',
+                subtitle: 'Vista previa en tiempo real, copia CSS con un clic',
+                resetBtn: '🔄 Restablecer',
+                bgTitle: 'Estilo de Fondo',
+                bgColorLabel: 'Color de Fondo',
+                bgGradientLabel: 'Gradiente de Fondo',
+                borderTitle: 'Estilo de Borde',
+                borderWidthLabel: 'Ancho del Borde:',
+                borderColorLabel: 'Color del Borde',
+                borderStyleLabel: 'Estilo de Borde',
+                borderRadiusLabel: 'Radio del Borde:',
+                shadowTitle: 'Efecto de Sombra',
+                shadowColorLabel: 'Color de Sombra',
+                shadowXLabel: 'Desplazamiento Horizontal:',
+                shadowYLabel: 'Desplazamiento Vertical:',
+                shadowBlurLabel: 'Radio de Desfoque:',
+                shadowSpreadLabel: 'Extensión de Sombra:',
+                textTitle: 'Estilo de Texto',
+                textColorLabel: 'Color de Texto',
+                fontSizeLabel: 'Tamaño de Fuente:',
+                fontWeightLabel: 'Peso de Fuente',
+                textAlignLabel: 'Alineación de Texto',
+                otherTitle: 'Otros Estilos',
+                paddingLabel: 'Relleno:',
+                marginLabel: 'Margen:',
+                opacityLabel: 'Opacidad:',
+                codeTitle: '💻 Código CSS',
+                copyBtn: '📋 Copiar CSS',
+                copied: '✓ ¡Copiado!',
+                copyFail: 'Copia fallida, por favor copia manualmente',
+                solid: 'Sólido',
+                dashed: 'Discontinuo',
+                dotted: 'Punteado',
+                double: 'Doble',
+                none: 'Ninguno',
+                normal: 'Normal',
+                bold: 'Negrita',
+                center: 'Centro',
+                left: 'Izquierda',
+                right: 'Derecha'
+            },
+            hi: {
+                title: '🎨 CSS शैली विज़ुअल संपादक',
+                subtitle: 'रीयल-टाइम पूर्वावलोकन, एक-क्लिक CSS कोड कॉपी',
+                resetBtn: '🔄 रीसेट',
+                bgTitle: 'पृष्ठभूमि शैली',
+                bgColorLabel: 'पृष्ठभूमि रंग',
+                bgGradientLabel: 'पृष्ठभूमि ग्रेडिएंट',
+                borderTitle: 'बॉर्डर शैली',
+                borderWidthLabel: 'बॉर्डर चौड़ाई:',
+                borderColorLabel: 'बॉर्डर रंग',
+                borderStyleLabel: 'बॉर्डर शैली',
+                borderRadiusLabel: 'बॉर्डर त्रिज्या:',
+                shadowTitle: 'छाया प्रभाव',
+                shadowColorLabel: 'छाया रंग',
+                shadowXLabel: 'क्षैतिज ऑफसेट:',
+                shadowYLabel: 'लंबवत ऑफसेट:',
+                shadowBlurLabel: 'धुंधला त्रिज्या:',
+                shadowSpreadLabel: 'छाया विस्तार:',
+                textTitle: 'टेक्स्ट शैली',
+                textColorLabel: 'टेक्स्ट रंग',
+                fontSizeLabel: 'फ़ॉन्ट आकार:',
+                fontWeightLabel: 'फ़ॉन्ट वजन',
+                textAlignLabel: 'टेक्स्ट संरेखण',
+                otherTitle: 'अन्य शैलियाँ',
+                paddingLabel: 'पैडिंग:',
+                marginLabel: 'मार्जिन:',
+                opacityLabel: 'अपारदर्शिता:',
+                codeTitle: '💻 CSS कोड',
+                copyBtn: '📋 CSS कॉपी करें',
+                copied: '✓ कॉपी हो गया!',
+                copyFail: 'कॉपी विफल, कृपया मैन्युअल रूप से कॉपी करें',
+                solid: 'ठोस',
+                dashed: 'डैश्ड',
+                dotted: 'डॉटेड',
+                double: 'डबल',
+                none: 'कोई नहीं',
+                normal: 'सामान्य',
+                bold: 'मोटा',
+                center: 'केंद्र',
+                left: 'बाएँ',
+                right: 'दाएँ'
+            },
+            ar: {
+                title: '🎨 محرر أنماط CSS المرئي',
+                subtitle: 'معاينة في الوقت الحقيقي، نسخ رمز CSS بنقرة واحدة',
+                resetBtn: '🔄 إعادة تعيين',
+                bgTitle: 'نمط الخلفية',
+                bgColorLabel: 'لون الخلفية',
+                bgGradientLabel: 'تدرج الخلفية',
+                borderTitle: 'نمط الحدود',
+                borderWidthLabel: 'عرض الحدود:',
+                borderColorLabel: 'لون الحدود',
+                borderStyleLabel: 'نمط الحدود',
+                borderRadiusLabel: 'نصف قطر الحدود:',
+                shadowTitle: 'تأثير الظل',
+                shadowColorLabel: 'لون الظل',
+                shadowXLabel: 'الإزاحة الأفقية:',
+                shadowYLabel: 'الإزاحة العمودية:',
+                shadowBlurLabel: 'نصف قطر التمويه:',
+                shadowSpreadLabel: 'انتشار الظل:',
+                textTitle: 'نمط النص',
+                textColorLabel: 'لون النص',
+                fontSizeLabel: 'حجم الخط:',
+                fontWeightLabel: 'وزن الخط',
+                textAlignLabel: 'محاذاة النص',
+                otherTitle: 'أنماط أخرى',
+                paddingLabel: 'الحشو:',
+                marginLabel: 'الهامش:',
+                opacityLabel: 'العتامة:',
+                codeTitle: '💻 رمز CSS',
+                copyBtn: '📋 نسخ CSS',
+                copied: '✓ تم النسخ!',
+                copyFail: 'فشل النسخ، يرجى النسخ يدويًا',
+                solid: 'صلب',
+                dashed: 'متقطع',
+                dotted: 'منقط',
+                double: 'مزدوج',
+                none: 'لا شيء',
+                normal: 'عادي',
+                bold: 'عريض',
+                center: 'مركز',
+                left: 'يسار',
+                right: 'يمين'
+            }
+        };
+
+        let currentLanguage = 'en';
+
+        // 切换语言
+        function switchLanguage(lang) {
+            currentLanguage = lang;
+            const t = translations[lang];
+            
+            // 更新所有文本
+            document.getElementById('mainTitle').textContent = t.title;
+            document.getElementById('mainSubtitle').textContent = t.subtitle;
+            document.getElementById('resetBtn').textContent = t.resetBtn;
+            document.getElementById('bgTitle').textContent = t.bgTitle;
+            document.getElementById('bgColorLabel').textContent = t.bgColorLabel;
+            document.getElementById('bgGradientLabel').textContent = t.bgGradientLabel;
+            document.getElementById('borderTitle').textContent = t.borderTitle;
+            document.getElementById('borderWidthLabel').textContent = t.borderWidthLabel;
+            document.getElementById('borderColorLabel').textContent = t.borderColorLabel;
+            document.getElementById('borderStyleLabel').textContent = t.borderStyleLabel;
+            document.getElementById('borderRadiusLabel').textContent = t.borderRadiusLabel;
+            document.getElementById('shadowTitle').textContent = t.shadowTitle;
+            document.getElementById('shadowColorLabel').textContent = t.shadowColorLabel;
+            document.getElementById('shadowXLabel').textContent = t.shadowXLabel;
+            document.getElementById('shadowYLabel').textContent = t.shadowYLabel;
+            document.getElementById('shadowBlurLabel').textContent = t.shadowBlurLabel;
+            document.getElementById('shadowSpreadLabel').textContent = t.shadowSpreadLabel;
+            document.getElementById('textTitle').textContent = t.textTitle;
+            document.getElementById('textColorLabel').textContent = t.textColorLabel;
+            document.getElementById('fontSizeLabel').textContent = t.fontSizeLabel;
+            document.getElementById('fontWeightLabel').textContent = t.fontWeightLabel;
+            document.getElementById('textAlignLabel').textContent = t.textAlignLabel;
+            document.getElementById('otherTitle').textContent = t.otherTitle;
+            document.getElementById('paddingLabel').textContent = t.paddingLabel;
+            document.getElementById('marginLabel').textContent = t.marginLabel;
+            document.getElementById('opacityLabel').textContent = t.opacityLabel;
+            document.getElementById('codeTitle').textContent = t.codeTitle;
+            document.getElementById('copyBtn').textContent = t.copyBtn;
+            
+            // 更新下拉菜单选项
+            document.getElementById('borderSolid').textContent = t.solid;
+            document.getElementById('borderDashed').textContent = t.dashed;
+            document.getElementById('borderDotted').textContent = t.dotted;
+            document.getElementById('borderDouble').textContent = t.double;
+            document.getElementById('borderNone').textContent = t.none;
+            document.getElementById('weightNormal').textContent = t.normal;
+            document.getElementById('weightBold').textContent = t.bold;
+            document.getElementById('alignCenter').textContent = t.center;
+            document.getElementById('alignLeft').textContent = t.left;
+            document.getElementById('alignRight').textContent = t.right;
+            
+            // 设置RTL（阿拉伯语）
+            if (lang === 'ar') {
+                document.body.style.direction = 'rtl';
+            } else {
+                document.body.style.direction = 'ltr';
+            }
+        }
+
+        // 获取所有控件
+        const controls = {
+            bgColor: document.getElementById('bgColor'),
+            bgGradient: document.getElementById('bgGradient'),
+            borderWidth: document.getElementById('borderWidth'),
+            borderColor: document.getElementById('borderColor'),
+            borderStyle: document.getElementById('borderStyle'),
+            borderRadius: document.getElementById('borderRadius'),
+            shadowColor: document.getElementById('shadowColor'),
+            shadowX: document.getElementById('shadowX'),
+            shadowY: document.getElementById('shadowY'),
+            shadowBlur: document.getElementById('shadowBlur'),
+            shadowSpread: document.getElementById('shadowSpread'),
+            textColor: document.getElementById('textColor'),
+            fontSize: document.getElementById('fontSize'),
+            fontWeight: document.getElementById('fontWeight'),
+            textAlign: document.getElementById('textAlign'),
+            padding: document.getElementById('padding'),
+            margin: document.getElementById('margin'),
+            opacity: document.getElementById('opacity')
+        };
+
+        const previewElement = document.getElementById('previewElement');
+        const codeOutput = document.getElementById('codeOutput');
+
+        // 更新预览和代码
+        function updatePreview() {
+            const styles = generateCSS();
+            
+            // 应用样式到预览元素
+            Object.assign(previewElement.style, styles);
+            
+            // 更新代码显示
+            const cssText = generateCSSText(styles);
+            codeOutput.textContent = cssText;
+            
+            // 更新范围值显示
+            updateRangeValues();
+        }
+
+        // 生成CSS样式对象
+        function generateCSS() {
+            const styles = {};
+            
+            // 背景
+            if (controls.bgGradient.value) {
+                styles.background = controls.bgGradient.value;
+            } else {
+                styles.backgroundColor = controls.bgColor.value;
+            }
+            
+            // 边框
+            styles.border = `${controls.borderWidth.value}px ${controls.borderStyle.value} ${controls.borderColor.value}`;
+            styles.borderRadius = `${controls.borderRadius.value}px`;
+            
+            // 阴影
+            const shadowColor = controls.shadowColor.value;
+            const shadowX = controls.shadowX.value;
+            const shadowY = controls.shadowY.value;
+            const shadowBlur = controls.shadowBlur.value;
+            const shadowSpread = controls.shadowSpread.value;
+            styles.boxShadow = `${shadowX}px ${shadowY}px ${shadowBlur}px ${shadowSpread}px ${shadowColor}`;
+            
+            // 文字
+            styles.color = controls.textColor.value;
+            styles.fontSize = `${controls.fontSize.value}px`;
+            styles.fontWeight = controls.fontWeight.value;
+            styles.textAlign = controls.textAlign.value;
+            
+            // 其他
+            styles.padding = `${controls.padding.value}px`;
+            styles.margin = `${controls.margin.value}px`;
+            styles.opacity = controls.opacity.value / 100;
+            
+            return styles;
+        }
+
+        // 生成CSS文本
+        function generateCSSText(styles) {
+            let css = '';
+            
+            for (const [property, value] of Object.entries(styles)) {
+                // 转换驼峰命名为短横线命名
+                const cssProperty = property.replace(/([A-Z])/g, '-$1').toLowerCase();
+                css += `${cssProperty}: ${value};\n`;
+            }
+            return css;
+        }
+
+        // 更新范围值显示
+        function updateRangeValues() {
+            document.getElementById('borderWidthValue').textContent = controls.borderWidth.value;
+            document.getElementById('borderRadiusValue').textContent = controls.borderRadius.value;
+            document.getElementById('shadowXValue').textContent = controls.shadowX.value;
+            document.getElementById('shadowYValue').textContent = controls.shadowY.value;
+            document.getElementById('shadowBlurValue').textContent = controls.shadowBlur.value;
+            document.getElementById('shadowSpreadValue').textContent = controls.shadowSpread.value;
+            document.getElementById('fontSizeValue').textContent = controls.fontSize.value;
+            document.getElementById('paddingValue').textContent = controls.padding.value;
+            document.getElementById('marginValue').textContent = controls.margin.value;
+            document.getElementById('opacityValue').textContent = controls.opacity.value;
+        }
+
+        // 复制CSS
+        function copyCSS() {
+            const cssText = codeOutput.textContent;
+            const t = translations[currentLanguage];
+            
+            navigator.clipboard.writeText(cssText).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = t.copied;
+                btn.classList.add('copied');
+                
+                setTimeout(() => {
+                    btn.innerHTML = t.copyBtn;
+                    btn.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                alert(t.copyFail);
+                console.error('复制失败:', err);
+            });
+        }
+
+        // 重置所有样式
+        function resetAll() {
+            controls.bgColor.value = '#f0f0f0';
+            controls.bgGradient.value = '';
+            controls.borderWidth.value = '2';
+            controls.borderColor.value = '#667eea';
+            controls.borderStyle.value = 'solid';
+            controls.borderRadius.value = '10';
+            controls.shadowColor.value = '#000000';
+            controls.shadowX.value = '0';
+            controls.shadowY.value = '5';
+            controls.shadowBlur.value = '15';
+            controls.shadowSpread.value = '0';
+            controls.textColor.value = '#333333';
+            controls.fontSize.value = '18';
+            controls.fontWeight.value = 'normal';
+            controls.textAlign.value = 'center';
+            controls.padding.value = '20';
+            controls.margin.value = '10';
+            controls.opacity.value = '100';
+            updatePreview();
+        }
+
+        // 绑定事件监听
+        Object.values(controls).forEach(control => {
+            control.addEventListener('input', updatePreview);
+            control.addEventListener('change', updatePreview);
+        });
+
+        // 语言选择器事件
+        document.getElementById('languageSelector').addEventListener('change', (e) => {
+            switchLanguage(e.target.value);
+        });
+
+        // 初始化
+        updatePreview();
+        // 默认使用英语
+        switchLanguage('en');
+    </script>
+</body>
+</html>
