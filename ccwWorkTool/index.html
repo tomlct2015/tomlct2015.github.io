@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Popup Style Editor</title>
-    <link rel="icon" type="image/svg+xml" href="icon.svg">
-    <link rel="alternate icon" type="image/png" href="icon.png">
-    <link rel="shortcut icon" href="icon.svg" type="image/svg+xml">
+    <title>CCW Work Tool</title>
+
+    <link rel="icon" type="image/svg+xml" href="ccw图标.svg">
+    <link rel="alternate icon" type="image/png" href="ccw图标.svg">
+    <link rel="shortcut icon" href="ccw图标.svg" type="image/svg+xml">
     <style>
         * {
             margin: 0;
@@ -15,429 +16,305 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             min-height: 100vh;
             padding: 20px;
             color: #e0e0e0;
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 900px;
             margin: 0 auto;
-            background: #0f0f1e;
+            background: rgba(30, 30, 46, 0.95);
             border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(15, 52, 96, 0.3);
             overflow: hidden;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #ffffff;
+            color: white;
             padding: 30px;
             text-align: center;
-            border-bottom: 3px solid #667eea;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+            pointer-events: none;
         }
 
         .header h1 {
-            font-size: 2.5rem;
+            font-size: 2em;
             margin-bottom: 10px;
         }
 
         .header p {
-            font-size: 1.1rem;
             opacity: 0.9;
+            font-size: 1.1em;
         }
 
-        .main-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
+        .content {
             padding: 30px;
         }
 
-        /* 左侧：控制面板 */
-        .control-panel {
-            background: #1a1a2e;
-            padding: 25px;
-            border-radius: 15px;
-            max-height: 80vh;
-            overflow-y: auto;
-            border: 1px solid #2a2a3e;
-        }
-
-        .control-group {
-            margin-bottom: 25px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #2a2a3e;
-        }
-
-        .control-group:last-child {
-            border-bottom: none;
-        }
-
-        .control-group h3 {
-            color: #667eea;
-            margin-bottom: 15px;
-            font-size: 1.3rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .control-group h3::before {
-            content: '';
-            display: inline-block;
-            width: 4px;
-            height: 20px;
-            background: #667eea;
-            border-radius: 2px;
-        }
-
-        .control-item {
-            margin-bottom: 15px;
-        }
-
-        .control-item label {
-            display: block;
-            margin-bottom: 5px;
-            color: #b0b0b0;
-            font-weight: 500;
-        }
-
-        .control-item input[type="text"],
-        .control-item input[type="number"],
-        .control-item input[type="color"],
-        .control-item select {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #2a2a3e;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: all 0.3s;
-            background: #0f0f1e;
-            color: #e0e0e0;
-        }
-
-        .control-item input:focus,
-        .control-item select:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
-        }
-
-        .control-item input[type="color"] {
-            height: 45px;
-            cursor: pointer;
-        }
-
-        .control-item input[type="range"] {
-            width: 100%;
-            height: 6px;
-            border-radius: 3px;
-            background: #2a2a3e;
-            outline: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-        }
-
-        .control-item input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #667eea;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .control-item input[type="range"]::-webkit-slider-thumb:hover {
-            background: #764ba2;
-            transform: scale(1.2);
-        }
-
-        .range-value {
-            display: inline-block;
-            margin-left: 10px;
-            color: #667eea;
-            font-weight: bold;
-        }
-
-        /* 右侧：预览和代码 */
-        .preview-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .preview-box {
-            background: #1a1a2e;
-            border: 3px solid #667eea;
-            border-radius: 15px;
-            padding: 40px;
-            min-height: 300px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-        }
-
-        .preview-element {
-            width: 200px;
-            height: 150px;
-            background: #0f0f1e;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            color: #e0e0e0;
-            transition: all 0.3s;
-        }
-
-        .code-box {
-            background: #0a0a1a;
-            border-radius: 15px;
+        .step {
+            margin-bottom: 30px;
             padding: 20px;
-            position: relative;
-            border: 1px solid #2a2a3e;
+            background: rgba(40, 40, 58, 0.6);
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .code-box h3 {
+        .step h3 {
             color: #667eea;
             margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            font-size: 1.3em;
         }
 
-        .code-output {
-            background: #0f0f1e;
-            border-radius: 8px;
-            padding: 15px;
-            color: #b0b0b0;
-            font-family: 'Consolas', 'Monaco', monospace;
-            font-size: 14px;
-            line-height: 1.6;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            max-height: 300px;
-            overflow-y: auto;
-            border: 1px solid #2a2a3e;
-        }
-
-        .copy-btn {
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: bold;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .copy-btn:hover {
-            background: #764ba2;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .copy-btn:active {
-            transform: translateY(0);
-        }
-
-        .copy-btn.copied {
-            background: #4caf50;
-        }
-
-        /* 代码操作按钮区域 */
-        .code-actions {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-        }
-
-        .import-btn {
-            background: #f39c12;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: bold;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .import-btn:hover {
-            background: #e67e22;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(243, 156, 18, 0.4);
-        }
-
-        /* 导入面板 */
-        .import-panel {
-            background: #1a1a2e;
-            border: 2px solid #f39c12;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 15px;
-            animation: slideDown 0.3s ease-out;
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .import-textarea {
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
             width: 100%;
-            min-height: 150px;
-            background: #0f0f1e;
-            border: 2px solid #2a2a3e;
-            border-radius: 8px;
-            padding: 12px;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            display: none;
+        }
+
+        .file-input-label {
+            display: block;
+            padding: 20px;
+            background: rgba(40, 40, 58, 0.4);
+            border: 2px dashed #667eea;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
             color: #e0e0e0;
-            font-family: 'Consolas', 'Monaco', monospace;
-            font-size: 14px;
-            line-height: 1.6;
-            resize: vertical;
+        }
+
+        .file-input-label:hover {
+            background: rgba(102, 126, 234, 0.1);
+            border-color: #764ba2;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.2);
+        }
+
+        .file-input-label .icon {
+            font-size: 3em;
             margin-bottom: 10px;
         }
 
-        .import-textarea:focus {
-            outline: none;
-            border-color: #f39c12;
-            box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.2);
+        .extension-list {
+            margin-top: 20px;
         }
 
-        .import-textarea::placeholder {
-            color: #808080;
-        }
-
-        .import-buttons {
+        .extension-item {
             display: flex;
-            gap: 10px;
-        }
-
-        .apply-btn {
-            flex: 1;
-            background: #4caf50;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: bold;
-            transition: all 0.3s;
-        }
-
-        .apply-btn:hover {
-            background: #45a049;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
-        }
-
-        .cancel-btn {
-            flex: 1;
-            background: #f44336;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: bold;
-            transition: all 0.3s;
-        }
-
-        .cancel-btn:hover {
-            background: #da190b;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(244, 67, 54, 0.4);
-        }
-
-        /* 快捷操作 */
-        .quick-actions {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .quick-btn {
-            flex: 1;
-            min-width: 120px;
+            align-items: center;
             padding: 12px;
-            border: 2px solid #667eea;
-            background: #1a1a2e;
-            color: #667eea;
+            background: rgba(40, 40, 58, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: bold;
+            margin-bottom: 10px;
             transition: all 0.3s;
         }
 
-        .quick-btn:hover {
+        .extension-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            box-shadow: 0 2px 12px rgba(102, 126, 234, 0.2);
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+
+        .extension-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 15px;
+            cursor: pointer;
+        }
+
+        .extension-item label {
+            flex: 1;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+        }
+
+        .extension-item .url {
+            color: #667eea;
+            word-break: break-all;
+        }
+
+        .extension-item .type {
+            padding: 4px 8px;
             background: #667eea;
-            color: #ffffff;
+            color: white;
+            border-radius: 4px;
+            font-size: 0.8em;
+            margin-left: 10px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
 
-        /* 响应式 */
-        @media (max-width: 968px) {
-            .main-content {
-                grid-template-columns: 1fr;
-            }
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
         }
 
-        /* 滚动条美化 */
-        ::-webkit-scrollbar {
-            width: 8px;
+        .btn-secondary {
+            background: rgba(60, 60, 80, 0.8);
+            color: #e0e0e0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        ::-webkit-scrollbar-track {
-            background: #1a1a2e;
-            border-radius: 4px;
+        .btn-secondary:hover {
+            background: rgba(80, 80, 100, 0.9);
+            border-color: rgba(102, 126, 234, 0.5);
         }
 
-        ::-webkit-scrollbar-thumb {
-            background: #667eea;
-            border-radius: 4px;
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
         }
 
-        ::-webkit-scrollbar-thumb:hover {
-            background: #764ba2;
+        .status.success {
+            display: block;
+            background: rgba(40, 167, 69, 0.2);
+            color: #4ade80;
+            border: 1px solid rgba(40, 167, 69, 0.3);
+        }
+
+        .status.error {
+            display: block;
+            background: rgba(220, 53, 69, 0.2);
+            color: #f87171;
+            border: 1px solid rgba(220, 53, 69, 0.3);
+        }
+
+        .status.info {
+            display: block;
+            background: rgba(23, 162, 184, 0.2);
+            color: #38bdf8;
+            border: 1px solid rgba(23, 164, 184, 0.3);
+        }
+
+        .progress {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .progress.active {
+            display: block;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: rgba(40, 40, 58, 0.6);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .info-box {
+            background: rgba(255, 193, 7, 0.1);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .info-box h4 {
+            color: #fbbf24;
+            margin-bottom: 10px;
+        }
+
+        .info-box ul {
+            margin-left: 20px;
+            color: #fcd34d;
+        }
+
+        .info-box li {
+            margin-bottom: 5px;
+        }
+        
+        /* 输入框样式 */
+        input[type="text"], input[type="file"] {
+            background: rgba(40, 40, 58, 0.6) !important;
+            color: #e0e0e0 !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+        
+        input[type="text"]:focus {
+            border-color: #667eea !important;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.3) !important;
+            outline: none;
+        }
+        
+        /* 复选框样式 */
+        input[type="checkbox"] {
+            accent-color: #667eea;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1 id="mainTitle">🎨 CSS Style Visual Editor</h1>
-            <p id="mainSubtitle">Real-time preview, one-click CSS code copy</p>
+            <h1><img width=35 src="data:image/png;base64,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"> <span id="mainTitle">CCW作品工具</span></h1>
+            <p id="mainSubtitle">让Scratch项目能被更方便的处理</p>
             <div style="margin-top: 20px;">
-                <select id="languageSelector" style="padding: 8px 15px; border-radius: 8px; border: 2px solid #667eea; background: #1a1a2e; color: #e0e0e0; font-size: 14px; cursor: pointer;">
+                <select id="languageSelector" style="padding: 8px 15px; border-radius: 8px; border: 2px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: white; font-size: 14px; cursor: pointer; backdrop-filter: blur(5px);">
                     <option value="en">🇬🇧 English</option>
                     <option value="zh">🇨🇳 中文</option>
                     <option value="es">🇪🇸 Español</option>
@@ -447,397 +324,347 @@
             </div>
         </div>
 
-        <div class="main-content">
-            <!-- 左侧：控制面板 -->
-            <div class="control-panel">
-                <!-- 快捷操作 -->
-                <div class="quick-actions">
-                    <button class="quick-btn" onclick="resetAll()" id="resetBtn">🔄 Reset</button>
-                </div>
+        <div class="content">
+            <div class="info-box">
+                <h4 id="usageTitle">📋 使用说明</h4>
+                <ul id="usageList">
+                    <li>上传你的.sb3项目文件</li>
+                    <li>工具会自动检测项目内容</li>
+                    <li>选择操作模式</li>
+                    <li>选择要操作的内容</li>
+                    <li>点击“执行并下载”修复后的新的.sb3文件</li>
+                </ul>
+            </div>
 
-                <!-- 背景样式 -->
-                <div class="control-group">
-                    <h3 id="bgTitle">Background Style</h3>
-                    <div class="control-item">
-                        <label id="bgColorLabel">Background Color</label>
-                        <input type="color" id="bgColor" value="#f0f0f0">
-                    </div>
-                    <div class="control-item">
-                        <label id="bgGradientLabel">Background Gradient</label>
-                        <input type="text" id="bgGradient" placeholder="linear-gradient(135deg, #667eea, #764ba2)">
-                    </div>
-                </div>
-
-                <!-- 边框样式 -->
-                <div class="control-group">
-                    <h3 id="borderTitle">Border Style</h3>
-                    <div class="control-item">
-                        <label id="borderWidthLabel">Border Width: <span class="range-value" id="borderWidthValue">2</span>px</label>
-                        <input type="range" id="borderWidth" min="0" max="20" value="2">
-                    </div>
-                    <div class="control-item">
-                        <label id="borderColorLabel">Border Color</label>
-                        <input type="color" id="borderColor" value="#667eea">
-                    </div>
-                    <div class="control-item">
-                        <label id="borderStyleLabel">Border Style</label>
-                        <select id="borderStyle">
-                            <option value="solid" id="borderSolid">Solid</option>
-                            <option value="dashed" id="borderDashed">Dashed</option>
-                            <option value="dotted" id="borderDotted">Dotted</option>
-                            <option value="double" id="borderDouble">Double</option>
-                            <option value="none" id="borderNone">None</option>
-                        </select>
-                    </div>
-                    <div class="control-item">
-                        <label id="borderRadiusLabel">Border Radius: <span class="range-value" id="borderRadiusValue">10</span>px</label>
-                        <input type="range" id="borderRadius" min="0" max="50" value="10">
-                    </div>
-                </div>
-
-                <!-- 阴影效果 -->
-                <div class="control-group">
-                    <h3 id="shadowTitle">Shadow Effect</h3>
-                    <div class="control-item">
-                        <label id="shadowColorLabel">Shadow Color</label>
-                        <input type="color" id="shadowColor" value="#000000">
-                    </div>
-                    <div class="control-item">
-                        <label id="shadowXLabel">Horizontal Offset: <span class="range-value" id="shadowXValue">0</span>px</label>
-                        <input type="range" id="shadowX" min="-50" max="50" value="0">
-                    </div>
-                    <div class="control-item">
-                        <label id="shadowYLabel">Vertical Offset: <span class="range-value" id="shadowYValue">5</span>px</label>
-                        <input type="range" id="shadowY" min="-50" max="50" value="5">
-                    </div>
-                    <div class="control-item">
-                        <label id="shadowBlurLabel">Blur Radius: <span class="range-value" id="shadowBlurValue">15</span>px</label>
-                        <input type="range" id="shadowBlur" min="0" max="50" value="15">
-                    </div>
-                    <div class="control-item">
-                        <label id="shadowSpreadLabel">Shadow Spread: <span class="range-value" id="shadowSpreadValue">0</span>px</label>
-                        <input type="range" id="shadowSpread" min="-50" max="50" value="0">
-                    </div>
-                </div>
-
-                <!-- 文字样式 -->
-                <div class="control-group">
-                    <h3 id="textTitle">Text Style</h3>
-                    <div class="control-item">
-                        <label id="textColorLabel">Text Color</label>
-                        <input type="color" id="textColor" value="#333333">
-                    </div>
-                    <div class="control-item">
-                        <label id="fontSizeLabel">Font Size: <span class="range-value" id="fontSizeValue">18</span>px</label>
-                        <input type="range" id="fontSize" min="12" max="48" value="18">
-                    </div>
-                    <div class="control-item">
-                        <label id="fontWeightLabel">Font Weight</label>
-                        <select id="fontWeight">
-                            <option value="normal" id="weightNormal">Normal</option>
-                            <option value="bold" id="weightBold">Bold</option>
-                        </select>
-                    </div>
-                    <div class="control-item">
-                        <label id="textAlignLabel">Text Align</label>
-                        <select id="textAlign">
-                            <option value="center" id="alignCenter">Center</option>
-                            <option value="left" id="alignLeft">Left</option>
-                            <option value="right" id="alignRight">Right</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- 其他样式 -->
-                <div class="control-group">
-                    <h3 id="otherTitle">Other Styles</h3>
-                    <div class="control-item">
-                        <label id="paddingLabel">Padding: <span class="range-value" id="paddingValue">20</span>px</label>
-                        <input type="range" id="padding" min="0" max="50" value="20">
-                    </div>
-                    <div class="control-item">
-                        <label id="marginLabel">Margin: <span class="range-value" id="marginValue">10</span>px</label>
-                        <input type="range" id="margin" min="0" max="50" value="10">
-                    </div>
-                    <div class="control-item">
-                        <label id="opacityLabel">Opacity: <span class="range-value" id="opacityValue">100</span>%</label>
-                        <input type="range" id="opacity" min="0" max="100" value="100">
-                    </div>
+            <!-- 步骤1：上传文件 -->
+            <div class="step">
+                <h3 id="step1Title">📁 步骤1：上传SB3文件</h3>
+                <div class="file-input-wrapper">
+                    <input type="file" id="sb3File" accept=".sb3">
+                    <label for="sb3File" class="file-input-label">
+                        <div class="icon">📦</div>
+                        <div id="uploadText">点击或拖拽上传.sb3文件</div>
+                    </label>
                 </div>
             </div>
 
-            <!-- 右侧：预览和代码 -->
-            <div class="preview-panel">
-                <div class="preview-box">
-                    <div class="preview-element" id="previewElement">
-                        Popup
-                    </div>
+            <!-- 步骤2：选择操作模式 -->
+            <div class="step" id="modeStep" style="display: none;">
+                <h3 id="step2Title">⚙️ 步骤2：选择操作模式</h3>
+                <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+                    <button class="btn btn-secondary" id="modeDelete" onclick="setMode('delete')" style="flex: 1; min-width: 120px;">
+                        🌀 <span id="modeDeleteText">更新扩展</span>
+                    </button>
+                    <button class="btn btn-secondary" id="modeReplaceURL" onclick="setMode('replaceURL')" style="flex: 1; min-width: 120px;">
+                        🔗 <span id="modeReplaceURLText">替换扩展链接</span>
+                    </button>
+                    <button class="btn btn-secondary" id="modeReplaceID" onclick="setMode('replaceID')" style="flex: 1; min-width: 120px;">
+                        🆔 <span id="modeReplaceIDText">替换扩展ID</span>
+                    </button>
+                    <button class="btn btn-secondary" id="modeConvertTW" onclick="setMode('convertTW')" style="flex: 1; min-width: 150px;">
+                        🔄 <span id="modeConvertTWText">Gandi转TurboWarp</span>
+                    </button>
                 </div>
-
-                <div class="code-box">
-                    <h3 id="codeTitle">💻 CSS Code</h3>
-                    <div class="code-actions">
-                        <button class="copy-btn" onclick="copyCSS()" id="copyBtn">📋 Copy CSS</button>
-                        <button class="import-btn" onclick="toggleImportPanel()" id="importBtn">📥 Import CSS</button>
-                    </div>
-                    
-                    <!-- 导入面板 -->
-                    <div class="import-panel" id="importPanel" style="display: none;">
-                        <textarea class="import-textarea" id="importTextarea" placeholder="Paste your CSS code here..."></textarea>
-                        <div class="import-buttons">
-                            <button class="apply-btn" onclick="applyImportCSS()" id="applyBtn">✓ Apply</button>
-                            <button class="cancel-btn" onclick="toggleImportPanel()" id="cancelBtn">✗ Cancel</button>
-                        </div>
-                    </div>
-                    
-                    <div class="code-output" id="codeOutput"></div>
+                
+                <!-- 替换链接输入框 -->
+                <div id="replaceURLInput" style="display: none;">
+                    <label id="newURLLabel" style="display: block; margin-bottom: 8px; font-weight: 600;">🔗 新的扩展链接：</label>
+                    <input type="text" id="newURL" placeholder="https://example.com/new-extension.js" 
+                           style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+                </div>
+                
+                <!-- 替换ID输入框 -->
+                <div id="replaceIDInput" style="display: none;">
+                    <label id="newIDLabel" style="display: block; margin-bottom: 8px; font-weight: 600;">🆔 新的扩展ID：</label>
+                    <input type="text" id="newID" placeholder="myExtension" 
+                           style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
                 </div>
             </div>
+
+            <!-- 步骤3：选择要操作的扩展 -->
+            <div class="step" id="extensionStep" style="display: none;">
+                <h3 id="step3Title">🔌 步骤3：选择要操作的扩展</h3>
+                <div id="extensionList" class="extension-list"></div>
+                <div class="button-group">
+                    <button class="btn btn-secondary" onclick="selectAll(true)" id="selectAllBtn">全选</button>
+                    <button class="btn btn-secondary" onclick="selectAll(false)" id="selectNoneBtn">全不选</button>
+                </div>
+            </div>
+
+            <!-- 步骤4：执行并下载 -->
+            <div class="step" id="downloadStep" style="display: none;">
+                <h3 id="step4Title">⬇️ 步骤4：执行并下载</h3>
+                <div class="button-group">
+                    <button class="btn btn-primary" id="updateBtn" onclick="executeAndDownload()">
+                        🚀 <span id="executeBtnText">执行并下载新文件</span>
+                    </button>
+                    <button class="btn btn-secondary" onclick="downloadDebugInfo()" style="flex: 0.5;">
+                        🐛 <span id="debugBtnText">下载调试信息</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 进度条 -->
+            <div class="progress" id="progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill">0%</div>
+                </div>
+            </div>
+
+            <!-- 状态信息 -->
+            <div class="status" id="status"></div>
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script>
         // 多语言翻译数据
         const translations = {
             en: {
-                title: '🎨 CSS Style Visual Editor',
-                subtitle: 'Real-time preview, one-click CSS code copy',
-                resetBtn: '🔄 Reset',
-                bgTitle: 'Background Style',
-                bgColorLabel: 'Background Color',
-                bgGradientLabel: 'Background Gradient',
-                borderTitle: 'Border Style',
-                borderWidthLabel: 'Border Width:',
-                borderColorLabel: 'Border Color',
-                borderStyleLabel: 'Border Style',
-                borderRadiusLabel: 'Border Radius:',
-                shadowTitle: 'Shadow Effect',
-                shadowColorLabel: 'Shadow Color',
-                shadowXLabel: 'Horizontal Offset:',
-                shadowYLabel: 'Vertical Offset:',
-                shadowBlurLabel: 'Blur Radius:',
-                shadowSpreadLabel: 'Shadow Spread:',
-                textTitle: 'Text Style',
-                textColorLabel: 'Text Color',
-                fontSizeLabel: 'Font Size:',
-                fontWeightLabel: 'Font Weight',
-                textAlignLabel: 'Text Align',
-                otherTitle: 'Other Styles',
-                paddingLabel: 'Padding:',
-                marginLabel: 'Margin:',
-                opacityLabel: 'Opacity:',
-                codeTitle: '💻 CSS Code',
-                copyBtn: '📋 Copy CSS',
-                importBtn: '📥 Import CSS',
-                importPlaceholder: 'Paste your CSS code here...',
-                applyBtn: '✓ Apply',
-                cancelBtn: '✗ Cancel',
-                copied: '✓ Copied!',
-                copyFail: 'Copy failed, please copy manually',
-                importSuccess: '✓ CSS imported successfully!',
-                importFail: '✗ Import failed, please check CSS format',
-                solid: 'Solid',
-                dashed: 'Dashed',
-                dotted: 'Dotted',
-                double: 'Double',
-                none: 'None',
-                normal: 'Normal',
-                bold: 'Bold',
-                center: 'Center',
-                left: 'Left',
-                right: 'Right'
+                title: 'CCW Works Tool',
+                subtitle: 'Make Scratch projects easier to process',
+                usageTitle: '📋 Usage Instructions',
+                usageList: [
+                    'Upload your .sb3 project file',
+                    'Tool will automatically detect project content',
+                    'Select operation mode',
+                    'Select content to operate',
+                    'Click "Execute and Download" to get the new .sb3 file'
+                ],
+                step1Title: '📁 Step 1: Upload SB3 File',
+                uploadText: 'Click or drag to upload .sb3 file',
+                step2Title: '⚙️ Step 2: Select Operation Mode',
+                modeDelete: 'Update Extensions',
+                modeReplaceURL: 'Replace Extension URL',
+                modeReplaceID: 'Replace Extension ID',
+                modeConvertTW: 'Gandi to TurboWarp',
+                newURLLabel: '🔗 New Extension URL:',
+                newIDLabel: '🆔 New Extension ID:',
+                step3Title: '🔌 Step 3: Select Extensions to Operate',
+                selectAll: 'Select All',
+                selectNone: 'Select None',
+                step4Title: '⬇️ Step 4: Execute and Download',
+                executeBtn: 'Execute and Download New File',
+                debugBtn: 'Download Debug Info',
+                // 状态消息
+                readingFile: '📂 Reading file...',
+                fileReadSuccess: '✅ File read successfully! Detecting extensions...',
+                noExtensions: 'ℹ️ No community extensions detected',
+                detectedExtensions: '✅ Detected {count} community extensions',
+                convertTWInfo: 'ℹ️ Gandi to TurboWarp mode: Will delete all Gandi properties to make file runnable in TurboWarp',
+                selectAtLeastOne: '❌ Please select at least one extension to operate',
+                enterNewURL: '❌ Please enter new extension URL',
+                enterNewID: '❌ Please enter new extension ID',
+                processing: 'Processing...',
+                creatingFile: 'Creating new file...',
+                copyingFiles: 'Copying files ({i}/{total})...',
+                updatingConfig: 'Updating extension configuration...',
+                savingData: 'Saving project data...',
+                generatingFile: 'Generating file ({percent}%)...',
+                complete: 'Complete!',
+                deleteSuccess: '✅ Extension update complete! File downloaded: {fileName}\n\nDeleted {count} extension configurations.',
+                replaceURLSuccess: '✅ URL replacement complete! File downloaded: {fileName}\n\nReplaced {count} extension URLs.',
+                replaceIDSuccess: '✅ ID replacement complete! File downloaded: {fileName}\n\nReplaced {count} extension IDs.',
+                convertSuccess: '✅ Conversion complete! File downloaded: {fileName}\n\nDeleted all Gandi properties.\nGandi built-in extensions prompted for TurboWarp URLs.\nFile can now run in TurboWarp.',
+                updateFailed: '❌ Update failed: ',
+                debugDownload: '✅ Debug info downloaded',
+                uploadError: '❌ Please upload .sb3 format file'
             },
             zh: {
-                title: '🎨 CSS样式可视化编辑器',
-                subtitle: '实时预览，一键复制CSS代码',
-                resetBtn: '🔄 重置',
-                bgTitle: '背景样式',
-                bgColorLabel: '背景颜色',
-                bgGradientLabel: '背景渐变',
-                borderTitle: '边框样式',
-                borderWidthLabel: '边框宽度:',
-                borderColorLabel: '边框颜色',
-                borderStyleLabel: '边框样式',
-                borderRadiusLabel: '圆角:',
-                shadowTitle: '阴影效果',
-                shadowColorLabel: '阴影颜色',
-                shadowXLabel: '水平偏移:',
-                shadowYLabel: '垂直偏移:',
-                shadowBlurLabel: '模糊半径:',
-                shadowSpreadLabel: '阴影大小:',
-                textTitle: '文字样式',
-                textColorLabel: '文字颜色',
-                fontSizeLabel: '字体大小:',
-                fontWeightLabel: '字重',
-                textAlignLabel: '文字对齐',
-                otherTitle: '其他样式',
-                paddingLabel: '内边距:',
-                marginLabel: '外边距:',
-                opacityLabel: '透明度:',
-                codeTitle: '💻 CSS代码',
-                copyBtn: '📋 复制CSS',
-                importBtn: '📥 导入CSS',
-                importPlaceholder: '在此粘贴您的CSS代码...',
-                applyBtn: '✓ 应用',
-                cancelBtn: '✗ 取消',
-                copied: '✓ 已复制!',
-                copyFail: '复制失败，请手动复制',
-                importSuccess: '✓ CSS导入成功!',
-                importFail: '✗ 导入失败，请检查CSS格式',
-                solid: '实线',
-                dashed: '虚线',
-                dotted: '点线',
-                double: '双线',
-                none: '无',
-                normal: '正常',
-                bold: '粗体',
-                center: '居中',
-                left: '左对齐',
-                right: '右对齐'
+                title: 'CCW作品工具',
+                subtitle: '让Scratch项目能被更方便的处理',
+                usageTitle: '📋 使用说明',
+                usageList: [
+                    '上传你的.sb3项目文件',
+                    '工具会自动检测项目内容',
+                    '选择操作模式',
+                    '选择要操作的内容',
+                    '点击“执行并下载”修复后的新的.sb3文件'
+                ],
+                step1Title: '📁 步骤1：上传SB3文件',
+                uploadText: '点击或拖拽上传.sb3文件',
+                step2Title: '⚙️ 步骤2：选择操作模式',
+                modeDelete: '更新扩展',
+                modeReplaceURL: '替换扩展链接',
+                modeReplaceID: '替换扩展ID',
+                modeConvertTW: 'Gandi转TurboWarp',
+                newURLLabel: '🔗 新的扩展链接：',
+                newIDLabel: '🆔 新的扩展ID：',
+                step3Title: '🔌 步骤3：选择要操作的扩展',
+                selectAll: '全选',
+                selectNone: '全不选',
+                step4Title: '⬇️ 步骤4：执行并下载',
+                executeBtn: '执行并下载新文件',
+                debugBtn: '下载调试信息',
+                readingFile: '📂 正在读取文件...',
+                fileReadSuccess: '✅ 文件读取成功！正在检测扩展...',
+                noExtensions: 'ℹ️ 未检测到社区扩展',
+                detectedExtensions: '✅ 检测到 {count} 个社区扩展',
+                convertTWInfo: 'ℹ️ Gandi转TurboWarp模式：将删除所有Gandi相关属性，使文件可以在TurboWarp中运行',
+                selectAtLeastOne: '❌ 请至少选择一个要操作的扩展',
+                enterNewURL: '❌ 请输入新的扩展链接',
+                enterNewID: '❌ 请输入新的扩展ID',
+                processing: '正在处理...',
+                creatingFile: '正在创建新文件...',
+                copyingFiles: '正在复制文件 ({i}/{total})...',
+                updatingConfig: '正在更新扩展配置...',
+                savingData: '正在保存项目数据...',
+                generatingFile: '正在生成文件 ({percent}%)...',
+                complete: '完成！',
+                deleteSuccess: '✅ 扩展更新完成！已下载文件：{fileName}\n\n已删除 {count} 个扩展配置。',
+                replaceURLSuccess: '✅ 链接替换完成！已下载文件：{fileName}\n\n已替换 {count} 个扩展链接。',
+                replaceIDSuccess: '✅ ID替换完成！已下载文件：{fileName}\n\n已替换 {count} 个扩展ID。',
+                convertSuccess: '✅ 转换完成！已下载文件：{fileName}\n\n已删除所有Gandi相关属性。\nGandi自带扩展已提示您输入TurboWarp链接。\n文件现在可以在TurboWarp中运行。',
+                updateFailed: '❌ 更新失败：',
+                debugDownload: '✅ 调试信息已下载',
+                uploadError: '❌ 请上传.sb3格式的文件'
             },
             es: {
-                title: '🎨 Editor Visual de Estilos CSS',
-                subtitle: 'Vista previa en tiempo real, copia CSS con un clic',
-                resetBtn: '🔄 Restablecer',
-                bgTitle: 'Estilo de Fondo',
-                bgColorLabel: 'Color de Fondo',
-                bgGradientLabel: 'Gradiente de Fondo',
-                borderTitle: 'Estilo de Borde',
-                borderWidthLabel: 'Ancho del Borde:',
-                borderColorLabel: 'Color del Borde',
-                borderStyleLabel: 'Estilo de Borde',
-                borderRadiusLabel: 'Radio del Borde:',
-                shadowTitle: 'Efecto de Sombra',
-                shadowColorLabel: 'Color de Sombra',
-                shadowXLabel: 'Desplazamiento Horizontal:',
-                shadowYLabel: 'Desplazamiento Vertical:',
-                shadowBlurLabel: 'Radio de Desfoque:',
-                shadowSpreadLabel: 'Extensión de Sombra:',
-                textTitle: 'Estilo de Texto',
-                textColorLabel: 'Color de Texto',
-                fontSizeLabel: 'Tamaño de Fuente:',
-                fontWeightLabel: 'Peso de Fuente',
-                textAlignLabel: 'Alineación de Texto',
-                otherTitle: 'Otros Estilos',
-                paddingLabel: 'Relleno:',
-                marginLabel: 'Margen:',
-                opacityLabel: 'Opacidad:',
-                codeTitle: '💻 Código CSS',
-                copyBtn: '📋 Copiar CSS',
-                importBtn: '📥 Importar CSS',
-                importPlaceholder: 'Pega tu código CSS aquí...',
-                applyBtn: '✓ Aplicar',
-                cancelBtn: '✗ Cancelar',
-                copied: '✓ ¡Copiado!',
-                copyFail: 'Copia fallida, por favor copia manualmente',
-                importSuccess: '✓ ¡CSS importado con éxito!',
-                importFail: '✗ Importación fallida, por favor verifica el formato CSS',
-                solid: 'Sólido',
-                dashed: 'Discontinuo',
-                dotted: 'Punteado',
-                double: 'Doble',
-                none: 'Ninguno',
-                normal: 'Normal',
-                bold: 'Negrita',
-                center: 'Centro',
-                left: 'Izquierda',
-                right: 'Derecha'
+                title: 'Herramienta CCW Works',
+                subtitle: 'Hacer que los proyectos de Scratch sean más fáciles de procesar',
+                usageTitle: '📋 Instrucciones de uso',
+                usageList: [
+                    'Sube tu archivo de proyecto .sb3',
+                    'La herramienta detectará automáticamente el contenido del proyecto',
+                    'Selecciona el modo de operación',
+                    'Selecciona el contenido a operar',
+                    'Haz clic en "Ejecutar y descargar" para obtener el nuevo archivo .sb3'
+                ],
+                step1Title: '📁 Paso 1: Subir archivo SB3',
+                uploadText: 'Haz clic o arrastra para subir archivo .sb3',
+                step2Title: '⚙️ Paso 2: Seleccionar modo de operación',
+                modeDelete: 'Actualizar extensiones',
+                modeReplaceURL: 'Reemplazar URL de extensión',
+                modeReplaceID: 'Reemplazar ID de extensión',
+                modeConvertTW: 'Gandi a TurboWarp',
+                newURLLabel: '🔗 Nueva URL de extensión:',
+                newIDLabel: '🆔 Nuevo ID de extensión:',
+                step3Title: '🔌 Paso 3: Seleccionar extensiones a operar',
+                selectAll: 'Seleccionar todo',
+                selectNone: 'No seleccionar nada',
+                step4Title: '⬇️ Paso 4: Ejecutar y descargar',
+                executeBtn: 'Ejecutar y descargar nuevo archivo',
+                debugBtn: 'Descargar info de depuración',
+                readingFile: '📂 Leyendo archivo...',
+                fileReadSuccess: '✅ ¡Archivo leído con éxito! Detectando extensiones...',
+                noExtensions: 'ℹ️ No se detectaron extensiones comunitarias',
+                detectedExtensions: '✅ Se detectaron {count} extensiones comunitarias',
+                convertTWInfo: 'ℹ️ Modo Gandi a TurboWarp: Eliminará todas las propiedades de Gandi para que el archivo pueda ejecutarse en TurboWarp',
+                selectAtLeastOne: '❌ Por favor selecciona al menos una extensión para operar',
+                enterNewURL: '❌ Por favor ingresa la nueva URL de extensión',
+                enterNewID: '❌ Por favor ingresa el nuevo ID de extensión',
+                processing: 'Procesando...',
+                creatingFile: 'Creando nuevo archivo...',
+                copyingFiles: 'Copiando archivos ({i}/{total})...',
+                updatingConfig: 'Actualizando configuración de extensiones...',
+                savingData: 'Guardando datos del proyecto...',
+                generatingFile: 'Generando archivo ({percent}%)...',
+                complete: '¡Completo!',
+                deleteSuccess: '✅ ¡Actualización de extensiones completa! Archivo descargado: {fileName}\n\nSe eliminaron {count} configuraciones de extensiones.',
+                replaceURLSuccess: '✅ ¡Reemplazo de URL completo! Archivo descargado: {fileName}\n\nSe reemplazaron {count} URLs de extensiones.',
+                replaceIDSuccess: '✅ ¡Reemplazo de ID completo! Archivo descargado: {fileName}\n\nSe reemplazaron {count} IDs de extensiones.',
+                convertSuccess: '✅ ¡Conversión completa! Archivo descargado: {fileName}\n\nSe eliminaron todas las propiedades de Gandi.\nExtensiones integradas de Gandi solicitaron URLs de TurboWarp.\nEl archivo ahora puede ejecutarse en TurboWarp.',
+                updateFailed: '❌ Error de actualización: ',
+                debugDownload: '✅ Info de depuración descargada',
+                uploadError: '❌ Por favor sube un archivo en formato .sb3'
             },
             hi: {
-                title: '🎨 CSS शैली विज़ुअल संपादक',
-                subtitle: 'रीयल-टाइम पूर्वावलोकन, एक-क्लिक CSS कोड कॉपी',
-                resetBtn: '🔄 रीसेट',
-                bgTitle: 'पृष्ठभूमि शैली',
-                bgColorLabel: 'पृष्ठभूमि रंग',
-                bgGradientLabel: 'पृष्ठभूमि ग्रेडिएंट',
-                borderTitle: 'बॉर्डर शैली',
-                borderWidthLabel: 'बॉर्डर चौड़ाई:',
-                borderColorLabel: 'बॉर्डर रंग',
-                borderStyleLabel: 'बॉर्डर शैली',
-                borderRadiusLabel: 'बॉर्डर त्रिज्या:',
-                shadowTitle: 'छाया प्रभाव',
-                shadowColorLabel: 'छाया रंग',
-                shadowXLabel: 'क्षैतिज ऑफसेट:',
-                shadowYLabel: 'लंबवत ऑफसेट:',
-                shadowBlurLabel: 'धुंधला त्रिज्या:',
-                shadowSpreadLabel: 'छाया विस्तार:',
-                textTitle: 'टेक्स्ट शैली',
-                textColorLabel: 'टेक्स्ट रंग',
-                fontSizeLabel: 'फ़ॉन्ट आकार:',
-                fontWeightLabel: 'फ़ॉन्ट वजन',
-                textAlignLabel: 'टेक्स्ट संरेखण',
-                otherTitle: 'अन्य शैलियाँ',
-                paddingLabel: 'पैडिंग:',
-                marginLabel: 'मार्जिन:',
-                opacityLabel: 'अपारदर्शिता:',
-                codeTitle: '💻 CSS कोड',
-                copyBtn: '📋 CSS कॉपी करें',
-                importBtn: '📥 CSS आयात करें',
-                importPlaceholder: 'यहाँ अपना CSS कोड पेस्ट करें...',
-                applyBtn: '✓ लागू करें',
-                cancelBtn: '✗ रद्द करें',
-                copied: '✓ कॉपी हो गया!',
-                copyFail: 'कॉपी विफल, कृपया मैन्युअल रूप से कॉपी करें',
-                importSuccess: '✓ CSS सफलतापूर्वक आयात किया गया!',
-                importFail: '✗ आयात विफल, कृपया CSS प्रारूप की जाँच करें',
-                solid: 'ठोस',
-                dashed: 'डैश्ड',
-                dotted: 'डॉटेड',
-                double: 'डबल',
-                none: 'कोई नहीं',
-                normal: 'सामान्य',
-                bold: 'मोटा',
-                center: 'केंद्र',
-                left: 'बाएँ',
-                right: 'दाएँ'
+                title: 'CCW वर्क्स टूल',
+                subtitle: 'Scratch प्रोजेक्ट्स को और आसानी से प्रोसेस करें',
+                usageTitle: '📋 उपयोग के निर्देश',
+                usageList: [
+                    'अपनी .sb3 प्रोजेक्ट फ़ाइल अपलोड करें',
+                    'टूल स्वचालित रूप से प्रोजेक्ट सामग्री का पता लगाएगा',
+                    'ऑपरेशन मोड चुनें',
+                    'ऑपरेट करने के लिए सामग्री चुनें',
+                    'नई .sb3 फ़ाइल पाने के लिए "निष्पादित करें और डाउनलोड करें" पर क्लिक करें'
+                ],
+                step1Title: '📁 चरण 1: SB3 फ़ाइल अपलोड करें',
+                uploadText: '.sb3 फ़ाइल अपलोड करने के लिए क्लिक करें या खींचें',
+                step2Title: '⚙️ चरण 2: ऑपरेशन मोड चुनें',
+                modeDelete: 'एक्सटेंशन अपडेट करें',
+                modeReplaceURL: 'एक्सटेंशन URL बदलें',
+                modeReplaceID: 'एक्सटेंशन ID बदलें',
+                modeConvertTW: 'Gandi से TurboWarp',
+                newURLLabel: '🔗 नया एक्सटेंशन URL:',
+                newIDLabel: '🆔 नया एक्सटेंशन ID:',
+                step3Title: '🔌 चरण 3: ऑपरेट करने के लिए एक्सटेंशन चुनें',
+                selectAll: 'सभी चुनें',
+                selectNone: 'कुछ नहीं चुनें',
+                step4Title: '⬇️ चरण 4: निष्पादित करें और डाउनलोड करें',
+                executeBtn: 'नई फ़ाइल निष्पादित करें और डाउनलोड करें',
+                debugBtn: 'डीबग जानकारी डाउनलोड करें',
+                readingFile: '📂 फ़ाइल पढ़ रहा है...',
+                fileReadSuccess: '✅ फ़ाइल सफलतापूर्वक पढ़ी गई! एक्सटेंशन का पता लगा रहा है...',
+                noExtensions: 'ℹ️ कोई सामुदायिक एक्सटेंशन नहीं मिला',
+                detectedExtensions: '✅ {count} सामुदायिक एक्सटेंशन मिले',
+                convertTWInfo: 'ℹ️ Gandi से TurboWarp मोड: TurboWarp में फ़ाइल चलाने योग्य बनाने के लिए सभी Gandi गुण हटा देगा',
+                selectAtLeastOne: '❌ कृपया ऑपरेट करने के लिए कम से कम एक एक्सटेंशन चुनें',
+                enterNewURL: '❌ कृपया नया एक्सटेंशन URL दर्ज करें',
+                enterNewID: '❌ कृपया नया एक्सटेंशन ID दर्ज करें',
+                processing: 'प्रोसेसिंग...',
+                creatingFile: 'नई फ़ाइल बना रहा है...',
+                copyingFiles: 'फ़ाइलें कॉपी कर रहा है ({i}/{total})...',
+                updatingConfig: 'एक्सटेंशन कॉन्फ़िगरेशन अपडेट कर रहा है...',
+                savingData: 'प्रोजेक्ट डेटा सहेज रहा है...',
+                generatingFile: 'फ़ाइल जनरेट कर रहा है ({percent}%)...',
+                complete: 'पूर्ण!',
+                deleteSuccess: '✅ एक्सटेंशन अपडेट पूर्ण! फ़ाइल डाउनलोड: {fileName}\n\n{count} एक्सटेंशन कॉन्फ़िगरेशन हटाए गए।',
+                replaceURLSuccess: '✅ URL प्रतिस्थापन पूर्ण! फ़ाइल डाउनलोड: {fileName}\n\n{count} एक्सटेंशन URLs बदले गए।',
+                replaceIDSuccess: '✅ ID प्रतिस्थापन पूर्ण! फ़ाइल डाउनलोड: {fileName}\n\n{count} एक्सटेंशन IDs बदले गए।',
+                convertSuccess: '✅ रूपांतरण पूर्ण! फ़ाइल डाउनलोड: {fileName}\n\nसभी Gandi गुण हटाए गए।\nGandi बिल्ट-इन एक्सटेंशन ने TurboWarp URLs के लिए संकेत दिया।\nफ़ाइल अब TurboWarp में चल सकती है।',
+                updateFailed: '❌ अपडेट विफल: ',
+                debugDownload: '✅ डीबग जानकारी डाउनलोड की गई',
+                uploadError: '❌ कृपया .sb3 प्रारूप की फ़ाइल अपलोड करें'
             },
             ar: {
-                title: '🎨 محرر أنماط CSS المرئي',
-                subtitle: 'معاينة في الوقت الحقيقي، نسخ رمز CSS بنقرة واحدة',
-                resetBtn: '🔄 إعادة تعيين',
-                bgTitle: 'نمط الخلفية',
-                bgColorLabel: 'لون الخلفية',
-                bgGradientLabel: 'تدرج الخلفية',
-                borderTitle: 'نمط الحدود',
-                borderWidthLabel: 'عرض الحدود:',
-                borderColorLabel: 'لون الحدود',
-                borderStyleLabel: 'نمط الحدود',
-                borderRadiusLabel: 'نصف قطر الحدود:',
-                shadowTitle: 'تأثير الظل',
-                shadowColorLabel: 'لون الظل',
-                shadowXLabel: 'الإزاحة الأفقية:',
-                shadowYLabel: 'الإزاحة العمودية:',
-                shadowBlurLabel: 'نصف قطر التمويه:',
-                shadowSpreadLabel: 'انتشار الظل:',
-                textTitle: 'نمط النص',
-                textColorLabel: 'لون النص',
-                fontSizeLabel: 'حجم الخط:',
-                fontWeightLabel: 'وزن الخط',
-                textAlignLabel: 'محاذاة النص',
-                otherTitle: 'أنماط أخرى',
-                paddingLabel: 'الحشو:',
-                marginLabel: 'الهامش:',
-                opacityLabel: 'العتامة:',
-                codeTitle: '💻 رمز CSS',
-                copyBtn: '📋 نسخ CSS',
-                importBtn: '📥 استيراد CSS',
-                importPlaceholder: 'الصق رمز CSS هنا...',
-                applyBtn: '✓ تطبيق',
-                cancelBtn: '✗ إلغاء',
-                copied: '✓ تم النسخ!',
-                copyFail: 'فشل النسخ، يرجى النسخ يدويًا',
-                importSuccess: '✓ تم استيراد CSS بنجاح!',
-                importFail: '✗ فشل الاستيراد، يرجى التحقق من تنسيق CSS',
-                solid: 'صلب',
-                dashed: 'متقطع',
-                dotted: 'منقط',
-                double: 'مزدوج',
-                none: 'لا شيء',
-                normal: 'عادي',
-                bold: 'عريض',
-                center: 'مركز',
-                left: 'يسار',
-                right: 'يمين'
+                title: 'أداة CCW Works',
+                subtitle: 'اجعل مشاريع Scratch أسهل في المعالجة',
+                usageTitle: '📋 تعليمات الاستخدام',
+                usageList: [
+                    'قم بتحميل ملف مشروعك .sb3',
+                    'ستكشف الأداة تلقائيًا عن محتوى المشروع',
+                    'اختر وضع التشغيل',
+                    'اختر المحتوى للتشغيل',
+                    'انقر على "تنفيذ وتنزيل" للحصول على ملف .sb3 جديد'
+                ],
+                step1Title: '📁 الخطوة 1: تحميل ملف SB3',
+                uploadText: 'انقر أو اسحب لتحميل ملف .sb3',
+                step2Title: '⚙️ الخطوة 2: اختيار وضع التشغيل',
+                modeDelete: 'تحديث الإضافات',
+                modeReplaceURL: 'استبدال رابط الإضافة',
+                modeReplaceID: 'استبدال معرف الإضافة',
+                modeConvertTW: 'Gandi إلى TurboWarp',
+                newURLLabel: '🔗 رابط الإضافة الجديد:',
+                newIDLabel: '🆔 معرف الإضافة الجديد:',
+                step3Title: '🔌 الخطوة 3: اختر الإضافات للتشغيل',
+                selectAll: 'تحديد الكل',
+                selectNone: 'عدم تحديد شيء',
+                step4Title: '⬇️ الخطوة 4: تنفيذ وتنزيل',
+                executeBtn: 'تنفيذ وتنزيل ملف جديد',
+                debugBtn: 'تنزيل معلومات التصحيح',
+                readingFile: '📂 جاري قراءة الملف...',
+                fileReadSuccess: '✅ تم قراءة الملف بنجاح! جاري كشف الإضافات...',
+                noExtensions: 'ℹ️ لم يتم اكتشاف إضافات مجتمعية',
+                detectedExtensions: '✅ تم اكتشاف {count} إضافات مجتمعية',
+                convertTWInfo: 'ℹ️ وضع Gandi إلى TurboWarp: سيحذف جميع خصائص Gandi لجعل الملف قابلاً للتشغيل في TurboWarp',
+                selectAtLeastOne: '❌ يرجى تحديد إضافة واحدة على الأقل للتشغيل',
+                enterNewURL: '❌ يرجى إدخال رابط الإضافة الجديد',
+                enterNewID: '❌ يرجى إدخال معرف الإضافة الجديد',
+                processing: 'جاري المعالجة...',
+                creatingFile: 'جاري إنشاء ملف جديد...',
+                copyingFiles: 'جاري نسخ الملفات ({i}/{total})...',
+                updatingConfig: 'جاري تحديث تكوين الإضافات...',
+                savingData: 'جاري حفظ بيانات المشروع...',
+                generatingFile: 'جاري إنشاء الملف ({percent}%)...',
+                complete: 'مكتمل!',
+                deleteSuccess: '✅ اكتمل تحديث الإضافات! تم تنزيل الملف: {fileName}\n\nتم حذف {count} تكوينات إضافات.',
+                replaceURLSuccess: '✅ اكتمل استبدال الروابط! تم تنزيل الملف: {fileName}\n\nتم استبدال {count} روابط إضافات.',
+                replaceIDSuccess: '✅ اكتمل استبدال المعرفات! تم تنزيل الملف: {fileName}\n\nتم استبدال {count} معرفات إضافات.',
+                convertSuccess: '✅ اكتمل التحويل! تم تنزيل الملف: {fileName}\n\nتم حذف جميع خصائص Gandi.\nطلبت إضافات Gandi المدمجة روابط TurboWarp.\nيمكن الآن تشغيل الملف في TurboWarp.',
+                updateFailed: '❌ فشل التحديث: ',
+                debugDownload: '✅ تم تنزيل معلومات التصحيح',
+                uploadError: '❌ يرجى تحميل ملف بتنسيق .sb3'
             }
         };
 
@@ -848,53 +675,42 @@
             currentLanguage = lang;
             const t = translations[lang];
             
-            // 更新所有文本
+            // 更新标题和副标题
             document.getElementById('mainTitle').textContent = t.title;
             document.getElementById('mainSubtitle').textContent = t.subtitle;
-            document.getElementById('resetBtn').textContent = t.resetBtn;
-            document.getElementById('bgTitle').textContent = t.bgTitle;
-            document.getElementById('bgColorLabel').textContent = t.bgColorLabel;
-            document.getElementById('bgGradientLabel').textContent = t.bgGradientLabel;
-            document.getElementById('borderTitle').textContent = t.borderTitle;
-            document.getElementById('borderWidthLabel').textContent = t.borderWidthLabel;
-            document.getElementById('borderColorLabel').textContent = t.borderColorLabel;
-            document.getElementById('borderStyleLabel').textContent = t.borderStyleLabel;
-            document.getElementById('borderRadiusLabel').textContent = t.borderRadiusLabel;
-            document.getElementById('shadowTitle').textContent = t.shadowTitle;
-            document.getElementById('shadowColorLabel').textContent = t.shadowColorLabel;
-            document.getElementById('shadowXLabel').textContent = t.shadowXLabel;
-            document.getElementById('shadowYLabel').textContent = t.shadowYLabel;
-            document.getElementById('shadowBlurLabel').textContent = t.shadowBlurLabel;
-            document.getElementById('shadowSpreadLabel').textContent = t.shadowSpreadLabel;
-            document.getElementById('textTitle').textContent = t.textTitle;
-            document.getElementById('textColorLabel').textContent = t.textColorLabel;
-            document.getElementById('fontSizeLabel').textContent = t.fontSizeLabel;
-            document.getElementById('fontWeightLabel').textContent = t.fontWeightLabel;
-            document.getElementById('textAlignLabel').textContent = t.textAlignLabel;
-            document.getElementById('otherTitle').textContent = t.otherTitle;
-            document.getElementById('paddingLabel').textContent = t.paddingLabel;
-            document.getElementById('marginLabel').textContent = t.marginLabel;
-            document.getElementById('opacityLabel').textContent = t.opacityLabel;
-            document.getElementById('codeTitle').textContent = t.codeTitle;
-            document.getElementById('copyBtn').textContent = t.copyBtn;
-            document.getElementById('importBtn').textContent = t.importBtn;
-            document.getElementById('applyBtn').textContent = t.applyBtn;
-            document.getElementById('cancelBtn').textContent = t.cancelBtn;
-            document.getElementById('importTextarea').placeholder = t.importPlaceholder;
             
-            // 更新下拉菜单选项
-            document.getElementById('borderSolid').textContent = t.solid;
-            document.getElementById('borderDashed').textContent = t.dashed;
-            document.getElementById('borderDotted').textContent = t.dotted;
-            document.getElementById('borderDouble').textContent = t.double;
-            document.getElementById('borderNone').textContent = t.none;
-            document.getElementById('weightNormal').textContent = t.normal;
-            document.getElementById('weightBold').textContent = t.bold;
-            document.getElementById('alignCenter').textContent = t.center;
-            document.getElementById('alignLeft').textContent = t.left;
-            document.getElementById('alignRight').textContent = t.right;
+            // 更新使用说明
+            document.getElementById('usageTitle').textContent = t.usageTitle;
+            const usageList = document.getElementById('usageList');
+            usageList.innerHTML = '';
+            t.usageList.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                usageList.appendChild(li);
+            });
             
-            // 设置RTL（阿拉伯语）
+            // 更新步骤标题
+            document.getElementById('step1Title').textContent = t.step1Title;
+            document.getElementById('uploadText').textContent = t.uploadText;
+            document.getElementById('step2Title').textContent = t.step2Title;
+            document.getElementById('step3Title').textContent = t.step3Title;
+            document.getElementById('step4Title').textContent = t.step4Title;
+            
+            // 更新按钮文本
+            document.getElementById('modeDeleteText').textContent = t.modeDelete;
+            document.getElementById('modeReplaceURLText').textContent = t.modeReplaceURL;
+            document.getElementById('modeReplaceIDText').textContent = t.modeReplaceID;
+            document.getElementById('modeConvertTWText').textContent = t.modeConvertTW;
+            document.getElementById('selectAllBtn').textContent = t.selectAll;
+            document.getElementById('selectNoneBtn').textContent = t.selectNone;
+            document.getElementById('executeBtnText').textContent = t.executeBtn;
+            document.getElementById('debugBtnText').textContent = t.debugBtn;
+            
+            // 更新标签
+            document.getElementById('newURLLabel').textContent = t.newURLLabel;
+            document.getElementById('newIDLabel').textContent = t.newIDLabel;
+            
+            // RTL支持
             if (lang === 'ar') {
                 document.body.style.direction = 'rtl';
             } else {
@@ -902,327 +718,698 @@
             }
         }
 
-        // 获取所有控件
-        const controls = {
-            bgColor: document.getElementById('bgColor'),
-            bgGradient: document.getElementById('bgGradient'),
-            borderWidth: document.getElementById('borderWidth'),
-            borderColor: document.getElementById('borderColor'),
-            borderStyle: document.getElementById('borderStyle'),
-            borderRadius: document.getElementById('borderRadius'),
-            shadowColor: document.getElementById('shadowColor'),
-            shadowX: document.getElementById('shadowX'),
-            shadowY: document.getElementById('shadowY'),
-            shadowBlur: document.getElementById('shadowBlur'),
-            shadowSpread: document.getElementById('shadowSpread'),
-            textColor: document.getElementById('textColor'),
-            fontSize: document.getElementById('fontSize'),
-            fontWeight: document.getElementById('fontWeight'),
-            textAlign: document.getElementById('textAlign'),
-            padding: document.getElementById('padding'),
-            margin: document.getElementById('margin'),
-            opacity: document.getElementById('opacity')
-        };
+        let projectData = null;
+        let sb3File = null;
+        let extensions = [];
+        let currentMode = 'delete'; // delete, replaceURL, replaceID
 
-        const previewElement = document.getElementById('previewElement');
-        const codeOutput = document.getElementById('codeOutput');
+        // 文件上传处理
+        document.getElementById('sb3File').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
 
-        // 更新预览和代码
-        function updatePreview() {
-            const styles = generateCSS();
+            showStatus('info', t('readingFile'));
             
-            // 应用样式到预览元素
-            Object.assign(previewElement.style, styles);
-            
-            // 更新代码显示
-            const cssText = generateCSSText(styles);
-            codeOutput.textContent = cssText;
-            
-            // 更新范围值显示
-            updateRangeValues();
-        }
-
-        // 生成CSS样式对象
-        function generateCSS() {
-            const styles = {};
-            
-            // 背景
-            if (controls.bgGradient.value) {
-                styles.background = controls.bgGradient.value;
-            } else {
-                styles.backgroundColor = controls.bgColor.value;
-            }
-            
-            // 边框
-            styles.border = `${controls.borderWidth.value}px ${controls.borderStyle.value} ${controls.borderColor.value}`;
-            styles.borderRadius = `${controls.borderRadius.value}px`;
-            
-            // 阴影
-            const shadowColor = controls.shadowColor.value;
-            const shadowX = controls.shadowX.value;
-            const shadowY = controls.shadowY.value;
-            const shadowBlur = controls.shadowBlur.value;
-            const shadowSpread = controls.shadowSpread.value;
-            styles.boxShadow = `${shadowX}px ${shadowY}px ${shadowBlur}px ${shadowSpread}px ${shadowColor}`;
-            
-            // 文字
-            styles.color = controls.textColor.value;
-            styles.fontSize = `${controls.fontSize.value}px`;
-            styles.fontWeight = controls.fontWeight.value;
-            styles.textAlign = controls.textAlign.value;
-            
-            // 其他
-            styles.padding = `${controls.padding.value}px`;
-            styles.margin = `${controls.margin.value}px`;
-            styles.opacity = controls.opacity.value / 100;
-            
-            return styles;
-        }
-
-        // 生成CSS文本
-        function generateCSSText(styles) {
-            let css = '';
-            
-            for (const [property, value] of Object.entries(styles)) {
-                // 转换驼峰命名为短横线命名
-                const cssProperty = property.replace(/([A-Z])/g, '-$1').toLowerCase();
-                css += `${cssProperty}: ${value};\n`;
-            }
-            return css;
-        }
-
-        // 更新范围值显示
-        function updateRangeValues() {
-            document.getElementById('borderWidthValue').textContent = controls.borderWidth.value;
-            document.getElementById('borderRadiusValue').textContent = controls.borderRadius.value;
-            document.getElementById('shadowXValue').textContent = controls.shadowX.value;
-            document.getElementById('shadowYValue').textContent = controls.shadowY.value;
-            document.getElementById('shadowBlurValue').textContent = controls.shadowBlur.value;
-            document.getElementById('shadowSpreadValue').textContent = controls.shadowSpread.value;
-            document.getElementById('fontSizeValue').textContent = controls.fontSize.value;
-            document.getElementById('paddingValue').textContent = controls.padding.value;
-            document.getElementById('marginValue').textContent = controls.margin.value;
-            document.getElementById('opacityValue').textContent = controls.opacity.value;
-        }
-
-        // 复制CSS
-        function copyCSS() {
-            const cssText = codeOutput.textContent;
-            const t = translations[currentLanguage];
-            
-            navigator.clipboard.writeText(cssText).then(() => {
-                const btn = document.querySelector('.copy-btn');
-                const originalText = btn.innerHTML;
-                btn.innerHTML = t.copied;
-                btn.classList.add('copied');
+            try {
+                sb3File = file;
+                const zip = await JSZip.loadAsync(file);
                 
-                setTimeout(() => {
-                    btn.innerHTML = t.copyBtn;
-                    btn.classList.remove('copied');
-                }, 2000);
-            }).catch(err => {
-                alert(t.copyFail);
-                console.error('复制失败:', err);
+                if (!zip.file('project.json')) {
+                    throw new Error('无效的SB3文件：缺少project.json');
+                }
+
+                const projectJson = await zip.file('project.json').async('string');
+                projectData = JSON.parse(projectJson);
+
+                showStatus('success', t('fileReadSuccess'));
+                
+                // 检测扩展
+                detectExtensions();
+                
+            } catch (error) {
+                showStatus('error', '❌ ' + error.message);
+            }
+        });
+
+        // 检测扩展
+        function detectExtensions() {
+            extensions = [];
+
+            // 1. 从 gandi.wildExtensions 获取
+            if (projectData.gandi && projectData.gandi.wildExtensions) {
+                const wildExts = projectData.gandi.wildExtensions;
+                if (Array.isArray(wildExts)) {
+                    wildExts.forEach(ext => {
+                        if (typeof ext === 'string') {
+                            extensions.push({
+                                id: ext,
+                                url: ext,
+                                type: 'wildExtension',
+                                platform: 'Gandi',
+                                isCCW: false,
+                                selected: true
+                            });
+                        } else if (typeof ext === 'object') {
+                            const url = ext.url || ext.extensionURL || ext.id || '';
+                            if (url) {
+                                extensions.push({
+                                    id: ext.id || url,
+                                    url: url,
+                                    type: 'wildExtension',
+                                    platform: 'Gandi',
+                                    isCCW: url.includes('ccw.site'),
+                                    selected: true,
+                                    rawData: ext
+                                });
+                            }
+                        }
+                    });
+                } else if (typeof wildExts === 'object') {
+                    Object.keys(wildExts).forEach(key => {
+                        const value = wildExts[key];
+                        const url = typeof value === 'string' ? value : (value.url || value.extensionURL || key);
+                        extensions.push({
+                            id: key,
+                            url: url,
+                            type: 'wildExtension',
+                            platform: 'Gandi',
+                            isCCW: url.includes('ccw.site'),
+                            selected: true,
+                            rawData: typeof value === 'object' ? value : null
+                        });
+                    });
+                }
+            }
+
+            // 2. 从 extensionURLs 获取（支持对象和数组两种格式）
+            if (projectData.extensionURLs) {
+                if (Array.isArray(projectData.extensionURLs)) {
+                    projectData.extensionURLs.forEach(url => {
+                        const exists = extensions.some(ext => ext.url === url);
+                        if (!exists) {
+                            extensions.push({
+                                id: url,
+                                url: url,
+                                type: 'extensionURL',
+                                platform: url.includes('ccw.site') ? 'CCW' : 'Other',
+                                isCCW: url.includes('ccw.site'),
+                                selected: true
+                            });
+                        }
+                    });
+                } else if (typeof projectData.extensionURLs === 'object') {
+                    Object.keys(projectData.extensionURLs).forEach(id => {
+                        const url = projectData.extensionURLs[id];
+                        const exists = extensions.some(ext => ext.url === url || ext.id === id);
+                        if (!exists) {
+                            extensions.push({
+                                id: id,
+                                url: url,
+                                type: 'extensionURL',
+                                platform: url.includes('ccw.site') ? 'CCW' : 'Other',
+                                isCCW: url.includes('ccw.site'),
+                                selected: true
+                            });
+                        }
+                    });
+                }
+            }
+
+            if (extensions.length === 0) {
+                showStatus('info', t('noExtensions'));
+                return;
+            }
+
+            showStatus('success', t('detectedExtensions', { count: extensions.length }));
+            
+            // 显示扩展列表
+            displayExtensions();
+            document.getElementById('modeStep').style.display = 'block';
+            document.getElementById('extensionStep').style.display = 'block';
+            document.getElementById('downloadStep').style.display = 'block';
+        }
+
+        // 设置操作模式
+        function setMode(mode) {
+            currentMode = mode;
+            
+            // 更新按钮样式
+            document.getElementById('modeDelete').style.background = mode === 'delete' ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : '#6c757d';
+            document.getElementById('modeReplaceURL').style.background = mode === 'replaceURL' ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : '#6c757d';
+            document.getElementById('modeReplaceID').style.background = mode === 'replaceID' ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : '#6c757d';
+            document.getElementById('modeConvertTW').style.background = mode === 'convertTW' ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : '#6c757d';
+            
+            // 显示/隐藏输入框
+            document.getElementById('replaceURLInput').style.display = mode === 'replaceURL' ? 'block' : 'none';
+            document.getElementById('replaceIDInput').style.display = mode === 'replaceID' ? 'block' : 'none';
+            
+            // Gandi转TurboWarp模式：隐藏扩展列表，直接转换
+            if (mode === 'convertTW') {
+                document.getElementById('extensionStep').style.display = 'none';
+                showStatus('info', t('convertTWInfo'));
+            } else {
+                document.getElementById('extensionStep').style.display = 'block';
+                // 重新渲染扩展列表（根据模式过滤）
+                displayExtensions();
+            }
+        }
+
+        // 显示扩展列表
+        function displayExtensions() {
+            const list = document.getElementById('extensionList');
+            list.innerHTML = '';
+
+            extensions.forEach((ext, index) => {
+                // 过滤逻辑：非CCW扩展在更新模式下不显示
+                if (currentMode === 'delete' && !ext.isCCW) {
+                    return; // 跳过显示
+                }
+
+                const item = document.createElement('div');
+                item.className = 'extension-item';
+                
+                // 显示内容逻辑
+                let displayText = '';
+                let typeText = '';
+                
+                if (ext.type === 'wildExtension') {
+                    // Gandi扩展：显示ID，标签为Gandi
+                    displayText = ext.id;
+                    typeText = 'Gandi';
+                } else {
+                    // extensionURL类型：也显示ID
+                    displayText = ext.id;
+                    typeText = ext.platform || 'URL';
+                }
+                
+                item.innerHTML = `
+                    <input type="checkbox" id="ext${index}" checked onchange="updateExtension(${index}, this.checked)">
+                    <label for="ext${index}">
+                        <span class="url">${displayText}</span>
+                    </label>
+                    <span class="type">${typeText}</span>
+                `;
+                list.appendChild(item);
             });
         }
 
-        // 切换导入面板
-        function toggleImportPanel() {
-            const panel = document.getElementById('importPanel');
-            const textarea = document.getElementById('importTextarea');
+        // 更新扩展选择状态
+        function updateExtension(index, selected) {
+            extensions[index].selected = selected;
+        }
+
+        // 全选/全不选
+        function selectAll(selected) {
+            extensions.forEach(ext => ext.selected = selected);
+            document.querySelectorAll('#extensionList input[type="checkbox"]').forEach(cb => {
+                cb.checked = selected;
+            });
+        }
+
+        // 执行并下载
+        async function executeAndDownload() {
+            // Gandi转TurboWarp模式不需要选择扩展
+            let selectedExtensions = [];
+            if (currentMode !== 'convertTW') {
+                selectedExtensions = extensions.filter(ext => ext.selected);
+                
+                if (selectedExtensions.length === 0) {
+                    showStatus('error', t('selectAtLeastOne'));
+                    return;
+                }
+            }
             
-            if (panel.style.display === 'none') {
-                panel.style.display = 'block';
-                textarea.value = '';
-                textarea.focus();
-            } else {
-                panel.style.display = 'none';
+            // 验证输入
+            let newURL = '';
+            let newID = '';
+            
+            if (currentMode === 'replaceURL') {
+                newURL = document.getElementById('newURL').value.trim();
+                if (!newURL) {
+                    showStatus('error', t('enterNewURL'));
+                    return;
+                }
+            }
+            
+            if (currentMode === 'replaceID') {
+                newID = document.getElementById('newID').value.trim();
+                if (!newID) {
+                    showStatus('error', t('enterNewID'));
+                    return;
+                }
+            }
+
+            const btn = document.getElementById('updateBtn');
+            btn.disabled = true;
+
+            showProgress(true);
+            updateProgress(10, t('processing'));
+
+            try {
+                // 1. 创建新的ZIP
+                updateProgress(20, t('creatingFile'));
+                const newZip = new JSZip();
+
+                // 2. 复制所有文件（除了project.json）
+                const originalZip = await JSZip.loadAsync(sb3File);
+                const files = Object.keys(originalZip.files);
+                
+                for (let i = 0; i < files.length; i++) {
+                    const fileName = files[i];
+                    if (fileName !== 'project.json') {
+                        const fileData = await originalZip.files[fileName].async('uint8array');
+                        newZip.file(fileName, fileData);
+                    }
+                    
+                    if (i % 10 === 0) {
+                        updateProgress(20 + (i / files.length) * 30, t('copyingFiles', { i: i, total: files.length }));
+                    }
+                }
+
+                updateProgress(50, t('updatingConfig'));
+
+                // 3. 修改project.json
+                const updatedProject = JSON.parse(JSON.stringify(projectData));
+                
+                // 根据模式执行不同操作
+                if (currentMode === 'delete') {
+                    // 模式1：删除扩展
+                    deleteExtensions(updatedProject, selectedExtensions);
+                } else if (currentMode === 'replaceURL') {
+                    // 模式2：替换链接
+                    replaceExtensionURLs(updatedProject, selectedExtensions, newURL);
+                } else if (currentMode === 'replaceID') {
+                    // 模式3：替换ID
+                    replaceExtensionIDs(updatedProject, selectedExtensions, newID);
+                } else if (currentMode === 'convertTW') {
+                    // 模式4：Gandi转TurboWarp（带扩展链接替换）
+                    await convertToTurboWarpWithExtensions(updatedProject);
+                }
+
+                updateProgress(70, t('savingData'));
+                
+                // 调试：输出修改后的配置
+                console.log('=== 修改后的扩展配置 ===');
+                console.log('extensions:', updatedProject.extensions);
+                console.log('extensionURLs:', updatedProject.extensionURLs);
+                console.log('gandi.wildExtensions:', updatedProject.gandi?.wildExtensions);
+                console.log('========================');
+                
+                // 显示详细的JSON内容（方便调试）
+                const debugInfo = {
+                    extensions: updatedProject.extensions,
+                    extensionURLs: updatedProject.extensionURLs,
+                    gandi: updatedProject.gandi
+                };
+                console.log('完整JSON配置:', JSON.stringify(debugInfo, null, 2));
+
+                // 4. 添加修改后的project.json
+                newZip.file('project.json', JSON.stringify(updatedProject, null, 2));
+
+                updateProgress(80, '正在生成SB3文件...');
+
+                // 5. 生成新的SB3文件
+                const newSb3Blob = await newZip.generateAsync({
+                    type: 'blob',
+                    compression: 'DEFLATE',
+                    compressionOptions: { level: 6 }
+                }, (metadata) => {
+                    updateProgress(80, t('generatingFile', { percent: Math.round(metadata.percent) }));
+                });
+
+                updateProgress(100, t('complete'));
+
+                // 6. 下载文件
+                const fileName = sb3File.name.replace('.sb3', '_updated.sb3');
+                const url = URL.createObjectURL(newSb3Blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                let successMsg = '';
+                if (currentMode === 'delete') {
+                    successMsg = t('deleteSuccess', { fileName: fileName, count: selectedExtensions.length });
+                } else if (currentMode === 'replaceURL') {
+                    successMsg = t('replaceURLSuccess', { fileName: fileName, count: selectedExtensions.length });
+                } else if (currentMode === 'replaceID') {
+                    successMsg = t('replaceIDSuccess', { fileName: fileName, count: selectedExtensions.length });
+                } else if (currentMode === 'convertTW') {
+                    successMsg = t('convertSuccess', { fileName: fileName });
+                }
+                
+                showStatus('success', successMsg);
+
+            } catch (error) {
+                showStatus('error', t('updateFailed') + error.message);
+                console.error(error);
+            } finally {
+                btn.disabled = false;
+                setTimeout(() => showProgress(false), 1000);
             }
         }
 
-        // 应用导入的CSS
-        function applyImportCSS() {
-            const textarea = document.getElementById('importTextarea');
-            const cssText = textarea.value.trim();
-            const t = translations[currentLanguage];
+        // 显示状态
+        function showStatus(type, message) {
+            const status = document.getElementById('status');
+            status.className = 'status ' + type;
+            status.textContent = message;
+        }
+        
+        // 获取翻译消息
+        function t(key, params = {}) {
+            const messages = translations[currentLanguage];
+            let msg = messages[key] || key;
+            // 替换参数
+            for (const [k, v] of Object.entries(params)) {
+                msg = msg.replace(`{${k}}`, v);
+            }
+            return msg;
+        }
+
+        // 显示/隐藏进度条
+        function showProgress(show) {
+            const progress = document.getElementById('progress');
+            progress.className = show ? 'progress active' : 'progress';
+        }
+
+        // 更新进度
+        function updateProgress(percent, message) {
+            const fill = document.getElementById('progressFill');
+            fill.style.width = percent + '%';
+            fill.textContent = Math.round(percent) + '%';
             
-            if (!cssText) {
-                alert(t.importFail);
+            if (message) {
+                showStatus('info', message);
+            }
+        }
+
+        // 拖拽上传
+        const fileLabel = document.querySelector('.file-input-label');
+        
+        fileLabel.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileLabel.style.background = '#f0f4ff';
+        });
+
+        fileLabel.addEventListener('dragleave', () => {
+            fileLabel.style.background = 'white';
+        });
+
+        fileLabel.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileLabel.style.background = 'white';
+            
+            const file = e.dataTransfer.files[0];
+            if (file && file.name.endsWith('.sb3')) {
+                document.getElementById('sb3File').files = e.dataTransfer.files;
+                document.getElementById('sb3File').dispatchEvent(new Event('change'));
+            } else {
+                showStatus('error', t('uploadError'));
+            }
+        });
+        
+        // 下载调试信息
+        function downloadDebugInfo() {
+            if (!projectData) {
+                showStatus('error', '❌ ' + t('uploadError'));
                 return;
             }
             
-            try {
-                // 解析CSS文本
-                const styles = parseCSSText(cssText);
-                
-                if (Object.keys(styles).length === 0) {
-                    alert(t.importFail);
-                    return;
+            const debugData = {
+                原始数据: {
+                    extensions: projectData.extensions,
+                    extensionURLs: projectData.extensionURLs,
+                    gandi: projectData.gandi
+                },
+                说明: '这是原始的project.json配置，请上传.sb3文件并执行删除后，对比新生成的文件'
+            };
+            
+            const blob = new Blob([JSON.stringify(debugData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'debug_info.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showStatus('success', t('debugDownload'));
+        }
+        
+        // ==================== 处理函数 ====================
+        
+        // 模式1：删除扩展
+        function deleteExtensions(updatedProject, selectedExtensions) {
+            // 收集所有要删除的ID
+            const deletedIds = selectedExtensions.map(sel => sel.id);
+            
+            console.log('要删除的扩展ID:', deletedIds);
+            
+            // 1. 删除 extensions 数组中的ID
+            if (updatedProject.extensions && Array.isArray(updatedProject.extensions)) {
+                updatedProject.extensions = updatedProject.extensions.filter(extId => {
+                    return !deletedIds.includes(extId);
+                });
+                console.log('删除后的extensions:', updatedProject.extensions);
+            }
+            
+            // 2. 删除 extensionURLs
+            if (updatedProject.extensionURLs) {
+                if (Array.isArray(updatedProject.extensionURLs)) {
+                    updatedProject.extensionURLs = updatedProject.extensionURLs.filter(url => {
+                        return !selectedExtensions.some(sel => sel.url === url);
+                    });
+                } else if (typeof updatedProject.extensionURLs === 'object') {
+                    Object.keys(updatedProject.extensionURLs).forEach(id => {
+                        if (deletedIds.includes(id)) {
+                            delete updatedProject.extensionURLs[id];
+                        }
+                    });
                 }
-                
-                // 应用样式到预览元素
-                Object.assign(previewElement.style, styles);
-                
-                // 更新控件值
-                updateControlsFromStyles(styles);
-                
-                // 更新代码显示
-                const cssOutput = generateCSSText(styles);
-                codeOutput.textContent = cssOutput;
-                
-                // 关闭导入面板
-                toggleImportPanel();
-                
-                // 显示成功消息
-                alert(t.importSuccess);
-            } catch (error) {
-                console.error('解析CSS失败:', error);
-                alert(t.importFail);
+                console.log('删除后的extensionURLs:', updatedProject.extensionURLs);
+            }
+            
+            // 3. 删除 gandi.wildExtensions
+            if (updatedProject.gandi && updatedProject.gandi.wildExtensions) {
+                if (Array.isArray(updatedProject.gandi.wildExtensions)) {
+                    updatedProject.gandi.wildExtensions = updatedProject.gandi.wildExtensions.filter(ext => {
+                        if (typeof ext === 'string') {
+                            return !deletedIds.includes(ext);
+                        } else if (typeof ext === 'object' && ext.id) {
+                            return !deletedIds.includes(ext.id);
+                        }
+                        return true;
+                    });
+                } else if (typeof updatedProject.gandi.wildExtensions === 'object') {
+                    Object.keys(updatedProject.gandi.wildExtensions).forEach(key => {
+                        if (deletedIds.includes(key)) {
+                            delete updatedProject.gandi.wildExtensions[key];
+                        }
+                    });
+                }
+                console.log('删除后的gandi.wildExtensions:', updatedProject.gandi.wildExtensions);
             }
         }
-
-        // 解析CSS文本为样式对象
-        function parseCSSText(cssText) {
-            const styles = {};
-            
-            // 移除注释
-            cssText = cssText.replace(/\/\*[\s\S]*?\*\//g, '');
-            
-            // 按行分割
-            const lines = cssText.split(';');
-            
-            for (let line of lines) {
-                line = line.trim();
-                if (!line || line.includes('{') || line.includes('}')) continue;
-                
-                // 分割属性和值
-                const colonIndex = line.indexOf(':');
-                if (colonIndex === -1) continue;
-                
-                const property = line.substring(0, colonIndex).trim();
-                const value = line.substring(colonIndex + 1).trim();
-                
-                if (!property || !value) continue;
-                
-                // 转换短横线命名为驼峰命名
-                const camelProperty = property.replace(/-([a-z])/g, (match, letter) => letter.toUpperCase());
-                
-                styles[camelProperty] = value;
-            }
-            
-            return styles;
-        }
-
-        // 从样式对象更新控件值
-        function updateControlsFromStyles(styles) {
-            // 背景
-            if (styles.background) {
-                if (styles.background.includes('gradient')) {
-                    controls.bgGradient.value = styles.background;
-                    controls.bgColor.value = '#f0f0f0';
-                } else {
-                    controls.bgColor.value = styles.background;
-                    controls.bgGradient.value = '';
-                }
-            }
-            
-            // 边框
-            if (styles.border) {
-                const borderMatch = styles.border.match(/(\d+)px\s+(\w+)\s+(.+)/);
-                if (borderMatch) {
-                    controls.borderWidth.value = borderMatch[1];
-                    controls.borderStyle.value = borderMatch[2];
-                    controls.borderColor.value = borderMatch[3];
-                }
-            }
-            
-            if (styles.borderRadius) {
-                controls.borderRadius.value = parseInt(styles.borderRadius);
-            }
-            
-            // 阴影
-            if (styles.boxShadow) {
-                const shadowMatch = styles.boxShadow.match(/(-?\d+)px\s+(-?\d+)px\s+(-?\d+)px\s+(-?\d+)px\s+(.+)/);
-                if (shadowMatch) {
-                    controls.shadowX.value = shadowMatch[1];
-                    controls.shadowY.value = shadowMatch[2];
-                    controls.shadowBlur.value = shadowMatch[3];
-                    controls.shadowSpread.value = shadowMatch[4];
-                    controls.shadowColor.value = shadowMatch[5];
+        
+        // 模式2：替换扩展链接
+        function replaceExtensionURLs(updatedProject, selectedExtensions, newURL) {
+            // 1. 替换 extensionURLs 中的URL
+            if (updatedProject.extensionURLs) {
+                if (Array.isArray(updatedProject.extensionURLs)) {
+                    updatedProject.extensionURLs = updatedProject.extensionURLs.map(url => {
+                        if (selectedExtensions.some(sel => sel.url === url)) {
+                            return newURL;
+                        }
+                        return url;
+                    });
+                } else if (typeof updatedProject.extensionURLs === 'object') {
+                    Object.keys(updatedProject.extensionURLs).forEach(id => {
+                        const url = updatedProject.extensionURLs[id];
+                        
+                        if (selectedExtensions.some(sel => sel.id === id || sel.url === url)) {
+                            updatedProject.extensionURLs[id] = newURL;
+                        }
+                    });
                 }
             }
             
-            // 文字
-            if (styles.color) {
-                controls.textColor.value = styles.color;
+            // 2. 替换 gandi.wildExtensions 中的URL
+            if (updatedProject.gandi && updatedProject.gandi.wildExtensions) {
+                if (Array.isArray(updatedProject.gandi.wildExtensions)) {
+                    updatedProject.gandi.wildExtensions = updatedProject.gandi.wildExtensions.map(ext => {
+                        if (typeof ext === 'string' && selectedExtensions.some(sel => sel.url === ext)) {
+                            return newURL;
+                        } else if (typeof ext === 'object' && ext.url && selectedExtensions.some(sel => sel.url === ext.url)) {
+                            ext.url = newURL;
+                            if (ext.extensionURL) ext.extensionURL = newURL;
+                        }
+                        return ext;
+                    });
+                } else if (typeof updatedProject.gandi.wildExtensions === 'object') {
+                    Object.keys(updatedProject.gandi.wildExtensions).forEach(key => {
+                        const value = updatedProject.gandi.wildExtensions[key];
+                        
+                        if (typeof value === 'string' && selectedExtensions.some(sel => sel.url === value)) {
+                            updatedProject.gandi.wildExtensions[key] = newURL;
+                        } else if (typeof value === 'object' && value.url && selectedExtensions.some(sel => sel.url === value.url)) {
+                            value.url = newURL;
+                            if (value.extensionURL) value.extensionURL = newURL;
+                        }
+                    });
+                }
             }
-            
-            if (styles.fontSize) {
-                controls.fontSize.value = parseInt(styles.fontSize);
-            }
-            
-            if (styles.fontWeight) {
-                controls.fontWeight.value = styles.fontWeight;
-            }
-            
-            if (styles.textAlign) {
-                controls.textAlign.value = styles.textAlign;
-            }
-            
-            // 其他
-            if (styles.padding) {
-                controls.padding.value = parseInt(styles.padding);
-            }
-            
-            if (styles.margin) {
-                controls.margin.value = parseInt(styles.margin);
-            }
-            
-            if (styles.opacity !== undefined) {
-                controls.opacity.value = parseFloat(styles.opacity) * 100;
-            }
-            
-            // 更新范围值显示
-            updateRangeValues();
         }
-
-        // 重置所有样式
-        function resetAll() {
-            controls.bgColor.value = '#f0f0f0';
-            controls.bgGradient.value = '';
-            controls.borderWidth.value = '2';
-            controls.borderColor.value = '#667eea';
-            controls.borderStyle.value = 'solid';
-            controls.borderRadius.value = '10';
-            controls.shadowColor.value = '#000000';
-            controls.shadowX.value = '0';
-            controls.shadowY.value = '5';
-            controls.shadowBlur.value = '15';
-            controls.shadowSpread.value = '0';
-            controls.textColor.value = '#333333';
-            controls.fontSize.value = '18';
-            controls.fontWeight.value = 'normal';
-            controls.textAlign.value = 'center';
-            controls.padding.value = '20';
-            controls.margin.value = '10';
-            controls.opacity.value = '100';
-            updatePreview();
+        
+        // 模式3：替换扩展ID
+        function replaceExtensionIDs(updatedProject, selectedExtensions, newID) {
+            // 1. 替换 extensions 数组中的ID
+            if (updatedProject.extensions && Array.isArray(updatedProject.extensions)) {
+                updatedProject.extensions = updatedProject.extensions.map(extId => {
+                    if (selectedExtensions.some(sel => sel.id === extId)) {
+                        return newID;
+                    }
+                    return extId;
+                });
+            }
+            
+            // 2. 替换 extensionURLs 中的键名
+            if (updatedProject.extensionURLs && typeof updatedProject.extensionURLs === 'object' && !Array.isArray(updatedProject.extensionURLs)) {
+                const newExtensionURLs = {};
+                
+                Object.keys(updatedProject.extensionURLs).forEach(id => {
+                    if (selectedExtensions.some(sel => sel.id === id)) {
+                        newExtensionURLs[newID] = updatedProject.extensionURLs[id];
+                    } else {
+                        newExtensionURLs[id] = updatedProject.extensionURLs[id];
+                    }
+                });
+                
+                updatedProject.extensionURLs = newExtensionURLs;
+            }
+            
+            // 3. 替换 gandi.wildExtensions 中的键名
+            if (updatedProject.gandi && updatedProject.gandi.wildExtensions && typeof updatedProject.gandi.wildExtensions === 'object' && !Array.isArray(updatedProject.gandi.wildExtensions)) {
+                const newWildExtensions = {};
+                
+                Object.keys(updatedProject.gandi.wildExtensions).forEach(key => {
+                    if (selectedExtensions.some(sel => sel.id === key)) {
+                        newWildExtensions[newID] = updatedProject.gandi.wildExtensions[key];
+                    } else {
+                        newWildExtensions[key] = updatedProject.gandi.wildExtensions[key];
+                    }
+                });
+                
+                updatedProject.gandi.wildExtensions = newWildExtensions;
+            }
         }
-
-        // 绑定事件监听
-        Object.values(controls).forEach(control => {
-            control.addEventListener('input', updatePreview);
-            control.addEventListener('change', updatePreview);
-        });
-
+        
+        // 模式4：Gandi转TurboWarp（删除所有Gandi属性）
+        function convertToTurboWarp(updatedProject) {
+            console.log('=== 开始Gandi转TurboWarp转换 ===');
+            
+            // 1. 删除 gandi 属性
+            if (updatedProject.gandi) {
+                console.log('删除 gandi 属性:', updatedProject.gandi);
+                delete updatedProject.gandi;
+            }
+            
+            // 2. 删除 extensionURLs（TurboWarp使用不同的扩展加载方式）
+            if (updatedProject.extensionURLs) {
+                console.log('删除 extensionURLs:', updatedProject.extensionURLs);
+                delete updatedProject.extensionURLs;
+            }
+            
+            // 3. 保留 extensions 数组（这是标准Scratch属性）
+            console.log('保留 extensions 数组:', updatedProject.extensions);
+            
+            console.log('=== 转换完成 ===');
+            console.log('转换后的项目配置:', JSON.stringify(updatedProject, null, 2));
+        }
+        
+        // 模式5：Gandi转TurboWarp（带扩展链接替换）
+        async function convertToTurboWarpWithExtensions(updatedProject) {
+            console.log('=== 开始Gandi转TurboWarp转换（带扩展链接） ===');
+            
+            // 1. 检测Gandi自带扩展（在extensions数组中但不在extensionURLs中）
+            const gandiExtensions = [];
+            const extensionURLs = updatedProject.extensionURLs || {};
+            
+            if (updatedProject.extensions && Array.isArray(updatedProject.extensions)) {
+                updatedProject.extensions.forEach(extId => {
+                    // 跳过CCWSugar（这是CCW平台特有扩展，TurboWarp不需要）
+                    if (extId === 'CCWSugar') {
+                        console.log(`跳过CCWSugar扩展（CCW平台特有）`);
+                        return;
+                    }
+                    
+                    // 检查这个扩展是否有URL
+                    const hasURL = extensionURLs[extId];
+                    if (!hasURL) {
+                        // 这是Gandi自带扩展，没有URL
+                        gandiExtensions.push(extId);
+                    }
+                });
+            }
+            
+            console.log('检测到Gandi自带扩展（无URL）:', gandiExtensions);
+            
+            // 2. 如果有Gandi自带扩展，让用户逐个提供链接
+            if (gandiExtensions.length > 0) {
+                const newExtensionURLs = {};
+                
+                for (const extId of gandiExtensions) {
+                    const userURL = await promptForExtensionURL(extId);
+                    if (userURL) {
+                        newExtensionURLs[extId] = userURL;
+                        console.log(`扩展 ${extId} 的链接: ${userURL}`);
+                    } else {
+                        console.log(`用户取消了扩展 ${extId} 的链接输入`);
+                    }
+                }
+                
+                // 更新extensionURLs
+                if (Object.keys(newExtensionURLs).length > 0) {
+                    updatedProject.extensionURLs = {
+                        ...extensionURLs,
+                        ...newExtensionURLs
+                    };
+                }
+            }
+            
+            // 3. 删除 gandi 属性
+            if (updatedProject.gandi) {
+                console.log('删除 gandi 属性:', updatedProject.gandi);
+                delete updatedProject.gandi;
+            }
+            
+            console.log('=== 转换完成 ===');
+            console.log('转换后的项目配置:', JSON.stringify(updatedProject, null, 2));
+        }
+        
+        // 提示用户输入扩展链接
+        function promptForExtensionURL(extId) {
+            return new Promise((resolve) => {
+                const url = prompt(
+                    `检测到Gandi自带扩展: ${extId}\n\n` +
+                    `这个扩展在TurboWarp中没有，请提供扩展链接：\n` +
+                    `（例如: https://extensions.turbowarp.org/${extId}.js）\n\n` +
+                    `如果不需要这个扩展，请点击“取消”`
+                );
+                resolve(url);
+            });
+        }
+        
         // 语言选择器事件
         document.getElementById('languageSelector').addEventListener('change', (e) => {
             switchLanguage(e.target.value);
         });
-
-        // 初始化
-        updatePreview();
-        // 默认使用英语
+        
+        // 初始化 - 默认英语
         switchLanguage('en');
     </script>
 </body>
