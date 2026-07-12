@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Popup Style Editor</title>
+    <link rel="icon" type="image/svg+xml" href="icon.svg">
+    <link rel="alternate icon" type="image/png" href="icon.png">
+    <link rel="shortcut icon" href="icon.svg" type="image/svg+xml">
     <style>
         * {
             margin: 0;
@@ -226,9 +229,6 @@
         }
 
         .copy-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
             background: #667eea;
             color: white;
             border: none;
@@ -255,6 +255,124 @@
 
         .copy-btn.copied {
             background: #4caf50;
+        }
+
+        /* 代码操作按钮区域 */
+        .code-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .import-btn {
+            background: #f39c12;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .import-btn:hover {
+            background: #e67e22;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(243, 156, 18, 0.4);
+        }
+
+        /* 导入面板 */
+        .import-panel {
+            background: #1a1a2e;
+            border: 2px solid #f39c12;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .import-textarea {
+            width: 100%;
+            min-height: 150px;
+            background: #0f0f1e;
+            border: 2px solid #2a2a3e;
+            border-radius: 8px;
+            padding: 12px;
+            color: #e0e0e0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            resize: vertical;
+            margin-bottom: 10px;
+        }
+
+        .import-textarea:focus {
+            outline: none;
+            border-color: #f39c12;
+            box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.2);
+        }
+
+        .import-textarea::placeholder {
+            color: #808080;
+        }
+
+        .import-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .apply-btn {
+            flex: 1;
+            background: #4caf50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .apply-btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+        }
+
+        .cancel-btn {
+            flex: 1;
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .cancel-btn:hover {
+            background: #da190b;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(244, 67, 54, 0.4);
         }
 
         /* 快捷操作 */
@@ -458,7 +576,20 @@
 
                 <div class="code-box">
                     <h3 id="codeTitle">💻 CSS Code</h3>
-                    <button class="copy-btn" onclick="copyCSS()" id="copyBtn">📋 Copy CSS</button>
+                    <div class="code-actions">
+                        <button class="copy-btn" onclick="copyCSS()" id="copyBtn">📋 Copy CSS</button>
+                        <button class="import-btn" onclick="toggleImportPanel()" id="importBtn">📥 Import CSS</button>
+                    </div>
+                    
+                    <!-- 导入面板 -->
+                    <div class="import-panel" id="importPanel" style="display: none;">
+                        <textarea class="import-textarea" id="importTextarea" placeholder="Paste your CSS code here..."></textarea>
+                        <div class="import-buttons">
+                            <button class="apply-btn" onclick="applyImportCSS()" id="applyBtn">✓ Apply</button>
+                            <button class="cancel-btn" onclick="toggleImportPanel()" id="cancelBtn">✗ Cancel</button>
+                        </div>
+                    </div>
+                    
                     <div class="code-output" id="codeOutput"></div>
                 </div>
             </div>
@@ -497,8 +628,14 @@
                 opacityLabel: 'Opacity:',
                 codeTitle: '💻 CSS Code',
                 copyBtn: '📋 Copy CSS',
+                importBtn: '📥 Import CSS',
+                importPlaceholder: 'Paste your CSS code here...',
+                applyBtn: '✓ Apply',
+                cancelBtn: '✗ Cancel',
                 copied: '✓ Copied!',
                 copyFail: 'Copy failed, please copy manually',
+                importSuccess: '✓ CSS imported successfully!',
+                importFail: '✗ Import failed, please check CSS format',
                 solid: 'Solid',
                 dashed: 'Dashed',
                 dotted: 'Dotted',
@@ -539,8 +676,14 @@
                 opacityLabel: '透明度:',
                 codeTitle: '💻 CSS代码',
                 copyBtn: '📋 复制CSS',
+                importBtn: '📥 导入CSS',
+                importPlaceholder: '在此粘贴您的CSS代码...',
+                applyBtn: '✓ 应用',
+                cancelBtn: '✗ 取消',
                 copied: '✓ 已复制!',
                 copyFail: '复制失败，请手动复制',
+                importSuccess: '✓ CSS导入成功!',
+                importFail: '✗ 导入失败，请检查CSS格式',
                 solid: '实线',
                 dashed: '虚线',
                 dotted: '点线',
@@ -581,8 +724,14 @@
                 opacityLabel: 'Opacidad:',
                 codeTitle: '💻 Código CSS',
                 copyBtn: '📋 Copiar CSS',
+                importBtn: '📥 Importar CSS',
+                importPlaceholder: 'Pega tu código CSS aquí...',
+                applyBtn: '✓ Aplicar',
+                cancelBtn: '✗ Cancelar',
                 copied: '✓ ¡Copiado!',
                 copyFail: 'Copia fallida, por favor copia manualmente',
+                importSuccess: '✓ ¡CSS importado con éxito!',
+                importFail: '✗ Importación fallida, por favor verifica el formato CSS',
                 solid: 'Sólido',
                 dashed: 'Discontinuo',
                 dotted: 'Punteado',
@@ -623,8 +772,14 @@
                 opacityLabel: 'अपारदर्शिता:',
                 codeTitle: '💻 CSS कोड',
                 copyBtn: '📋 CSS कॉपी करें',
+                importBtn: '📥 CSS आयात करें',
+                importPlaceholder: 'यहाँ अपना CSS कोड पेस्ट करें...',
+                applyBtn: '✓ लागू करें',
+                cancelBtn: '✗ रद्द करें',
                 copied: '✓ कॉपी हो गया!',
                 copyFail: 'कॉपी विफल, कृपया मैन्युअल रूप से कॉपी करें',
+                importSuccess: '✓ CSS सफलतापूर्वक आयात किया गया!',
+                importFail: '✗ आयात विफल, कृपया CSS प्रारूप की जाँच करें',
                 solid: 'ठोस',
                 dashed: 'डैश्ड',
                 dotted: 'डॉटेड',
@@ -665,8 +820,14 @@
                 opacityLabel: 'العتامة:',
                 codeTitle: '💻 رمز CSS',
                 copyBtn: '📋 نسخ CSS',
+                importBtn: '📥 استيراد CSS',
+                importPlaceholder: 'الصق رمز CSS هنا...',
+                applyBtn: '✓ تطبيق',
+                cancelBtn: '✗ إلغاء',
                 copied: '✓ تم النسخ!',
                 copyFail: 'فشل النسخ، يرجى النسخ يدويًا',
+                importSuccess: '✓ تم استيراد CSS بنجاح!',
+                importFail: '✗ فشل الاستيراد، يرجى التحقق من تنسيق CSS',
                 solid: 'صلب',
                 dashed: 'متقطع',
                 dotted: 'منقط',
@@ -716,6 +877,10 @@
             document.getElementById('opacityLabel').textContent = t.opacityLabel;
             document.getElementById('codeTitle').textContent = t.codeTitle;
             document.getElementById('copyBtn').textContent = t.copyBtn;
+            document.getElementById('importBtn').textContent = t.importBtn;
+            document.getElementById('applyBtn').textContent = t.applyBtn;
+            document.getElementById('cancelBtn').textContent = t.cancelBtn;
+            document.getElementById('importTextarea').placeholder = t.importPlaceholder;
             
             // 更新下拉菜单选项
             document.getElementById('borderSolid').textContent = t.solid;
@@ -859,6 +1024,166 @@
                 alert(t.copyFail);
                 console.error('复制失败:', err);
             });
+        }
+
+        // 切换导入面板
+        function toggleImportPanel() {
+            const panel = document.getElementById('importPanel');
+            const textarea = document.getElementById('importTextarea');
+            
+            if (panel.style.display === 'none') {
+                panel.style.display = 'block';
+                textarea.value = '';
+                textarea.focus();
+            } else {
+                panel.style.display = 'none';
+            }
+        }
+
+        // 应用导入的CSS
+        function applyImportCSS() {
+            const textarea = document.getElementById('importTextarea');
+            const cssText = textarea.value.trim();
+            const t = translations[currentLanguage];
+            
+            if (!cssText) {
+                alert(t.importFail);
+                return;
+            }
+            
+            try {
+                // 解析CSS文本
+                const styles = parseCSSText(cssText);
+                
+                if (Object.keys(styles).length === 0) {
+                    alert(t.importFail);
+                    return;
+                }
+                
+                // 应用样式到预览元素
+                Object.assign(previewElement.style, styles);
+                
+                // 更新控件值
+                updateControlsFromStyles(styles);
+                
+                // 更新代码显示
+                const cssOutput = generateCSSText(styles);
+                codeOutput.textContent = cssOutput;
+                
+                // 关闭导入面板
+                toggleImportPanel();
+                
+                // 显示成功消息
+                alert(t.importSuccess);
+            } catch (error) {
+                console.error('解析CSS失败:', error);
+                alert(t.importFail);
+            }
+        }
+
+        // 解析CSS文本为样式对象
+        function parseCSSText(cssText) {
+            const styles = {};
+            
+            // 移除注释
+            cssText = cssText.replace(/\/\*[\s\S]*?\*\//g, '');
+            
+            // 按行分割
+            const lines = cssText.split(';');
+            
+            for (let line of lines) {
+                line = line.trim();
+                if (!line || line.includes('{') || line.includes('}')) continue;
+                
+                // 分割属性和值
+                const colonIndex = line.indexOf(':');
+                if (colonIndex === -1) continue;
+                
+                const property = line.substring(0, colonIndex).trim();
+                const value = line.substring(colonIndex + 1).trim();
+                
+                if (!property || !value) continue;
+                
+                // 转换短横线命名为驼峰命名
+                const camelProperty = property.replace(/-([a-z])/g, (match, letter) => letter.toUpperCase());
+                
+                styles[camelProperty] = value;
+            }
+            
+            return styles;
+        }
+
+        // 从样式对象更新控件值
+        function updateControlsFromStyles(styles) {
+            // 背景
+            if (styles.background) {
+                if (styles.background.includes('gradient')) {
+                    controls.bgGradient.value = styles.background;
+                    controls.bgColor.value = '#f0f0f0';
+                } else {
+                    controls.bgColor.value = styles.background;
+                    controls.bgGradient.value = '';
+                }
+            }
+            
+            // 边框
+            if (styles.border) {
+                const borderMatch = styles.border.match(/(\d+)px\s+(\w+)\s+(.+)/);
+                if (borderMatch) {
+                    controls.borderWidth.value = borderMatch[1];
+                    controls.borderStyle.value = borderMatch[2];
+                    controls.borderColor.value = borderMatch[3];
+                }
+            }
+            
+            if (styles.borderRadius) {
+                controls.borderRadius.value = parseInt(styles.borderRadius);
+            }
+            
+            // 阴影
+            if (styles.boxShadow) {
+                const shadowMatch = styles.boxShadow.match(/(-?\d+)px\s+(-?\d+)px\s+(-?\d+)px\s+(-?\d+)px\s+(.+)/);
+                if (shadowMatch) {
+                    controls.shadowX.value = shadowMatch[1];
+                    controls.shadowY.value = shadowMatch[2];
+                    controls.shadowBlur.value = shadowMatch[3];
+                    controls.shadowSpread.value = shadowMatch[4];
+                    controls.shadowColor.value = shadowMatch[5];
+                }
+            }
+            
+            // 文字
+            if (styles.color) {
+                controls.textColor.value = styles.color;
+            }
+            
+            if (styles.fontSize) {
+                controls.fontSize.value = parseInt(styles.fontSize);
+            }
+            
+            if (styles.fontWeight) {
+                controls.fontWeight.value = styles.fontWeight;
+            }
+            
+            if (styles.textAlign) {
+                controls.textAlign.value = styles.textAlign;
+            }
+            
+            // 其他
+            if (styles.padding) {
+                controls.padding.value = parseInt(styles.padding);
+            }
+            
+            if (styles.margin) {
+                controls.margin.value = parseInt(styles.margin);
+            }
+            
+            if (styles.opacity !== undefined) {
+                controls.opacity.value = parseFloat(styles.opacity) * 100;
+            }
+            
+            // 更新范围值显示
+            updateRangeValues();
         }
 
         // 重置所有样式
