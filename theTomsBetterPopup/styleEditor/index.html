@@ -1081,19 +1081,26 @@
             }
         }
 
-        // 解析CSS文本为样式对象
+        // 解析CSS文本为样式对象（只支持属性-值对，不支持选择器）
         function parseCSSText(cssText) {
             const styles = {};
             
             // 移除注释
             cssText = cssText.replace(/\/\*[\s\S]*?\*\//g, '');
             
-            // 按行分割
+            // 移除选择器块（如果有的话）
+            // 匹配 { ... } 并提取其中的内容
+            const selectorMatch = cssText.match(/\{([^}]+)\}/);
+            if (selectorMatch) {
+                cssText = selectorMatch[1];
+            }
+            
+            // 按分号分割
             const lines = cssText.split(';');
             
             for (let line of lines) {
                 line = line.trim();
-                if (!line || line.includes('{') || line.includes('}')) continue;
+                if (!line) continue;
                 
                 // 分割属性和值
                 const colonIndex = line.indexOf(':');
