@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CCW Extension Center</title>
+    <link rel="icon" type="image/svg+xml" href="https://tomlct2015.github.io/ccw图标.svg">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: #0a0a0f;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+        /* 导航栏 */
+        .navbar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 40px;
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(102, 126, 234, 0.2);
+        }
+        .nav-brand {
+            font-size: 1.5em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+        }
+        .nav-links { display: flex; align-items: center; gap: 15px; }
+        .nav-btn {
+            padding: 10px 24px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-size: 0.95em;
+            font-weight: 500;
+            transition: all 0.3s;
+            border: 1.5px solid rgba(102, 126, 234, 0.4);
+            color: #667eea;
+            background: transparent;
+            cursor: pointer;
+        }
+        .nav-btn:hover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+        .nav-btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+        }
+        .nav-btn-primary:hover {
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+            transform: translateY(-2px);
+        }
+        .lang-select {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1.5px solid rgba(102, 126, 234, 0.4);
+            background: rgba(20, 20, 35, 0.9);
+            color: #e0e0e0;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .lang-select:hover { border-color: #667eea; box-shadow: 0 0 15px rgba(102, 126, 234, 0.3); }
+        /* Hero */
+        .hero {
+            min-height: 60vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 120px 20px 60px;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.08) 0%, transparent 50%);
+            animation: rotate 30s linear infinite;
+        }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .hero-content { text-align: center; z-index: 1; max-width: 900px; }
+        .hero-title {
+            font-size: 3.5em; font-weight: bold;
+            background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            margin-bottom: 20px;
+        }
+        .hero-subtitle { font-size: 1.3em; color: #b0b0b0; line-height: 1.8; }
+        /* 通用板块 */
+        .section {
+            padding: 80px 20px;
+        }
+        .section:nth-child(odd) { background: linear-gradient(180deg, #0a0a0f, #1a1a2e); }
+        .section:nth-child(even) { background: linear-gradient(180deg, #1a1a2e, #0a0a0f); }
+        .section-title {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 50px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .section-desc {
+            text-align: center;
+            color: #b0b0b0;
+            font-size: 1.1em;
+            max-width: 700px;
+            margin: -20px auto 50px;
+            line-height: 1.8;
+        }
+        /* 按钮网格 */
+        .btn-grid {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .card-btn {
+            flex: 1;
+            min-width: 260px;
+            max-width: 400px;
+            padding: 30px 35px;
+            border-radius: 18px;
+            background: rgba(30, 30, 46, 0.8);
+            border: 2px solid rgba(102, 126, 234, 0.25);
+            color: #e0e0e0;
+            text-decoration: none;
+            transition: all 0.3s;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .card-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+        .card-btn:hover {
+            transform: translateY(-8px);
+            border-color: rgba(102, 126, 234, 0.5);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.15);
+        }
+        .card-btn:hover::before { transform: scaleX(1); }
+        .card-btn-icon { font-size: 2.5em; margin-bottom: 15px; }
+        .card-btn-title {
+            font-size: 1.3em;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        .card-btn-desc { color: #808080; font-size: 0.9em; line-height: 1.6; }
+        /* 底部 */
+        .footer {
+            padding: 40px 20px;
+            text-align: center;
+            background: #0a0a0f;
+            border-top: 1px solid rgba(102, 126, 234, 0.2);
+        }
+        .footer-text { color: #808080; font-size: 0.95em; margin-bottom: 6px; }
+        .footer-credit { color: #606060; font-size: 0.85em; }
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .navbar { padding: 12px 20px; flex-wrap: wrap; gap: 10px; }
+            .nav-links { flex-wrap: wrap; justify-content: center; }
+            .hero-title { font-size: 2.2em; }
+            .section-title { font-size: 1.8em; }
+            .btn-grid { flex-direction: column; align-items: center; }
+            .card-btn { max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <a href="#" class="nav-brand">CCW Extensions</a>
+        <div class="nav-links">
+            <a href="https://www.ccw.site/gandi/extension" class="nav-btn nav-btn-primary" id="navTry" target="_blank" rel="noopener noreferrer">立即尝试</a>
+            <a href="docs/" class="nav-btn" id="navDocs">打开文档</a>
+            <select class="lang-select" id="langSelect">
+                <option value="zh">🇨🇳 中文</option>
+                <option value="en">🇬🇧 English</option>
+                <option value="es">🇪🇸 Español</option>
+                <option value="hi">🇮🇳 हिन्दी</option>
+                <option value="ar">🇸🇦 العربية</option>
+            </select>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title" id="heroTitle">CCW 扩展中心</h1>
+            <p class="hero-subtitle" id="heroSubtitle">探索 CCW 扩展生态，获取开发模板与官方资源</p>
+        </div>
+    </section>
+
+    <!-- 帮助板块 -->
+    <section class="section" id="helpSection">
+        <h2 class="section-title" id="helpTitle">帮助</h2>
+        <p class="section-desc" id="helpDesc">提供扩展开发模板，帮助你快速上手 CCW 扩展开发</p>
+        <div class="btn-grid">
+            <a href="/docs/help/#example1" class="card-btn" id="helpBtn1" target="_blank" rel="noopener noreferrer">
+                <div class="card-btn-icon">📄</div>
+                <div class="card-btn-title" id="helpBtn1Title">普通扩展模板</div>
+                <div class="card-btn-desc" id="helpBtn1Desc">基础的 TurboWarp 扩展开发模板</div>
+            </a>
+            <a href="/docs/help/#example2" class="card-btn" id="helpBtn2" target="_blank" rel="noopener noreferrer">
+                <div class="card-btn-icon">📝</div>
+                <div class="card-btn-title" id="helpBtn2Title">可扩展输入模版</div>
+                <div class="card-btn-desc" id="helpBtn2Desc">支持可扩展输入参数的扩展模板</div>
+            </a>
+        </div>
+    </section>
+
+    <!-- 官方板块 -->
+    <section class="section" id="officialSection">
+        <h2 class="section-title" id="officialTitle">官方</h2>
+        <p class="section-desc" id="officialDesc">访问官方扩展开发资源与开发者主页</p>
+        <div class="btn-grid">
+            <a href="https://dev.ccw.site/extensions" class="card-btn" id="officialBtn1" target="_blank" rel="noopener noreferrer">
+                <div class="card-btn-icon">📚</div>
+                <div class="card-btn-title" id="officialBtn1Title">官方扩展开发文档</div>
+                <div class="card-btn-desc" id="officialBtn1Desc">完整的扩展开发指南与 API 文档</div>
+            </a>
+            <a href="https://dev.ccw.site" class="card-btn" id="officialBtn2" target="_blank" rel="noopener noreferrer">
+                <div class="card-btn-icon">🏠</div>
+                <div class="card-btn-title" id="officialBtn2Title">官方主页</div>
+                <div class="card-btn-desc" id="officialBtn2Desc">CCW 开发者官方门户</div>
+            </a>
+        </div>
+    </section>
+
+    <!-- 底部 -->
+    <footer class="footer">
+        <p class="footer-text" id="footerText">© 2026 ༺ཌༀཉི Li Tom ༃ༀད༻. All rights reserved.</p>
+        <p class="footer-credit"></p>
+    </footer>
+
+    <script>
+        const translations = {
+            zh: {
+                navTry: '立即尝试', navDocs: '打开文档',
+                heroTitle: 'CCW 扩展中心', heroSubtitle: '探索 CCW 扩展生态，获取开发模板与官方资源',
+                helpTitle: '帮助', helpDesc: '提供扩展开发模板，帮助你快速上手 CCW 扩展开发',
+                helpBtn1Title: '普通扩展模板', helpBtn1Desc: '基础的 TurboWarp 扩展开发模板',
+                helpBtn2Title: '可扩展输入模版', helpBtn2Desc: '支持可扩展输入参数的扩展模板',
+                officialTitle: '官方', officialDesc: '访问官方扩展开发资源与开发者主页',
+                officialBtn1Title: '官方扩展开发文档', officialBtn1Desc: '完整的扩展开发指南与 API 文档',
+                officialBtn2Title: '官方主页', officialBtn2Desc: 'CCW 开发者官方门户',
+                footerText: '© 2026 ༺ཌༀཉི 李 Tom ༃ༀད༻. 保留所有权利。'
+            },
+            en: {
+                navTry: 'Try Now', navDocs: 'Documentation',
+                heroTitle: 'CCW Extension Hub', heroSubtitle: 'Explore the CCW extension ecosystem, get development templates and official resources',
+                helpTitle: 'Help', helpDesc: 'Extension development templates to help you get started with CCW extension development',
+                helpBtn1Title: 'Basic Extension Template', helpBtn1Desc: 'Basic TurboWarp extension development template',
+                helpBtn2Title: 'Extensible Input Template', helpBtn2Desc: 'Extension template with extensible input parameters',
+                officialTitle: 'Official', officialDesc: 'Access official extension development resources and developer portal',
+                officialBtn1Title: 'Official Extension Docs', officialBtn1Desc: 'Complete extension development guide and API documentation',
+                officialBtn2Title: 'Official Homepage', officialBtn2Desc: 'CCW Developer official portal',
+                footerText: '© 2026 ༺ཌༀཉི Li Tom ༃ༀད༻. All rights reserved.'
+            },
+            es: {
+                navTry: 'Probar ahora', navDocs: 'Documentación',
+                heroTitle: 'Centro de extensiones CCW', heroSubtitle: 'Explora el ecosistema de extensiones CCW, obtén plantillas y recursos oficiales',
+                helpTitle: 'Ayuda', helpDesc: 'Plantillas de desarrollo de extensiones para ayudarte a comenzar',
+                helpBtn1Title: 'Plantilla básica', helpBtn1Desc: 'Plantilla básica de desarrollo de extensiones TurboWarp',
+                helpBtn2Title: 'Plantilla de entrada extensible', helpBtn2Desc: 'Plantilla con parámetros de entrada extensibles',
+                officialTitle: 'Oficial', officialDesc: 'Accede a recursos oficiales de desarrollo de extensiones',
+                officialBtn1Title: 'Documentación oficial', officialBtn1Desc: 'Guía completa de desarrollo y documentación API',
+                officialBtn2Title: 'Página oficial', officialBtn2Desc: 'Portal oficial del desarrollador CCW',
+                footerText: '© 2026 ༺ཌༀཉི Li Tom ༃ༀད༻. Todos los derechos reservados.'
+            },
+            hi: {
+                navTry: 'अभी आज़माएं', navDocs: 'दस्तावेज़ीकरण',
+                heroTitle: 'CCW एक्सटेंशन हब', heroSubtitle: 'CCW एक्सटेंशन इकोसिस्टम का अन्वेषण करें, विकास टेम्पलेट और आधिकारिक संसाधन प्राप्त करें',
+                helpTitle: 'सहायता', helpDesc: 'CCW एक्सटेंशन विकास शुरू करने में मदद के लिए टेम्पलेट',
+                helpBtn1Title: 'बुनियादी टेम्पलेट', helpBtn1Desc: 'बुनियादी TurboWarp एक्सटेंशन विकास टेम्पलेट',
+                helpBtn2Title: 'विस्तार योग्य इनपुट टेम्पलेट', helpBtn2Desc: 'विस्तार योग्य इनपुट पैरामीटर के साथ टेम्पलेट',
+                officialTitle: 'आधिकारिक', officialDesc: 'आधिकारिक एक्सटेंशन विकास संसाधन और डेवलपर पोर्टल',
+                officialBtn1Title: 'आधिकारिक दस्तावेज़', officialBtn1Desc: 'पूर्ण विकास गाइड और API दस्तावेज़ीकरण',
+                officialBtn2Title: 'आधिकारिक होमपेज', officialBtn2Desc: 'CCW डेवलपर आधिकारिक पोर्टल',
+                footerText: '© 2026 ༺ཌༀཉི Li Tom ༃ༀད༻. सर्वाधिकार सुरक्षित।'
+            },
+            ar: {
+                navTry: 'جرب الآن', navDocs: 'الوثائق',
+                heroTitle: 'مركز امتدادات CCW', heroSubtitle: 'استكشف نظام امتدادات CCW، احصل على قوالب التطوير والموارد الرسمية',
+                helpTitle: 'مساعدة', helpDesc: 'قوالب تطوير الامتدادات لمساعدتك على البدء في تطوير امتدادات CCW',
+                helpBtn1Title: 'القالب الأساسي', helpBtn1Desc: 'قالب تطوير امتدادات TurboWarp الأساسي',
+                helpBtn2Title: 'قالب الإدخال القابل للتوسيع', helpBtn2Desc: 'قالب بمعلمات إدخال قابلة للتوسيع',
+                officialTitle: 'رسمي', officialDesc: 'الوصول إلى موارد تطوير الامتدادات الرسمية وبوابة المطور',
+                officialBtn1Title: 'الوثائق الرسمية', officialBtn1Desc: 'دليل تطوير شامل ووثائق API',
+                officialBtn2Title: 'الصفحة الرسمية', officialBtn2Desc: 'بوابة مطور CCW الرسمية',
+                footerText: '© 2026 ༺ཌༀཉི Li Tom ༃ༀད༻. جميع الحقوق محفوظة.'
+            }
+        };
+
+        function switchLang(lang) {
+            const t = translations[lang];
+            if (!t) return;
+            document.getElementById('navTry').textContent = t.navTry;
+            document.getElementById('navDocs').textContent = t.navDocs;
+            document.getElementById('heroTitle').textContent = t.heroTitle;
+            document.getElementById('heroSubtitle').textContent = t.heroSubtitle;
+            document.getElementById('helpTitle').textContent = t.helpTitle;
+            document.getElementById('helpDesc').textContent = t.helpDesc;
+            document.getElementById('helpBtn1Title').textContent = t.helpBtn1Title;
+            document.getElementById('helpBtn1Desc').textContent = t.helpBtn1Desc;
+            document.getElementById('helpBtn2Title').textContent = t.helpBtn2Title;
+            document.getElementById('helpBtn2Desc').textContent = t.helpBtn2Desc;
+            document.getElementById('officialTitle').textContent = t.officialTitle;
+            document.getElementById('officialDesc').textContent = t.officialDesc;
+            document.getElementById('officialBtn1Title').textContent = t.officialBtn1Title;
+            document.getElementById('officialBtn1Desc').textContent = t.officialBtn1Desc;
+            document.getElementById('officialBtn2Title').textContent = t.officialBtn2Title;
+            document.getElementById('officialBtn2Desc').textContent = t.officialBtn2Desc;
+            document.getElementById('footerText').textContent = t.footerText;
+            document.body.style.direction = lang === 'ar' ? 'rtl' : 'ltr';
+        }
+
+        document.getElementById('langSelect').addEventListener('change', e => switchLang(e.target.value));
+        switchLang('zh');
+    </script>
+</body>
+</html>
