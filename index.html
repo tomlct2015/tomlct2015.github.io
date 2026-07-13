@@ -353,6 +353,25 @@
             font-size: 1.1em;
         }
 
+        /* 作者区域 */
+        .author {
+            padding: 60px 20px;
+            text-align: center;
+            background: linear-gradient(180deg, #0a0a0f 0%, #1a1a2e 100%);
+        }
+
+        .author a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 1.2em;
+            transition: all 0.3s;
+        }
+
+        .author a:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
         /* 底部 */
         .footer {
             padding: 60px 20px;
@@ -364,6 +383,12 @@
         .footer-text {
             color: #808080;
             font-size: 1em;
+            margin-bottom: 8px;
+        }
+
+        .footer-credit {
+            color: #606060;
+            font-size: 0.9em;
         }
 
         /* 动画效果 */
@@ -520,6 +545,19 @@
         </div>
     </section>
 
+    <!-- 底部 -->
+    <footer class="footer">
+        <p class="footer-text" id="footerText"></p>
+        <p class="footer-credit" id="footerCredit"></p>
+    </footer>
+
+    <!-- 作者 -->
+    <section class="author">
+        <a href="https://www.ccw.site/student/63c28c9d058b205e558837ca" target="_blank" rel="noopener noreferrer" id="authorLink">
+            TheTom
+        </a>
+    </section>
+
     <script>
         // 多语言翻译数据
         const translations = {
@@ -551,7 +589,9 @@
                 stat1Label: 'Active Users',
                 stat2Label: 'Created Works',
                 stat3Label: 'Community Extensions',
-                footerText: '© 2024 CCW - Cocreate World. All rights reserved.'
+                footerText: '© 2024 CCW - Cocreate World. All rights reserved.',
+                footerCredit: 'CCW is owned by Xigua Creator',
+                authorLink: '༺ཌༀཉི Li Tom ༃ༀད༻'
             },
             zh: {
                 logo: 'CCW',
@@ -581,7 +621,9 @@
                 stat1Label: '活跃用户',
                 stat2Label: '创作作品',
                 stat3Label: '社区扩展',
-                footerText: '© 2024 CCW - 共创世界. 保留所有权利。'
+                footerText: '© 2024 CCW - 共创世界. 保留所有权利。',
+                footerCredit: 'CCW属于西瓜创客',
+                authorLink: '༺ཌༀཉི 李 Tom ༃ༀད༻'
             },
             es: {
                 logo: 'CCW',
@@ -611,7 +653,9 @@
                 stat1Label: 'Usuarios activos',
                 stat2Label: 'Obras creadas',
                 stat3Label: 'Extensiones comunitarias',
-                footerText: '© 2024 CCW - Mundo Cocreate. Todos los derechos reservados.'
+                footerText: '© 2024 CCW - Mundo Cocreate. Todos los derechos reservados.',
+                footerCredit: 'CCW pertenece a Xigua Creator',
+                authorLink: '༺ཌༀཉི Li Tom ༃ༀད༻'
             },
             hi: {
                 logo: 'CCW',
@@ -641,7 +685,9 @@
                 stat1Label: 'सक्रिय उपयोगकर्ता',
                 stat2Label: 'बनाए गए कार्य',
                 stat3Label: 'सामुदायिक एक्सटेंशन',
-                footerText: '© 2024 CCW - सह-रचना विश्व. सर्वाधिकार सुरक्षित।'
+                footerText: '© 2024 CCW - सह-रचना विश्व. सर्वाधिकार सुरक्षित।',
+                footerCredit: 'CCW, Xigua Creator का है',
+                authorLink: '༺ཌༀཉི Li Tom ༃ༀད༻'
             },
             ar: {
                 logo: 'CCW',
@@ -671,7 +717,9 @@
                 stat1Label: 'المستخدمون النشطون',
                 stat2Label: 'الأعمال المُنشأة',
                 stat3Label: 'امتدادات المجتمع',
-                footerText: '© 2024 CCW - Cocreate World. جميع الحقوق محفوظة.'
+                footerText: '© 2024 CCW - Cocreate World. جميع الحقوق محفوظة.',
+                footerCredit: 'CCW مملوك لـ Xigua Creator',
+                authorLink: '༺ཌༀཉི Li Tom ༃ༀད༻'
             }
         };
 
@@ -704,6 +752,8 @@
             document.getElementById('stat2Label').textContent = t.stat2Label;
             document.getElementById('stat3Label').textContent = t.stat3Label;
             document.getElementById('footerText').textContent = t.footerText;
+            document.getElementById('footerCredit').textContent = t.footerCredit;
+            document.getElementById('authorLink').textContent = t.authorLink;
             
             // RTL支持
             if (lang === 'ar') {
