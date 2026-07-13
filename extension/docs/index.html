@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CCW Extension Docs</title>
+    <link rel="icon" type="image/svg+xml" href="https://tomlct2015.github.io/ccw图标.svg">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: #0a0a0f;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+        /* 导航栏 */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 40px;
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(102, 126, 234, 0.2);
+        }
+        .nav-brand {
+            font-size: 1.5em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+        }
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .nav-btn {
+            padding: 10px 24px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-size: 0.95em;
+            font-weight: 500;
+            transition: all 0.3s;
+            border: 1.5px solid rgba(102, 126, 234, 0.4);
+            color: #667eea;
+            background: transparent;
+            cursor: pointer;
+        }
+        .nav-btn:hover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+        .nav-btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+        }
+        .nav-btn-primary:hover {
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+            transform: translateY(-2px);
+        }
+        .lang-select {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1.5px solid rgba(102, 126, 234, 0.4);
+            background: rgba(20, 20, 35, 0.9);
+            color: #e0e0e0;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .lang-select:hover {
+            border-color: #667eea;
+            box-shadow: 0 0 15px rgba(102, 126, 234, 0.3);
+        }
+        /* Hero */
+        .hero {
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 120px 20px 80px;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.08) 0%, transparent 50%);
+            animation: rotate 30s linear infinite;
+        }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .hero-content {
+            text-align: center;
+            z-index: 1;
+            max-width: 900px;
+        }
+        .hero-title {
+            font-size: 3.5em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+        }
+        .hero-subtitle {
+            font-size: 1.3em;
+            color: #b0b0b0;
+            line-height: 1.8;
+            margin-bottom: 40px;
+        }
+        .hero-link {
+            display: inline-block;
+            padding: 16px 40px;
+            border-radius: 30px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        .hero-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
+        }
+        /* 特性区域 */
+        .features {
+            padding: 100px 20px;
+            background: linear-gradient(180deg, #0a0a0f, #1a1a2e);
+        }
+        .section-title {
+            text-align: center;
+            font-size: 2.8em;
+            margin-bottom: 60px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 35px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .feature-card {
+            background: rgba(30, 30, 46, 0.6);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+        .feature-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(102, 126, 234, 0.5);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.15);
+        }
+        .feature-card:hover::before { transform: scaleX(1); }
+        .feature-icon { font-size: 3em; margin-bottom: 20px; }
+        .feature-title { font-size: 1.4em; color: #667eea; margin-bottom: 12px; }
+        .feature-desc { color: #b0b0b0; line-height: 1.8; font-size: 1em; }
+        /* 底部 */
+        .footer {
+            padding: 40px 20px;
+            text-align: center;
+            background: #0a0a0f;
+            border-top: 1px solid rgba(102, 126, 234, 0.2);
+        }
+        .footer-text { color: #808080; font-size: 0.95em; margin-bottom: 6px; }
+        .footer-credit { color: #606060; font-size: 0.85em; }
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .navbar { padding: 12px 20px; flex-wrap: wrap; gap: 10px; }
+            .nav-links { flex-wrap: wrap; justify-content: center; }
+            .hero-title { font-size: 2.2em; }
+            .hero-subtitle { font-size: 1.1em; }
+            .section-title { font-size: 2em; }
+            .features-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <a href="../" class="nav-brand">CCW Extensions</a>
+        <div class="nav-links">
+            <a href="https://www.ccw.site/gandi/extension" class="nav-btn nav-btn-primary" id="navTry" target="_blank" rel="noopener noreferrer">立即尝试</a>
+            <a href="help/" class="nav-btn" id="navDocs">打开文档</a>
+            <select class="lang-select" id="langSelect">
+                <option value="zh">🇨🇳 中文</option>
+                <option value="en">🇬🇧 English</option>
+                <option value="es">🇪🇸 Español</option>
+                <option value="hi">🇮🇳 हिन्दी</option>
+                <option value="ar">🇸🇦 العربية</option>
+            </select>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title" id="heroTitle">CCW 扩展生态</h1>
+            <p class="hero-subtitle" id="heroSubtitle">
+                CCW 拥有开放且充满活力的扩展生态系统。任何人都可以自由创建自定义扩展，
+                使用 Blocky 可视化编辑积木样式，通过社区评审与官方鉴定机制确保质量，
+                让每一个创意都能找到实现的方式。
+            </p>
+            <a href="https://assets.ccw.site/extensions" class="hero-link" id="heroLink" target="_blank" rel="noopener noreferrer">浏览扩展仓库</a>
+        </div>
+    </section>
+
+    <!-- 特性 -->
+    <section class="features">
+        <h2 class="section-title" id="featuresTitle">生态特性</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🎨</div>
+                <h3 class="feature-title" id="f1Title">自定义扩展</h3>
+                <p class="feature-desc" id="f1Desc">任何人都可以创建自己的 Scratch 扩展，定义独特的积木和功能，扩展创作的可能性边界。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🧩</div>
+                <h3 class="feature-title" id="f2Title">Blocky 自由编辑</h3>
+                <p class="feature-desc" id="f2Desc">使用 Blocky 可视化编辑器自由设计积木样式，灵活定义积木外观、参数和交互方式。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">👥</div>
+                <h3 class="feature-title" id="f3Title">大众审评机制</h3>
+                <p class="feature-desc" id="f3Desc">社区驱动的评审系统，所有扩展都经过用户投票和评价，确保扩展的质量和实用性。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">✅</div>
+                <h3 class="feature-title" id="f4Title">官方鉴定扩展</h3>
+                <p class="feature-desc" id="f4Desc">通过官方审核的扩展获得认证标识，保证安全性、稳定性和最佳实践，让用户放心使用。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 底部 -->
+    <footer class="footer">
+        <p class="footer-text" id="footerText">© 2026 ༺ཌༀཉི Li Tom ༃ༀད༻. All rights reserved.</p>
+        <p class="footer-credit"></p>
+    </footer>
+
+    <script>
+        const translations = {
+            zh: {
+                navTry: '立即尝试', navDocs: '打开文档',
+                heroTitle: 'CCW 扩展生态',
+                heroSubtitle: 'CCW 拥有开放且充满活力的扩展生态系统。任何人都可以自由创建自定义扩展，使用 Blocky 可视化编辑积木样式，通过社区评审与官方鉴定机制确保质量，让每一个创意都能找到实现的方式。',
+                heroLink: '浏览扩展仓库',
+                featuresTitle: '生态特性',
+                f1Title: '自定义扩展', f1Desc: '任何人都可以创建自己的 Scratch 扩展，定义独特的积木和功能，扩展创作的可能性边界。',
+                f2Title: 'Blocky 自由编辑', f2Desc: '使用 Blocky 可视化编辑器自由设计积木样式，灵活定义积木外观、参数和交互方式。',
+                f3Title: '大众审评机制', f3Desc: '社区驱动的评审系统，所有扩展都经过用户投票和评价，确保扩展的质量和实用性。',
+                f4Title: '官方鉴定扩展', f4Desc: '通过官方审核的扩展获得认证标识，保证安全性、稳定性和最佳实践，让用户放心使用。',
+                footerText: '© 2026 ༺ཌༀཉི 李 Tom ༃ༀད༻. 保留所有权利。'
+            },
+            en: {
+                navTry: 'Try Now', navDocs: 'Documentation',
+                heroTitle: 'CCW Extension Ecosystem',
+                heroSubtitle: 'CCW has an open and vibrant extension ecosystem. Anyone can freely create custom extensions, visually edit block styles with Blocky, and ensure quality through community review and official verification.',
+                heroLink: 'Browse Extensions',
+                featuresTitle: 'Ecosystem Features',
+                f1Title: 'Custom Extensions', f1Desc: 'Anyone can create their own Scratch extensions, defining unique blocks and features to expand creative possibilities.',
+                f2Title: 'Blocky Visual Editor', f2Desc: 'Use the Blocky visual editor to freely design block styles, flexibly defining block appearance, parameters, and interactions.',
+                f3Title: 'Community Review', f3Desc: 'A community-driven review system where all extensions are voted and rated by users to ensure quality and usefulness.',
+                f4Title: 'Official Verified', f4Desc: 'Extensions that pass official review receive a certification badge, guaranteeing security, stability, and best practices.',
+                footerText: '© 2026 ༺ཌༀཉི Li Tom ༃ༀད༻. All rights reserved.'
+            },
+            es: {
+                navTry: 'Probar ahora', navDocs: 'Documentación',
+                heroTitle: 'Ecosistema de extensiones CCW',
+                heroSubtitle: 'CCW tiene un ecosistema de extensiones abierto y vibrante. Cualquiera puede crear extensiones personalizadas, editar estilos de bloques visualmente con Blocky, y asegurar la calidad mediante revisión comunitaria y verificación oficial.',
+                heroLink: 'Explorar extensiones',
+                featuresTitle: 'Características del ecosistema',
+                f1Title: 'Extensiones personalizadas', f1Desc: 'Cualquiera puede crear sus propias extensiones de Scratch, definiendo bloques y funciones únicas.',
+                f2Title: 'Editor visual Blocky', f2Desc: 'Usa el editor visual Blocky para diseñar libremente estilos de bloques, parámetros e interacciones.',
+                f3Title: 'Revisión comunitaria', f3Desc: 'Sistema de revisión impulsado por la comunidad donde los usuarios votan y evalúan las extensiones.',
+                f4Title: 'Verificación oficial', f4Desc: 'Las extensiones que pasan la revisión oficial reciben una insignia de certificación de seguridad y estabilidad.',
+                footerText: '© 2026 ༺ཌༀཉི Li Tom ༃ༀད༻. Todos los derechos reservados.'
+            },
+            hi: {
+                navTry: 'अभी आज़माएं', navDocs: 'दस्तावेज़ीकरण',
+                heroTitle: 'CCW एक्सटेंशन इकोसिस्टम',
+                heroSubtitle: 'CCW का एक खुला और जीवंत एक्सटेंशन इकोसिस्टम है। कोई भी कस्टम एक्सटेंशन बना सकता है, Blocky से ब्लॉक शैलियाँ संपादित कर सकता है, और सामुदायिक समीक्षा व आधिकारिक सत्यापन से गुणवत्ता सुनिश्चित कर सकता है।',
+                heroLink: 'एक्सटेंशन ब्राउज़ करें',
+                featuresTitle: 'इकोसिस्टम विशेषताएं',
+                f1Title: 'कस्टम एक्सटेंशन', f1Desc: 'कोई भी अपने Scratch एक्सटेंशन बना सकता है, अद्वितीय ब्लॉक और सुविधाएं परिभाषित कर सकता है।',
+                f2Title: 'Blocky विज़ुअल एडिटर', f2Desc: 'Blocky विज़ुअल एडिटर से ब्लॉक शैलियाँ, पैरामीटर और इंटरैक्शन स्वतंत्र रूप से डिज़ाइन करें।',
+                f3Title: 'सामुदायिक समीक्षा', f3Desc: 'समुदाय-संचालित समीक्षा प्रणाली जहां उपयोगकर्ता एक्सटेंशन को वोट और रेट करते हैं।',
+                f4Title: 'आधिकारिक सत्यापित', f4Desc: 'आधिकारिक समीक्षा पास करने वाले एक्सटेंशन को सुरक्षा और स्थिरता की प्रमाणन बैज मिलता है।',
+                footerText: '© 2026 ༺ཌༀཉི Li Tom ༃ༀད༻. सर्वाधिकार सुरक्षित।'
+            },
+            ar: {
+                navTry: 'جرب الآن', navDocs: 'الوثائق',
+                heroTitle: 'نظام CCW البيئي للامتدادات',
+                heroSubtitle: 'يمتلك CCW نظامًا بيئيًا مفتوحًا وحيويًا للامتدادات. يمكن لأي شخص إنشاء امتدادات مخصصة، وتحرير أنماط الكتل بصريًا باستخدام Blocky، وضمان الجودة من خلال مراجعة المجتمع والتحقق الرسمي.',
+                heroLink: 'تصفح الامتدادات',
+                featuresTitle: 'خصائص النظام البيئي',
+                f1Title: 'امتدادات مخصصة', f1Desc: 'يمكن لأي شخص إنشاء امتدادات Scratch الخاصة به، وتحديد كتل وميزات فريدة.',
+                f2Title: 'محرر Blocky المرئي', f2Desc: 'استخدم محرر Blocky المرئي لتصميم أنماط الكتل والمعلمات والتفاعلات بحرية.',
+                f3Title: 'مراجعة المجتمع', f3Desc: 'نظام مراجعة يعتمد على المجتمع حيث يصوت المستخدمون ويقيّمون الامتدادات.',
+                f4Title: 'تحقق رسمي', f4Desc: 'الامتدادات التي تجتاز المراجعة الرسمية تحصل على شارة اعتماد تضمن الأمان والاستقرار.',
+                footerText: '© 2026 ༺ཌༀཉི Li Tom ༃ༀད༻. جميع الحقوق محفوظة.'
+            }
+        };
+
+        function switchLang(lang) {
+            const t = translations[lang];
+            if (!t) return;
+            document.getElementById('navTry').textContent = t.navTry;
+            document.getElementById('navDocs').textContent = t.navDocs;
+            document.getElementById('heroTitle').textContent = t.heroTitle;
+            document.getElementById('heroSubtitle').textContent = t.heroSubtitle;
+            document.getElementById('heroLink').textContent = t.heroLink;
+            document.getElementById('featuresTitle').textContent = t.featuresTitle;
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById('f' + i + 'Title').textContent = t['f' + i + 'Title'];
+                document.getElementById('f' + i + 'Desc').textContent = t['f' + i + 'Desc'];
+            }
+            document.getElementById('footerText').textContent = t.footerText;
+            document.body.style.direction = lang === 'ar' ? 'rtl' : 'ltr';
+        }
+
+        document.getElementById('langSelect').addEventListener('change', e => switchLang(e.target.value));
+        switchLang('zh');
+    </script>
+</body>
+</html>
