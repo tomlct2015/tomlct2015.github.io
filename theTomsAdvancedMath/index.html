@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Math</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a1040 50%, #0e102a 100%);
+            min-height: 100vh; padding: 20px; color: #e0e0e0;
+        }
+        .container {
+            max-width: 1000px; margin: 0 auto;
+            background: rgba(20, 20, 42, 0.95); border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(171,178,255,0.15);
+            overflow: hidden; backdrop-filter: blur(10px);
+            border: 1px solid rgba(171,178,255,0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #0e102a 0%, #1a1a4e 50%, #2a2060 100%);
+            color: white; padding: 40px; text-align: center;
+            position: relative; overflow: hidden;
+        }
+        .header::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at 30% 50%, rgba(171,178,255,0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        .header h1 { font-size: 2.5em; margin-bottom: 15px; position: relative; z-index: 1; }
+        .header p { opacity: 0.95; font-size: 1.2em; position: relative; z-index: 1; }
+        .math-symbols {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            font-size: 2em; opacity: 0.06; pointer-events: none;
+            overflow: hidden; word-break: break-all;
+            font-family: 'Times New Roman', serif; line-height: 1.4;
+            color: #abb2ff;
+        }
+        .content { padding: 40px; }
+        .info-section {
+            margin-bottom: 30px; padding: 25px;
+            background: rgba(30, 30, 56, 0.6); border-radius: 12px;
+            border-left: 4px solid #abb2ff; backdrop-filter: blur(5px);
+            border: 1px solid rgba(171,178,255,0.08);
+        }
+        .info-section h2 {
+            color: #abb2ff; margin-bottom: 15px; font-size: 1.5em;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .info-section p { line-height: 1.8; margin-bottom: 10px; color: #d0d0d0; }
+        .info-section ul { margin-left: 25px; line-height: 1.8; color: #d0d0d0; }
+        .info-section li { margin-bottom: 8px; }
+        .feature-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px; margin-top: 20px;
+        }
+        .feature-card {
+            background: rgba(30, 30, 56, 0.5); padding: 20px; border-radius: 10px;
+            border: 1px solid rgba(171,178,255,0.1); transition: all 0.3s;
+        }
+        .feature-card:hover {
+            background: rgba(171,178,255,0.08); transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(171,178,255,0.2); border-color: rgba(171,178,255,0.3);
+        }
+        .feature-card h3 { color: #abb2ff; margin-bottom: 10px; font-size: 1.2em; }
+        .feature-card p { color: #b0b0b0; font-size: 0.95em; line-height: 1.6; }
+        .button-group { display: flex; gap: 20px; margin-top: 30px; flex-wrap: wrap; }
+        .btn {
+            flex: 1; min-width: 200px; padding: 18px 35px; border: none; border-radius: 10px;
+            font-size: 1.1em; font-weight: 600; cursor: pointer; transition: all 0.3s;
+            text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .btn-primary { background: linear-gradient(135deg, #4a4aff 0%, #abb2ff 100%); color: white; }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(171,178,255,0.4); }
+        .btn-secondary {
+            background: rgba(50, 50, 80, 0.8); color: #e0e0e0;
+            border: 1px solid rgba(171,178,255,0.15);
+        }
+        .btn-secondary:hover {
+            background: rgba(70, 70, 100, 0.9); border-color: rgba(171,178,255,0.4); transform: translateY(-3px);
+        }
+        .tech-stack { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
+        .tech-tag {
+            padding: 6px 15px; background: rgba(171,178,255,0.15); color: #abb2ff;
+            border-radius: 20px; font-size: 0.9em; border: 1px solid rgba(171,178,255,0.25);
+        }
+        .stats {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px; margin-top: 20px;
+        }
+        .stat-card {
+            background: rgba(30, 30, 56, 0.5); padding: 20px; border-radius: 10px;
+            text-align: center; border: 1px solid rgba(171,178,255,0.1);
+        }
+        .stat-number { font-size: 2em; font-weight: bold; color: #abb2ff; margin-bottom: 5px; }
+        .stat-label { color: #b0b0b0; font-size: 0.9em; }
+        .tree-section { font-family: 'Consolas', 'Monaco', monospace; line-height: 2; color: #c0c0c0; font-size: 0.95em; }
+        .highlight-tag {
+            display: inline-block; padding: 3px 10px; background: rgba(171,178,255,0.15);
+            color: #abb2ff; border-radius: 5px; font-size: 0.85em; margin-left: 8px;
+        }
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2em; }
+            .button-group { flex-direction: column; }
+            .btn { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="math-symbols">∑ ∏ ∫ ∂ ∇ ∞ ≈ ≠ ≤ ≥ ± × ÷ √ π θ α β γ δ ε λ μ σ φ ω Δ Ω ∮ ∯ ∇ × · ⊕ ⊗ ∈ ∉ ⊂ ⊃ ∪ ∩ ∀ ∃ ¬ ∧ ∨ ⇒ ⇔ ∑ ∏ ∫ ∂ ∇ ∞ ≈ ≠ ≤ ≥ ± × ÷ √ π θ α β γ δ ε λ μ σ φ ω Δ Ω ∮ ∯ ∇ × · ⊕ ⊗ ∈ ∉ ⊂ ⊃ ∪ ∩ ∀ ∃ ¬ ∧ ∨ ⇒ ⇔</div>
+            <h1 id="mainTitle">🧮 Tom 的高级数学</h1>
+            <p id="mainSubtitle">为Scratch带来强大的数学计算能力</p>
+            <div style="margin-top: 20px;">
+                <select id="languageSelector" style="padding: 8px 15px; border-radius: 8px; border: 2px solid rgba(171,178,255,0.3); background: rgba(255,255,255,0.1); color: white; font-size: 14px; cursor: pointer;">
+                    <option value="en">🇬🇧 English</option>
+                    <option value="zh">🇨🇳 中文</option>
+                    <option value="es">🇪🇸 Español</option>
+                    <option value="hi">🇮🇳 हिन्दी</option>
+                    <option value="ar">🇸🇦 العربية</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="info-section">
+                <h2 id="introTitle">📋 扩展简介</h2>
+                <p id="introText1">
+                    <strong>Tom 的高级数学 (Advanced Math)</strong> 是一个为Scratch设计的高级数学工具扩展，提供了从基础运算到高等数学的全方位计算能力。
+                    支持比较运算、幂次与对数、双曲函数、三角函数（高精度）、求和、求积、阶乘等基础数学功能。
+                </p>
+                <p id="introText2">
+                    扩展还包含表达式计算引擎（支持变量替换和函数调用）、集合运算（并集、交集、差集、子集判断）、矩阵运算（创建、乘法、转置、行列式、逆矩阵）、数学常量、极限、定积分等高等数学工具，让你的Scratch项目拥有强大的数学计算能力。
+                </p>
+            </div>
+
+            <div class="info-section">
+                <h2 id="featuresTitle">✨ 核心功能</h2>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h3 id="feature1Title">📊 比较与幂次</h3>
+                        <p id="feature1Text">多条件比较运算（=、≠、>、<、≥、≤），自然对数、常用对数、任意底数对数、幂运算、 tetration（超幂）</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3 id="feature2Title">📐 三角与双曲函数</h3>
+                        <p id="feature2Text">高精度三角函数（sin/cos/tan/cot/sec/csc），双曲函数（sinh/cosh/tanh），角度弧度互转</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3 id="feature3Title">🔢 求和与求积</h3>
+                        <p id="feature3Text">支持可扩展参数的求和与求积积木，阶乘计算，排列组合，列表平均值与加权平均值</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3 id="feature4Title">🧮 表达式引擎</h3>
+                        <p id="feature4Text">强大的表达式计算引擎，支持变量替换、自定义函数调用、复杂数学表达式求值</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3 id="feature5Title">📦 集合运算</h3>
+                        <p id="feature5Text">创建集合、列表转集合、并集、交集、差集、子集判断、元素归属、集合基数、空集</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3 id="feature6Title">📈 矩阵与高等数学</h3>
+                        <p id="feature6Text">矩阵创建/乘法/转置/行列式/逆矩阵，数学常量（π/e/φ/√2），极限计算，定积分</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h2 id="treeTitle">🗂️ 积木分类</h2>
+                <div class="tree-section" id="treeContent">
+📊 比较运算 <br>
+   ├── 多条件比较（= ≠ > < ≥ ≤）<br>
+   └── 区间判断 <br>
+📈 幂次函数 <br>
+   ├── 自然对数 ln / 常用对数 log₁₀ <br>
+   ├── 任意底数对数 logₙ <br>
+   ├── 幂运算 aⁿ <br>
+   └── 超幂（tetration）<br>
+📐 三角函数（高精度）<br>
+   ├── 角度 ↔ 弧度 <br>
+   └── sin/cos/tan/cot/sec/csc/sinh/cosh/tanh <br>
+🔢 求和 & 求积 <br>
+   ├── 可扩展参数的求和积木 <br>
+   └── 阶乘 n! <br>
+🧮 表达式计算 <br>
+   ├── 基础表达式求值 <br>
+   ├── 带变量替换的表达式 <br>
+   └── 带自定义函数的表达式 <br>
+📦 集合 <br>
+   ├── 创建集合 / 列表转集合 <br>
+   ├── 集合相等 / 子集 / 元素归属 <br>
+   ├── 并集 / 交集 / 差集 <br>
+   └── 集合基数 / 空集 <br>
+📈 矩阵 <br>
+   ├── 创建矩阵 / 快捷二阶矩阵 / 单位矩阵 <br>
+   ├── 矩阵乘法 / 转置 <br>
+   └── 行列式 / 逆矩阵 <br>
+∞ 数学常量 & 趋势 <br>
+   ├── π / e / φ / √2 / ∞ <br>
+   └── 极限（左极限/右极限/双侧）<br>
+∫ 积分 <br>
+   └── 定积分（支持自定义函数和精度）
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h2 id="techTitle">🔧 技术特性</h2>
+                <p id="techText">
+                    <strong id="compatLabel">平台兼容性：</strong> CCW (共创世界)、TurboWarp
+                </p>
+                <div class="tech-stack">
+                    <span class="tech-tag">CCW</span>
+                    <span class="tech-tag">TurboWarp</span>
+                    <span class="tech-tag" id="tagExpandable">可扩展积木</span>
+                    <span class="tech-tag" id="tagExpression">表达式引擎</span>
+                    <span class="tech-tag" id="tagBilingual">中英双语</span>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h2 id="statsTitle">📈 扩展数据</h2>
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-number">50+</div>
+                        <div class="stat-label" id="stat1Label">积木数量</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">10+</div>
+                        <div class="stat-label" id="stat2Label">功能分类</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">2</div>
+                        <div class="stat-label" id="stat3Label">支持平台</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">100%</div>
+                        <div class="stat-label" id="stat4Label">开源免费</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h2 id="usageTitle">📖 使用说明</h2>
+                <ul id="usageList">
+                    <li><strong>安装扩展：</strong> 在CCW Gandi编辑器中点击"扩展"，打开自定义扩展，点击"从URL加载"，输入扩展ID "theTomsAdvancedMath" 即可</li>
+                    <li><strong>比较运算：</strong> 使用多条件比较积木进行数值大小判断，支持链式比较</li>
+                    <li><strong>表达式计算：</strong> 输入数学表达式如 "2+3*4" 或带变量的 "2+f(x)"，扩展会自动求值</li>
+                    <li><strong>集合运算：</strong> 创建集合后可以进行并集、交集、差集等操作，判断子集关系</li>
+                    <li><strong>矩阵运算：</strong> 创建矩阵后进行乘法、转置、求行列式、求逆矩阵等操作</li>
+                </ul>
+            </div>
+
+            <div class="button-group">
+                <a href="https://assets.ccw.site/extension/theTomsAdvancedMath"
+                   class="btn btn-primary" target="_blank" rel="noopener noreferrer" id="btnCCW">
+                    🚀 前往CCW查看
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const translations = {
+            en: {
+                title: "Tom's Advanced Math",
+                subtitle: 'Powerful math computation for Scratch',
+                introTitle: '📋 Extension Introduction',
+                introText1: '<strong>Advanced Math</strong> is a high-level math toolkit for Scratch, providing comprehensive computation from basic operations to advanced mathematics. It supports comparison, powers & logarithms, hyperbolic functions, trigonometric functions (high precision), summation, multiplication, factorial, and more.',
+                introText2: 'The extension also includes an expression evaluation engine (with variable substitution and function calls), set operations (union, intersection, difference, subset), matrix operations (creation, multiplication, transpose, determinant, inverse), math constants, limits, and definite integrals.',
+                featuresTitle: '✨ Core Features',
+                feature1Title: '📊 Comparison & Power',
+                feature1Text: 'Multi-condition comparisons (=, ≠, >, <, ≥, ≤), natural log, common log, arbitrary base log, power, tetration',
+                feature2Title: '📐 Trig & Hyperbolic',
+                feature2Text: 'High-precision trig functions (sin/cos/tan/cot/sec/csc), hyperbolic functions (sinh/cosh/tanh), angle-radian conversion',
+                feature3Title: '🔢 Sum & Product',
+                feature3Text: 'Expandable summation and product blocks, factorial, permutation/combination, list average and weighted average',
+                feature4Title: '🧮 Expression Engine',
+                feature4Text: 'Powerful expression evaluation engine with variable substitution, custom function calls, and complex math expressions',
+                feature5Title: '📦 Set Operations',
+                feature5Text: 'Create sets, list to set, union, intersection, difference, subset check, element membership, cardinality, empty set',
+                feature6Title: '📈 Matrix & Advanced Math',
+                feature6Text: 'Matrix creation/multiplication/transpose/determinant/inverse, math constants (π/e/φ/√2), limits, definite integrals',
+                treeTitle: '🗂️ Block Categories',
+                techTitle: '🔧 Technical Features',
+                compatLabel: 'Platform Compatibility: ',
+                tagExpandable: 'Expandable Blocks',
+                tagExpression: 'Expression Engine',
+                tagBilingual: 'Bilingual',
+                statsTitle: '📈 Extension Statistics',
+                stat1Label: 'Number of Blocks',
+                stat2Label: 'Feature Categories',
+                stat3Label: 'Supported Platforms',
+                stat4Label: 'Open Source',
+                usageTitle: '📖 Usage Instructions',
+                usageList: [
+                    '<strong>Install:</strong> Click "Extensions" in CCW Gandi editor, open custom extensions, click "Load from URL", and enter "theTomsAdvancedMath"',
+                    '<strong>Comparison:</strong> Use multi-condition comparison blocks for value checking with chain comparison support',
+                    '<strong>Expressions:</strong> Enter math expressions like "2+3*4" or with variables "2+f(x)" for automatic evaluation',
+                    '<strong>Sets:</strong> Create sets and perform union, intersection, difference operations, check subset relations',
+                    '<strong>Matrix:</strong> Create matrices and perform multiplication, transpose, determinant, inverse operations'
+                ],
+                btnCCW: '🚀 View on CCW'
+            },
+            zh: {
+                title: 'Tom 的高级数学',
+                subtitle: '为Scratch带来强大的数学计算能力',
+                introTitle: '📋 扩展简介',
+                introText1: '<strong>Tom 的高级数学 (Advanced Math)</strong> 是一个为Scratch设计的高级数学工具扩展，提供了从基础运算到高等数学的全方位计算能力。支持比较运算、幂次与对数、双曲函数、三角函数（高精度）、求和、求积、阶乘等基础数学功能。',
+                introText2: '扩展还包含表达式计算引擎（支持变量替换和函数调用）、集合运算（并集、交集、差集、子集判断）、矩阵运算（创建、乘法、转置、行列式、逆矩阵）、数学常量、极限、定积分等高等数学工具，让你的Scratch项目拥有强大的数学计算能力。',
+                featuresTitle: '✨ 核心功能',
+                feature1Title: '📊 比较与幂次',
+                feature1Text: '多条件比较运算（=、≠、>、<、≥、≤），自然对数、常用对数、任意底数对数、幂运算、tetration（超幂）',
+                feature2Title: '📐 三角与双曲函数',
+                feature2Text: '高精度三角函数（sin/cos/tan/cot/sec/csc），双曲函数（sinh/cosh/tanh），角度弧度互转',
+                feature3Title: '🔢 求和与求积',
+                feature3Text: '支持可扩展参数的求和与求积积木，阶乘计算，排列组合，列表平均值与加权平均值',
+                feature4Title: '🧮 表达式引擎',
+                feature4Text: '强大的表达式计算引擎，支持变量替换、自定义函数调用、复杂数学表达式求值',
+                feature5Title: '📦 集合运算',
+                feature5Text: '创建集合、列表转集合、并集、交集、差集、子集判断、元素归属、集合基数、空集',
+                feature6Title: '📈 矩阵与高等数学',
+                feature6Text: '矩阵创建/乘法/转置/行列式/逆矩阵，数学常量（π/e/φ/√2），极限计算，定积分',
+                treeTitle: '🗂️ 积木分类',
+                techTitle: '🔧 技术特性',
+                compatLabel: '平台兼容性：',
+                tagExpandable: '可扩展积木',
+                tagExpression: '表达式引擎',
+                tagBilingual: '中英双语',
+                statsTitle: '📈 扩展数据',
+                stat1Label: '积木数量',
+                stat2Label: '功能分类',
+                stat3Label: '支持平台',
+                stat4Label: '开源免费',
+                usageTitle: '📖 使用说明',
+                usageList: [
+                    '<strong>安装扩展：</strong> 在CCW Gandi编辑器中点击"扩展"，打开自定义扩展，点击"从URL加载"，输入扩展ID "theTomsAdvancedMath" 即可',
+                    '<strong>比较运算：</strong> 使用多条件比较积木进行数值大小判断，支持链式比较',
+                    '<strong>表达式计算：</strong> 输入数学表达式如 "2+3*4" 或带变量的 "2+f(x)"，扩展会自动求值',
+                    '<strong>集合运算：</strong> 创建集合后可以进行并集、交集、差集等操作，判断子集关系',
+                    '<strong>矩阵运算：</strong> 创建矩阵后进行乘法、转置、求行列式、求逆矩阵等操作'
+                ],
+                btnCCW: '🚀 前往CCW查看'
+            },
+            es: {
+                title: 'Matemáticas Avanzadas de Tom',
+                subtitle: 'Potente cálculo matemático para Scratch',
+                introTitle: '📋 Introducción',
+                introText1: '<strong>Advanced Math</strong> es un conjunto de herramientas matemáticas para Scratch, que ofrece cálculo desde operaciones básicas hasta matemáticas avanzadas. Soporta comparación, potencias y logaritmos, funciones hiperbólicas, trigonométricas, sumas, productos y factoriales.',
+                introText2: 'La extensión también incluye un motor de evaluación de expresiones, operaciones de conjuntos, operaciones de matrices, constantes matemáticas, límites e integrales definidas.',
+                featuresTitle: '✨ Características principales',
+                feature1Title: '📊 Comparación y Potencias',
+                feature1Text: 'Comparaciones múltiples (=, ≠, >, <, ≥, ≤), logaritmo natural, logaritmo común, potencia, tetración',
+                feature2Title: '📐 Trig e Hiperbólica',
+                feature2Text: 'Funciones trigonométricas de alta precisión, funciones hiperbólicas, conversión ángulo-radián',
+                feature3Title: '🔢 Suma y Producto',
+                feature3Text: 'Bloques de suma y producto expandibles, factorial, permutación, promedio y promedio ponderado',
+                feature4Title: '🧮 Motor de Expresiones',
+                feature4Text: 'Motor de evaluación con sustitución de variables, llamadas a funciones personalizadas',
+                feature5Title: '📦 Operaciones de Conjuntos',
+                feature5Text: 'Crear conjuntos, unión, intersección, diferencia, subconjunto, cardinalidad, conjunto vacío',
+                feature6Title: '📈 Matrices y Matemáticas Avanzadas',
+                feature6Text: 'Creación/multiplicación/transpose/determinante/inversa de matrices, constantes, límites, integrales',
+                treeTitle: '🗂️ Categorías de bloques',
+                techTitle: '🔧 Características técnicas',
+                compatLabel: 'Compatibilidad: ',
+                tagExpandable: 'Bloques expandibles',
+                tagExpression: 'Motor de expresiones',
+                tagBilingual: 'Bilingüe',
+                statsTitle: '📈 Estadísticas',
+                stat1Label: 'Número de bloques',
+                stat2Label: 'Categorías',
+                stat3Label: 'Plataformas',
+                stat4Label: 'Código abierto',
+                usageTitle: '📖 Instrucciones',
+                usageList: [
+                    '<strong>Instalar:</strong> En el editor CCW Gandi, haz clic en "Extensiones", "Cargar desde URL" e introduce "theTomsAdvancedMath"',
+                    '<strong>Comparación:</strong> Usa bloques de comparación múltiple con soporte de comparación en cadena',
+                    '<strong>Expresiones:</strong> Introduce expresiones como "2+3*4" o con variables "2+f(x)"',
+                    '<strong>Conjuntos:</strong> Crea conjuntos y realiza unión, intersección, diferencia',
+                    '<strong>Matrices:</strong> Crea matrices y realiza multiplicación, transposición, determinante, inversa'
+                ],
+                btnCCW: '🚀 Ver en CCW'
+            },
+            hi: {
+                title: 'Tom की उन्नत गणित',
+                subtitle: 'Scratch के लिए शक्तिशाली गणितीय गणना',
+                introTitle: '📋 परिचय',
+                introText1: '<strong>Advanced Math</strong> Scratch के लिए एक उच्च-स्तरीय गणित टूलकिट है, जो बुनियादी गणनाओं से लेकर उन्नत गणित तक की क्षमता प्रदान करता है।',
+                introText2: 'एक्सटेंशन में अभिव्यक्ति मूल्यांकन इंजन, सेट ऑपरेशन, मैट्रिक्स ऑपरेशन, गणितीय स्थिरांक, सीमा और निश्चित समाकलन शामिल हैं।',
+                featuresTitle: '✨ मुख्य विशेषताएं',
+                feature1Title: '📊 तुलना और घात',
+                feature1Text: 'बहु-शर्त तुलना, प्राकृतिक लघुगणक, घात, टेट्रेशन',
+                feature2Title: '📐 त्रिकोणमिति और अतिपरवलयिक',
+                feature2Text: 'उच्च-सटीक त्रिकोणमिति फ़ंक्शन, अतिपरवलयिक फ़ंक्शन',
+                feature3Title: '🔢 योग और गुणन',
+                feature3Text: 'विस्तार योग्य योग और गुणन ब्लॉक, क्रमगुणित, औसत',
+                feature4Title: '🧮 अभिव्यक्ति इंजन',
+                feature4Text: 'चर प्रतिस्थापन और कस्टम फ़ंक्शन कॉल के साथ अभिव्यक्ति मूल्यांकन',
+                feature5Title: '📦 सेट ऑपरेशन',
+                feature5Text: 'सेट बनाएं, संघ, प्रतिच्छेदन, अंतर, उपसमुच्चय, कार्डिनैलिटी',
+                feature6Title: '📈 मैट्रिक्स और उन्नत गणित',
+                feature6Text: 'मैट्रिक्स गुणन/ट्रांसपोज़/डिटरमिनेंट/इनवर्स, स्थिरांक, सीमा, समाकलन',
+                treeTitle: '🗂️ ब्लॉक श्रेणियां',
+                techTitle: '🔧 तकनीकी विशेषताएं',
+                compatLabel: 'प्लेटफॉर्म संगतता: ',
+                tagExpandable: 'विस्तार योग्य ब्लॉक',
+                tagExpression: 'अभिव्यक्ति इंजन',
+                tagBilingual: 'द्विभाषी',
+                statsTitle: '📈 सांख्यिकी',
+                stat1Label: 'ब्लॉक संख्या',
+                stat2Label: 'श्रेणियां',
+                stat3Label: 'प्लेटफॉर्म',
+                stat4Label: 'ओपन सोर्स',
+                usageTitle: '📖 उपयोग के निर्देश',
+                usageList: [
+                    '<strong>इंस्टॉल:</strong> CCW Gandi संपादक में "URL से लोड करें" चुनें और "theTomsAdvancedMath" दर्ज करें',
+                    '<strong>तुलना:</strong> बहु-शर्त तुलना ब्लॉक का उपयोग करें',
+                    '<strong>अभिव्यक्ति:</strong> "2+3*4" या "2+f(x)" जैसे अभिव्यक्ति दर्ज करें',
+                    '<strong>सेट:</strong> सेट बनाएं और संघ, प्रतिच्छेदन, अंतर का उपयोग करें',
+                    '<strong>मैट्रिक्स:</strong> मैट्रिक्स गुणन, ट्रांसपोज़, डिटरमिनेंट, इनवर्स'
+                ],
+                btnCCW: '🚀 CCW पर देखें'
+            },
+            ar: {
+                title: 'رياضيات توم المتقدمة',
+                subtitle: 'حسابات رياضية قوية لـ Scratch',
+                introTitle: '📋 مقدمة',
+                introText1: '<strong>Advanced Math</strong> هو مجموعة أدوات رياضية لـ Scratch، يوفر حسابات من العمليات الأساسية إلى الرياضيات المتقدمة.',
+                introText2: 'يتضمن الامتداد محرك تقييم التعبيرات، عمليات المجموعات، عمليات المصفوفات، الثوابت الرياضية، النهايات والتكاملات المحددة.',
+                featuresTitle: '✨ الميزات الرئيسية',
+                feature1Title: '📊 مقارنة وأس',
+                feature1Text: 'مقارنات متعددة، لوغاريتم طبيعي، أس، تترايشن',
+                feature2Title: '📐 مثلثات وزائدية',
+                feature2Text: 'دوال مثلثية عالية الدقة، دوال زائدية',
+                feature3Title: '🔢 جمع وضرب',
+                feature3Text: 'كتل جمع وضرب قابلة للتوسيع، مضروب، متوسط',
+                feature4Title: '🧮 محرك التعبيرات',
+                feature4Text: 'تقييم التعبيرات مع استبدال المتغيرات واستدعاء الدوال',
+                feature5Title: '📦 عمليات المجموعات',
+                feature5Text: 'إنشاء مجموعات، اتحاد، تقاطع، فرق، مجموعة جزئية',
+                feature6Title: '📈 مصفوفات ورياضيات متقدمة',
+                feature6Text: 'ضرب/نقل/محدد/معكوس المصفوفات، ثوابت، نهايات، تكاملات',
+                treeTitle: '🗂️ فئات الكتل',
+                techTitle: '🔧 الميزات التقنية',
+                compatLabel: 'توافق المنصة: ',
+                tagExpandable: 'كتل قابلة للتوسيع',
+                tagExpression: 'محرك التعبيرات',
+                tagBilingual: 'ثنائي اللغة',
+                statsTitle: '📈 الإحصائيات',
+                stat1Label: 'عدد الكتل',
+                stat2Label: 'الفئات',
+                stat3Label: 'المنصات',
+                stat4Label: 'مفتوح المصدر',
+                usageTitle: '📖 تعليمات الاستخدام',
+                usageList: [
+                    '<strong>التثبيت:</strong> في محرر CCW Gandi، انقر على "تحميل من URL" وأدخل "theTomsAdvancedMath"',
+                    '<strong>المقارنة:</strong> استخدم كتل المقارنة المتعددة',
+                    '<strong>التعبيرات:</strong> أدخل تعبيرات مثل "2+3*4" أو "2+f(x)"',
+                    '<strong>المجموعات:</strong> أنشئ مجموعات واستخدم الاتحاد والتقاطع والفرق',
+                    '<strong>المصفوفات:</strong> ضرب، نقل، محدد، معكوس المصفوفات'
+                ],
+                btnCCW: '🚀 عرض على CCW'
+            }
+        };
+
+        let currentLanguage = 'en';
+
+        function switchLanguage(lang) {
+            currentLanguage = lang;
+            const t = translations[lang];
+            document.getElementById('mainTitle').textContent = t.title;
+            document.getElementById('mainSubtitle').textContent = t.subtitle;
+            document.getElementById('introTitle').textContent = t.introTitle;
+            document.getElementById('introText1').innerHTML = t.introText1;
+            document.getElementById('introText2').textContent = t.introText2;
+            document.getElementById('featuresTitle').textContent = t.featuresTitle;
+            for (let i = 1; i <= 6; i++) {
+                document.getElementById(`feature${i}Title`).textContent = t[`feature${i}Title`];
+                document.getElementById(`feature${i}Text`).textContent = t[`feature${i}Text`];
+            }
+            document.getElementById('treeTitle').textContent = t.treeTitle;
+            document.getElementById('techTitle').textContent = t.techTitle;
+            document.getElementById('compatLabel').textContent = t.compatLabel;
+            document.getElementById('tagExpandable').textContent = t.tagExpandable;
+            document.getElementById('tagExpression').textContent = t.tagExpression;
+            document.getElementById('tagBilingual').textContent = t.tagBilingual;
+            document.getElementById('statsTitle').textContent = t.statsTitle;
+            document.getElementById('stat1Label').textContent = t.stat1Label;
+            document.getElementById('stat2Label').textContent = t.stat2Label;
+            document.getElementById('stat3Label').textContent = t.stat3Label;
+            document.getElementById('stat4Label').textContent = t.stat4Label;
+            document.getElementById('usageTitle').textContent = t.usageTitle;
+            const usageList = document.getElementById('usageList');
+            usageList.innerHTML = '';
+            t.usageList.forEach(item => {
+                const li = document.createElement('li');
+                li.innerHTML = item;
+                usageList.appendChild(li);
+            });
+            document.getElementById('btnCCW').textContent = t.btnCCW;
+            if (lang === 'ar') {
+                document.body.style.direction = 'rtl';
+            } else {
+                document.body.style.direction = 'ltr';
+            }
+        }
+
+        document.querySelectorAll('.feature-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px)';
+            });
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+
+        document.getElementById('languageSelector').addEventListener('change', (e) => {
+            switchLanguage(e.target.value);
+        });
+
+        switchLanguage('en');
+
+        console.log('%c🧮 Advanced Math', 'color: #abb2ff; font-size: 24px; font-weight: bold;');
+        console.log('%c强大的Scratch数学计算扩展', 'color: #4a4aff; font-size: 14px;');
+    </script>
+</body>
+</html>
