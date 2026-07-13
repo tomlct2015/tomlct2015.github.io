@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Path Editor - Motion +</title>
+    <link rel="icon" type="image/svg+xml" href="../icon.svg">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', sans-serif;
+            background: #0f0f1a;
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        h1 {
+            font-size: 1.6em;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #4c97ff, #3373cc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .toolbar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .btn {
+            padding: 10px 22px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-reset {
+            background: rgba(255,80,80,0.2);
+            color: #ff6b6b;
+            border: 1px solid rgba(255,80,80,0.3);
+        }
+        .btn-reset:hover { background: rgba(255,80,80,0.35); }
+        .btn-copy {
+            background: rgba(76,151,255,0.2);
+            color: #4c97ff;
+            border: 1px solid rgba(76,151,255,0.3);
+        }
+        .btn-copy:hover { background: rgba(76,151,255,0.35); }
+        .btn-undo {
+            background: rgba(255,200,50,0.2);
+            color: #ffc832;
+            border: 1px solid rgba(255,200,50,0.3);
+        }
+        .btn-undo:hover { background: rgba(255,200,50,0.35); }
+        .info {
+            font-size: 13px;
+            color: #888;
+            padding: 6px 14px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 6px;
+        }
+        .info span { color: #4c97ff; font-weight: 600; }
+        .canvas-wrap {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.4), 0 0 20px rgba(76,151,255,0.1);
+            border: 1px solid rgba(76,151,255,0.2);
+        }
+        canvas {
+            display: block;
+            background: #1a1a2e;
+            cursor: crosshair;
+        }
+        .output-area {
+            margin-top: 15px;
+            width: 800px;
+            max-width: 100%;
+        }
+        .output-label {
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 6px;
+        }
+        .output-box {
+            width: 100%;
+            height: 80px;
+            background: rgba(30,30,46,0.8);
+            border: 1px solid rgba(76,151,255,0.2);
+            border-radius: 8px;
+            color: #c0c0c0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 13px;
+            padding: 10px;
+            resize: vertical;
+            outline: none;
+        }
+        .output-box:focus { border-color: rgba(76,151,255,0.5); }
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            background: rgba(76,151,255,0.9);
+            color: white;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s;
+            pointer-events: none;
+            z-index: 100;
+        }
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .coords-display {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #666;
+            font-family: 'Consolas', monospace;
+            height: 18px;
+        }
+        @media (max-width: 850px) {
+            canvas { width: 100%; height: auto; }
+            .output-area { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <h1>🏃 Path Editor - Motion +</h1>
+
+    <div class="toolbar">
+        <button class="btn btn-reset" id="btnReset" title="清空路径">🗑️ 重置</button>
+        <button class="btn btn-undo" id="btnUndo" title="撤销最后一个点">↩️ 撤销</button>
+        <button class="btn btn-copy" id="btnCopy" title="复制位置数组到剪贴板">📋 复制数组</button>
+        <div class="info">节点数: <span id="nodeCount">0</span></div>
+        <div class="info">按住拖动绘制 | 点击节点拖动 | 双击删除节点</div>
+    </div>
+
+    <div class="canvas-wrap">
+        <canvas id="canvas" width="800" height="500"></canvas>
+    </div>
+    <div class="coords-display" id="coordsDisplay">&nbsp;</div>
+
+    <div class="output-area">
+        <div class="output-label">📄 位置数组 (可直接用于「用位置数组创建轨迹」积木):</div>
+        <textarea class="output-box" id="outputBox" readonly></textarea>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const outputBox = document.getElementById('outputBox');
+        const nodeCountEl = document.getElementById('nodeCount');
+        const coordsDisplay = document.getElementById('coordsDisplay');
+        const toastEl = document.getElementById('toast');
+
+        let points = [];
+        let isDrawing = false;
+        let dragNodeIndex = -1;
+        let hoveredNodeIndex = -1;
+        const NODE_RADIUS = 7;
+        const MIN_DIST = 8;
+
+        // 坐标系: 画布中心为原点, y轴向上 (Scratch坐标系)
+        function toScratch(cx, cy) {
+            return { x: cx - canvas.width / 2, y: canvas.height / 2 - cy };
+        }
+        function toCanvas(sx, sy) {
+            return { cx: sx + canvas.width / 2, cy: canvas.height / 2 - sy };
+        }
+
+        function showToast(msg) {
+            toastEl.textContent = msg;
+            toastEl.classList.add('show');
+            setTimeout(() => toastEl.classList.remove('show'), 1800);
+        }
+
+        function updateOutput() {
+            const arr = points.map(p => [p.x, p.y]);
+            outputBox.value = JSON.stringify(arr);
+            nodeCountEl.textContent = points.length;
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 网格
+            ctx.strokeStyle = 'rgba(76,151,255,0.06)';
+            ctx.lineWidth = 1;
+            for (let x = 0; x <= canvas.width; x += 50) {
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+            }
+            for (let y = 0; y <= canvas.height; y += 50) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+            }
+
+            // 坐标轴
+            const cx = canvas.width / 2, cy = canvas.height / 2;
+            ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+            ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(canvas.width, cy); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, canvas.height); ctx.stroke();
+
+            // 原点标记
+            ctx.fillStyle = 'rgba(255,255,255,0.2)';
+            ctx.font = '11px Consolas, monospace';
+            ctx.fillText('(0,0)', cx + 4, cy + 14);
+
+            if (points.length === 0) return;
+
+            // 路径线
+            ctx.strokeStyle = '#4c97ff';
+            ctx.lineWidth = 2.5;
+            ctx.lineJoin = 'round';
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            points.forEach((p, i) => {
+                const c = toCanvas(p.x, p.y);
+                if (i === 0) ctx.moveTo(c.cx, c.cy);
+                else ctx.lineTo(c.cx, c.cy);
+            });
+            ctx.stroke();
+
+            // 方向箭头
+            if (points.length >= 2) {
+                ctx.fillStyle = '#4c97ff';
+                for (let i = 0; i < points.length - 1; i++) {
+                    const a = toCanvas(points[i].x, points[i].y);
+                    const b = toCanvas(points[i + 1].x, points[i + 1].y);
+                    const mx = (a.cx + b.cx) / 2, my = (a.cy + b.cy) / 2;
+                    const angle = Math.atan2(b.cy - a.cy, b.cx - a.cx);
+                    ctx.save();
+                    ctx.translate(mx, my);
+                    ctx.rotate(angle);
+                    ctx.beginPath();
+                    ctx.moveTo(5, 0);
+                    ctx.lineTo(-3, -3.5);
+                    ctx.lineTo(-3, 3.5);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.restore();
+                }
+            }
+
+            // 节点
+            points.forEach((p, i) => {
+                const c = toCanvas(p.x, p.y);
+                const isHovered = i === hoveredNodeIndex;
+                const isDragged = i === dragNodeIndex;
+                const isFirst = i === 0;
+                const isLast = i === points.length - 1;
+
+                // 起点绿色，终点红色，中间蓝色
+                let color = '#4c97ff';
+                if (isFirst) color = '#50c878';
+                if (isLast && points.length > 1) color = '#ff6b6b';
+
+                const r = (isHovered || isDragged) ? NODE_RADIUS + 2 : NODE_RADIUS;
+
+                // 光晕
+                if (isHovered || isDragged) {
+                    ctx.beginPath();
+                    ctx.arc(c.cx, c.cy, r + 4, 0, Math.PI * 2);
+                    ctx.fillStyle = color.replace(')', ',0.2)').replace('rgb', 'rgba').replace('#', '');
+                    const gradient = ctx.createRadialGradient(c.cx, c.cy, r, c.cx, c.cy, r + 8);
+                    gradient.addColorStop(0, color + '44');
+                    gradient.addColorStop(1, 'transparent');
+                    ctx.fillStyle = gradient;
+                    ctx.fill();
+                }
+
+                ctx.beginPath();
+                ctx.arc(c.cx, c.cy, r, 0, Math.PI * 2);
+                ctx.fillStyle = color;
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+
+                // 序号
+                ctx.fillStyle = 'rgba(255,255,255,0.8)';
+                ctx.font = 'bold 10px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(i, c.cx, c.cy);
+            });
+
+            // 坐标标签 (hovered)
+            if (hoveredNodeIndex >= 0 && hoveredNodeIndex < points.length) {
+                const p = points[hoveredNodeIndex];
+                const c = toCanvas(p.x, p.y);
+                ctx.fillStyle = 'rgba(0,0,0,0.7)';
+                const text = `(${p.x}, ${p.y})`;
+                const tw = ctx.measureText(text).width + 10;
+                ctx.fillRect(c.cx - tw / 2, c.cy - NODE_RADIUS - 22, tw, 18);
+                ctx.fillStyle = '#fff';
+                ctx.font = '11px Consolas, monospace';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(text, c.cx, c.cy - NODE_RADIUS - 13);
+            }
+        }
+
+        function getMousePos(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const cx = (e.clientX - rect.left) * scaleX;
+            const cy = (e.clientY - rect.top) * scaleY;
+            return { cx, cy, ...toScratch(cx, cy) };
+        }
+
+        function findNodeAt(sx, sy) {
+            for (let i = points.length - 1; i >= 0; i--) {
+                const c = toCanvas(points[i].x, points[i].y);
+                const dx = c.cx - (sx + canvas.width / 2);
+                const dy = c.cy - (canvas.height / 2 - sy);
+                // recompute properly
+                const cc = toCanvas(points[i].x, points[i].y);
+                const mx = (sx + canvas.width / 2);
+                const my = (canvas.height / 2 - sy);
+                const dist = Math.sqrt((cc.cx - mx) ** 2 + (cc.cy - my) ** 2);
+                if (dist <= NODE_RADIUS + 4) return i;
+            }
+            return -1;
+        }
+
+        // 修正 findNodeAt
+        function findNodeAtPos(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const mx = (e.clientX - rect.left) * scaleX;
+            const my = (e.clientY - rect.top) * scaleY;
+            for (let i = points.length - 1; i >= 0; i--) {
+                const c = toCanvas(points[i].x, points[i].y);
+                const dist = Math.sqrt((c.cx - mx) ** 2 + (c.cy - my) ** 2);
+                if (dist <= NODE_RADIUS + 4) return i;
+            }
+            return -1;
+        }
+
+        function addPoint(sx, sy) {
+            // 吸附到整数
+            const x = Math.round(sx);
+            const y = Math.round(sy);
+            // 检查距离太近则跳过
+            if (points.length > 0) {
+                const last = points[points.length - 1];
+                if (Math.abs(last.x - x) < MIN_DIST && Math.abs(last.y - y) < MIN_DIST) return;
+            }
+            points.push({ x, y });
+            updateOutput();
+            draw();
+        }
+
+        // 鼠标事件
+        canvas.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            const pos = getMousePos(e);
+            const nodeIdx = findNodeAtPos(e);
+
+            if (nodeIdx >= 0) {
+                // 拖动已有节点
+                dragNodeIndex = nodeIdx;
+            } else {
+                // 开始绘制新路径
+                isDrawing = true;
+                points = [];
+                addPoint(pos.x, pos.y);
+            }
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            const pos = getMousePos(e);
+            coordsDisplay.textContent = `x: ${pos.x}, y: ${pos.y}`;
+
+            if (isDrawing) {
+                addPoint(pos.x, pos.y);
+            } else if (dragNodeIndex >= 0) {
+                points[dragNodeIndex] = { x: Math.round(pos.x), y: Math.round(pos.y) };
+                updateOutput();
+                draw();
+            } else {
+                const idx = findNodeAtPos(e);
+                if (idx !== hoveredNodeIndex) {
+                    hoveredNodeIndex = idx;
+                    canvas.style.cursor = idx >= 0 ? 'grab' : 'crosshair';
+                    draw();
+                }
+            }
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            isDrawing = false;
+            dragNodeIndex = -1;
+            canvas.style.cursor = 'crosshair';
+        });
+
+        canvas.addEventListener('mouseleave', () => {
+            isDrawing = false;
+            dragNodeIndex = -1;
+            hoveredNodeIndex = -1;
+            coordsDisplay.textContent = '\u00a0';
+            draw();
+        });
+
+        // 双击删除节点
+        canvas.addEventListener('dblclick', (e) => {
+            const idx = findNodeAtPos(e);
+            if (idx >= 0) {
+                points.splice(idx, 1);
+                updateOutput();
+                draw();
+                showToast('已删除节点');
+            }
+        });
+
+        // 触摸支持
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent('mousedown', { clientX: touch.clientX, clientY: touch.clientY });
+            canvas.dispatchEvent(mouseEvent);
+        }, { passive: false });
+
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent('mousemove', { clientX: touch.clientX, clientY: touch.clientY });
+            canvas.dispatchEvent(mouseEvent);
+        }, { passive: false });
+
+        canvas.addEventListener('touchend', () => {
+            canvas.dispatchEvent(new MouseEvent('mouseup'));
+        });
+
+        // 按钮
+        document.getElementById('btnReset').addEventListener('click', () => {
+            points = [];
+            updateOutput();
+            draw();
+            showToast('路径已清空');
+        });
+
+        document.getElementById('btnUndo').addEventListener('click', () => {
+            if (points.length > 0) {
+                points.pop();
+                updateOutput();
+                draw();
+                showToast('已撤销最后一个点');
+            }
+        });
+
+        document.getElementById('btnCopy').addEventListener('click', () => {
+            const text = outputBox.value;
+            if (!text || text === '[]') {
+                showToast('路径为空，无法复制');
+                return;
+            }
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('✅ 已复制到剪贴板！');
+            }).catch(() => {
+                outputBox.select();
+                document.execCommand('copy');
+                showToast('✅ 已复制到剪贴板！');
+            });
+        });
+
+        // 初始化
+        draw();
+        updateOutput();
+    </script>
+</body>
+</html>
