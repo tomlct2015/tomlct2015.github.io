@@ -353,6 +353,67 @@
             font-size: 1.1em;
         }
 
+        /* 开发者区域 */
+        .developer {
+            padding: 50px 20px;
+            text-align: center;
+            background: linear-gradient(180deg, #0a0a0f 0%, #1a1a2e 50%, #0a0a0f 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .developer::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent 0%, #667eea 50%, transparent 100%);
+        }
+        .developer::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent 0%, #764ba2 50%, transparent 100%);
+        }
+        .developer-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 35px;
+            background: rgba(30, 30, 46, 0.8);
+            border-radius: 50px;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            margin-bottom: 15px;
+        }
+        .developer-badge .dev-icon {
+            font-size: 1.8em;
+        }
+        .developer-badge .dev-label {
+            color: #808080;
+            font-size: 0.95em;
+        }
+        .developer-link {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 1.5em;
+            font-weight: bold;
+            transition: all 0.3s;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .developer-link:hover {
+            -webkit-text-fill-color: transparent;
+            filter: brightness(1.3);
+            transform: scale(1.05);
+        }
+        .developer-subtitle {
+            color: #606060;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+
         /* 作者区域 */
         .author {
             padding: 60px 20px;
@@ -454,6 +515,19 @@
                 </a>
             </div>
         </div>
+    </section>
+
+    <!-- 开发者区域 -->
+    <section class="developer">
+        <div class="developer-badge">
+            <span class="dev-icon">💻</span>
+            <span class="dev-label" id="devLabel">Developer</span>
+        </div>
+        <br>
+        <a href="https://www.ccw.site/student/63c28c9d058b205e558837ca" target="_blank" rel="noopener noreferrer" class="developer-link" id="authorLink">
+            ༺ཌༀཉི Li Tom ༃ༀད༻
+        </a>
+        <p class="developer-subtitle" id="devSubtitle">This site is developed by me</p>
     </section>
 
     <!-- 扩展区域 -->
@@ -565,12 +639,7 @@
         <p class="footer-credit" id="footerCredit"></p>
     </footer>
 
-    <!-- 作者 -->
-    <section class="author">
-        <a href="https://www.ccw.site/student/63c28c9d058b205e558837ca" target="_blank" rel="noopener noreferrer" id="authorLink">
-            TheTom
-        </a>
-    </section>
+
 
     <script>
         // 多语言翻译数据
@@ -606,6 +675,8 @@
                 stat1Label: 'Active Users',
                 stat2Label: 'Created Works',
                 stat3Label: 'Community Extensions',
+                devLabel: 'Developer',
+                devSubtitle: 'This site is developed by me',
                 footerText: '© 2024 CCW - Cocreate World. All rights reserved.',
                 footerCredit: 'CCW is owned by Xigua Creator',
                 authorLink: '༺ཌༀཉི Li Tom ༃ༀད༻'
@@ -641,6 +712,8 @@
                 stat1Label: '活跃用户',
                 stat2Label: '创作作品',
                 stat3Label: '社区扩展',
+                devLabel: '开发者',
+                devSubtitle: '本站由本人开发',
                 footerText: '© 2024 CCW - 共创世界. 保留所有权利。',
                 footerCredit: 'CCW属于西瓜创客',
                 authorLink: '༺ཌༀཉི 李 Tom ༃ༀད༻'
@@ -676,6 +749,8 @@
                 stat1Label: 'Usuarios activos',
                 stat2Label: 'Obras creadas',
                 stat3Label: 'Extensiones comunitarias',
+                devLabel: 'Desarrollador',
+                devSubtitle: 'Este sitio es desarrollado por mí',
                 footerText: '© 2024 CCW - Mundo Cocreate. Todos los derechos reservados.',
                 footerCredit: 'CCW pertenece a Xigua Creator',
                 authorLink: '༺ཌༀཉི Li Tom ༃ༀད༻'
@@ -711,6 +786,8 @@
                 stat1Label: 'सक्रिय उपयोगकर्ता',
                 stat2Label: 'बनाए गए कार्य',
                 stat3Label: 'सामुदायिक एक्सटेंशन',
+                devLabel: 'डेवलपर',
+                devSubtitle: 'यह साइट मेरे द्वारा विकसित की गई है',
                 footerText: '© 2024 CCW - सह-रचना विश्व. सर्वाधिकार सुरक्षित।',
                 footerCredit: 'CCW, Xigua Creator का है',
                 authorLink: '༺ཌༀཉི Li Tom ༃ༀད༻'
@@ -746,6 +823,8 @@
                 stat1Label: 'المستخدمون النشطون',
                 stat2Label: 'الأعمال المُنشأة',
                 stat3Label: 'امتدادات المجتمع',
+                devLabel: 'المطور',
+                devSubtitle: 'هذا الموقع تم تطويره بواسطتي',
                 footerText: '© 2024 CCW - Cocreate World. جميع الحقوق محفوظة.',
                 footerCredit: 'CCW مملوك لـ Xigua Creator',
                 authorLink: '༺ཌༀཉི Li Tom ༃ༀད༻'
@@ -783,6 +862,8 @@
             document.getElementById('stat1Label').textContent = t.stat1Label;
             document.getElementById('stat2Label').textContent = t.stat2Label;
             document.getElementById('stat3Label').textContent = t.stat3Label;
+            document.getElementById('devLabel').textContent = t.devLabel;
+            document.getElementById('devSubtitle').textContent = t.devSubtitle;
             document.getElementById('footerText').textContent = t.footerText;
             document.getElementById('footerCredit').textContent = t.footerCredit;
             document.getElementById('authorLink').textContent = t.authorLink;
