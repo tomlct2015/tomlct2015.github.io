@@ -546,6 +546,22 @@
                             <option value="right" id="alignRight">Right</option>
                         </select>
                     </div>
+                    <div class="control-item">
+                        <label id="textShadowColorLabel">Text Shadow Color</label>
+                        <input type="color" id="textShadowColor" value="#000000">
+                    </div>
+                    <div class="control-item">
+                        <label id="textShadowXLabel">Text Shadow X: <span class="range-value" id="textShadowXValue">0</span>px</label>
+                        <input type="range" id="textShadowX" min="-50" max="50" value="0">
+                    </div>
+                    <div class="control-item">
+                        <label id="textShadowYLabel">Text Shadow Y: <span class="range-value" id="textShadowYValue">0</span>px</label>
+                        <input type="range" id="textShadowY" min="-50" max="50" value="0">
+                    </div>
+                    <div class="control-item">
+                        <label id="textShadowBlurLabel">Text Shadow Blur: <span class="range-value" id="textShadowBlurValue">0</span>px</label>
+                        <input type="range" id="textShadowBlur" min="0" max="50" value="0">
+                    </div>
                 </div>
 
                 <!-- 其他样式 -->
@@ -562,6 +578,15 @@
                     <div class="control-item">
                         <label id="opacityLabel">Opacity: <span class="range-value" id="opacityValue">100</span>%</label>
                         <input type="range" id="opacity" min="0" max="100" value="100">
+                    </div>
+                </div>
+
+                <!-- 自定义CSS -->
+                <div class="control-group">
+                    <h3 id="customCSSTitle">Custom CSS</h3>
+                    <div class="control-item">
+                        <label id="customCSSLabel">Extra CSS Properties</label>
+                        <textarea class="import-textarea" id="customCSSInput" style="min-height:100px" placeholder="e.g. transform: rotate(5deg);"></textarea>
                     </div>
                 </div>
             </div>
@@ -622,6 +647,10 @@
                 fontSizeLabel: 'Font Size:',
                 fontWeightLabel: 'Font Weight',
                 textAlignLabel: 'Text Align',
+                textShadowColorLabel: 'Text Shadow Color',
+                textShadowXLabel: 'Text Shadow X:',
+                textShadowYLabel: 'Text Shadow Y:',
+                textShadowBlurLabel: 'Text Shadow Blur:',
                 otherTitle: 'Other Styles',
                 paddingLabel: 'Padding:',
                 marginLabel: 'Margin:',
@@ -645,7 +674,10 @@
                 bold: 'Bold',
                 center: 'Center',
                 left: 'Left',
-                right: 'Right'
+                right: 'Right',
+                customCSSTitle: 'Custom CSS',
+                customCSSLabel: 'Extra CSS Properties',
+                customCSSPlaceholder: 'e.g. transform: rotate(5deg);'
             },
             zh: {
                 title: '🎨 CSS样式可视化编辑器',
@@ -670,6 +702,10 @@
                 fontSizeLabel: '字体大小:',
                 fontWeightLabel: '字重',
                 textAlignLabel: '文字对齐',
+                textShadowColorLabel: '字体阴影颜色',
+                textShadowXLabel: '阴影水平偏移:',
+                textShadowYLabel: '阴影垂直偏移:',
+                textShadowBlurLabel: '阴影模糊半径:',
                 otherTitle: '其他样式',
                 paddingLabel: '内边距:',
                 marginLabel: '外边距:',
@@ -693,7 +729,10 @@
                 bold: '粗体',
                 center: '居中',
                 left: '左对齐',
-                right: '右对齐'
+                right: '右对齐',
+                customCSSTitle: '自定义 CSS',
+                customCSSLabel: '额外 CSS 属性',
+                customCSSPlaceholder: '例如: transform: rotate(5deg);'
             },
             es: {
                 title: '🎨 Editor Visual de Estilos CSS',
@@ -718,6 +757,10 @@
                 fontSizeLabel: 'Tamaño de Fuente:',
                 fontWeightLabel: 'Peso de Fuente',
                 textAlignLabel: 'Alineación de Texto',
+                textShadowColorLabel: 'Color de Sombra de Texto',
+                textShadowXLabel: 'Sombra X:',
+                textShadowYLabel: 'Sombra Y:',
+                textShadowBlurLabel: 'Desfoque de Sombra:',
                 otherTitle: 'Otros Estilos',
                 paddingLabel: 'Relleno:',
                 marginLabel: 'Margen:',
@@ -741,7 +784,10 @@
                 bold: 'Negrita',
                 center: 'Centro',
                 left: 'Izquierda',
-                right: 'Derecha'
+                right: 'Derecha',
+                customCSSTitle: 'CSS Personalizado',
+                customCSSLabel: 'Propiedades CSS Extra',
+                customCSSPlaceholder: 'ej: transform: rotate(5deg);'
             },
             hi: {
                 title: '🎨 CSS शैली विज़ुअल संपादक',
@@ -766,6 +812,10 @@
                 fontSizeLabel: 'फ़ॉन्ट आकार:',
                 fontWeightLabel: 'फ़ॉन्ट वजन',
                 textAlignLabel: 'टेक्स्ट संरेखण',
+                textShadowColorLabel: 'टेक्स्ट छाया रंग',
+                textShadowXLabel: 'छाया X:',
+                textShadowYLabel: 'छाया Y:',
+                textShadowBlurLabel: 'छाया धुंधला:',
                 otherTitle: 'अन्य शैलियाँ',
                 paddingLabel: 'पैडिंग:',
                 marginLabel: 'मार्जिन:',
@@ -789,7 +839,10 @@
                 bold: 'मोटा',
                 center: 'केंद्र',
                 left: 'बाएँ',
-                right: 'दाएँ'
+                right: 'दाएँ',
+                customCSSTitle: 'कस्टम CSS',
+                customCSSLabel: 'अतिरिक्त CSS गुण',
+                customCSSPlaceholder: 'उदाहरण: transform: rotate(5deg);'
             },
             ar: {
                 title: '🎨 محرر أنماط CSS المرئي',
@@ -814,6 +867,10 @@
                 fontSizeLabel: 'حجم الخط:',
                 fontWeightLabel: 'وزن الخط',
                 textAlignLabel: 'محاذاة النص',
+                textShadowColorLabel: 'لون ظل النص',
+                textShadowXLabel: 'ظل X:',
+                textShadowYLabel: 'ظل Y:',
+                textShadowBlurLabel: 'ضبابية الظل:',
                 otherTitle: 'أنماط أخرى',
                 paddingLabel: 'الحشو:',
                 marginLabel: 'الهامش:',
@@ -837,7 +894,10 @@
                 bold: 'عريض',
                 center: 'مركز',
                 left: 'يسار',
-                right: 'يمين'
+                right: 'يمين',
+                customCSSTitle: 'CSS مخصص',
+                customCSSLabel: 'خصائص CSS إضافية',
+                customCSSPlaceholder: 'مثال: transform: rotate(5deg);'
             }
         };
 
@@ -881,6 +941,10 @@
             document.getElementById('applyBtn').textContent = t.applyBtn;
             document.getElementById('cancelBtn').textContent = t.cancelBtn;
             document.getElementById('importTextarea').placeholder = t.importPlaceholder;
+            document.getElementById('customCSSInput').placeholder = t.customCSSPlaceholder;
+            document.getElementById('customCSSTitle').textContent = t.customCSSTitle;
+            document.getElementById('customCSSLabel').textContent = t.customCSSLabel;
+            document.getElementById('textShadowColorLabel').textContent = t.textShadowColorLabel;
             
             // 更新下拉菜单选项
             document.getElementById('borderSolid').textContent = t.solid;
@@ -919,6 +983,10 @@
             fontSize: document.getElementById('fontSize'),
             fontWeight: document.getElementById('fontWeight'),
             textAlign: document.getElementById('textAlign'),
+            textShadowColor: document.getElementById('textShadowColor'),
+            textShadowX: document.getElementById('textShadowX'),
+            textShadowY: document.getElementById('textShadowY'),
+            textShadowBlur: document.getElementById('textShadowBlur'),
             padding: document.getElementById('padding'),
             margin: document.getElementById('margin'),
             opacity: document.getElementById('opacity')
@@ -934,8 +1002,21 @@
             // 应用样式到预览元素
             Object.assign(previewElement.style, styles);
             
+            // 生成CSS文本
+            let cssText = generateCSSText(styles);
+            
+            // 添加自定义CSS
+            const customCSS = document.getElementById('customCSSInput').value.trim();
+            if (customCSS) {
+                cssText += customCSS + '\n';
+                // 应用自定义CSS到预览
+                try {
+                    const customStyles = parseCSSText(customCSS);
+                    Object.assign(previewElement.style, customStyles);
+                } catch(e) {}
+            }
+            
             // 更新代码显示
-            const cssText = generateCSSText(styles);
             codeOutput.textContent = cssText;
             
             // 更新范围值显示
@@ -971,6 +1052,15 @@
             styles.fontWeight = controls.fontWeight.value;
             styles.textAlign = controls.textAlign.value;
             
+            // 字体阴影
+            const tsColor = controls.textShadowColor.value;
+            const tsX = controls.textShadowX.value;
+            const tsY = controls.textShadowY.value;
+            const tsBlur = controls.textShadowBlur.value;
+            if (tsX !== '0' || tsY !== '0' || tsBlur !== '0') {
+                styles.textShadow = `${tsX}px ${tsY}px ${tsBlur}px ${tsColor}`;
+            }
+            
             // 其他
             styles.padding = `${controls.padding.value}px`;
             styles.margin = `${controls.margin.value}px`;
@@ -999,6 +1089,9 @@
             document.getElementById('shadowYValue').textContent = controls.shadowY.value;
             document.getElementById('shadowBlurValue').textContent = controls.shadowBlur.value;
             document.getElementById('shadowSpreadValue').textContent = controls.shadowSpread.value;
+            document.getElementById('textShadowXValue').textContent = controls.textShadowX.value;
+            document.getElementById('textShadowYValue').textContent = controls.textShadowY.value;
+            document.getElementById('textShadowBlurValue').textContent = controls.textShadowBlur.value;
             document.getElementById('fontSizeValue').textContent = controls.fontSize.value;
             document.getElementById('paddingValue').textContent = controls.padding.value;
             document.getElementById('marginValue').textContent = controls.margin.value;
@@ -1176,6 +1269,17 @@
                 controls.textAlign.value = styles.textAlign;
             }
             
+            // 字体阴影
+            if (styles.textShadow) {
+                const tsMatch = styles.textShadow.match(/(-?\d+)px\s+(-?\d+)px\s+(-?\d+)px\s+(.+)/);
+                if (tsMatch) {
+                    controls.textShadowX.value = tsMatch[1];
+                    controls.textShadowY.value = tsMatch[2];
+                    controls.textShadowBlur.value = tsMatch[3];
+                    controls.textShadowColor.value = tsMatch[4];
+                }
+            }
+            
             // 其他
             if (styles.padding) {
                 controls.padding.value = parseInt(styles.padding);
@@ -1210,6 +1314,11 @@
             controls.fontSize.value = '18';
             controls.fontWeight.value = 'normal';
             controls.textAlign.value = 'center';
+            controls.textShadowColor.value = '#000000';
+            controls.textShadowX.value = '0';
+            controls.textShadowY.value = '0';
+            controls.textShadowBlur.value = '0';
+            document.getElementById('customCSSInput').value = '';
             controls.padding.value = '20';
             controls.margin.value = '10';
             controls.opacity.value = '100';
