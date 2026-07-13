@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CCW Extension Develop Help</title>
+    <link rel="icon" type="image/svg+xml" href="https://tomlct2015.github.io/ccw图标.svg">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: #0a0a0f;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+        /* 导航栏 */
+        .navbar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 40px;
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(102, 126, 234, 0.2);
+        }
+        .nav-brand {
+            font-size: 1.5em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+        }
+        .nav-links { display: flex; align-items: center; gap: 15px; }
+        .nav-btn {
+            padding: 10px 24px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-size: 0.95em;
+            font-weight: 500;
+            transition: all 0.3s;
+            border: 1.5px solid rgba(102, 126, 234, 0.4);
+            color: #667eea;
+            background: transparent;
+            cursor: pointer;
+        }
+        .nav-btn:hover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+        .nav-btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+        }
+        .nav-btn-primary:hover {
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+            transform: translateY(-2px);
+        }
+        .lang-select {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1.5px solid rgba(102, 126, 234, 0.4);
+            background: rgba(20, 20, 35, 0.9);
+            color: #e0e0e0;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .lang-select:hover { border-color: #667eea; box-shadow: 0 0 15px rgba(102, 126, 234, 0.3); }
+        /* 主内容 */
+        .main {
+            padding: 100px 20px 60px;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%);
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        /* 页面标题 */
+        .page-title {
+            font-size: 2.8em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .page-subtitle {
+            font-size: 1.2em;
+            color: #b0b0b0;
+            text-align: center;
+            margin-bottom: 50px;
+            line-height: 1.8;
+        }
+        /* 内容卡片 */
+        .content-card {
+            background: rgba(30, 30, 46, 0.7);
+            border-radius: 20px;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            padding: 40px;
+            margin-bottom: 30px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .content-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+        .content-card:hover {
+            border-color: rgba(102, 126, 234, 0.4);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.1);
+        }
+        .content-card:hover::before { transform: scaleX(1); }
+        .card-title {
+            font-size: 1.5em;
+            color: #667eea;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .card-title-icon { font-size: 1.3em; }
+        .card-text {
+            color: #b0b0b0;
+            line-height: 1.8;
+            font-size: 1em;
+        }
+        /* 按钮组 */
+        .btn-group {
+            display: flex;
+            gap: 25px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+        .action-btn {
+            padding: 18px 36px;
+            border-radius: 15px;
+            background: rgba(30, 30, 46, 0.8);
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            color: #667eea;
+            text-decoration: none;
+            font-size: 1.05em;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-align: center;
+            min-width: 220px;
+        }
+        .action-btn:hover {
+            transform: translateY(-5px);
+            border-color: rgba(102, 126, 234, 0.6);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.2);
+            background: rgba(102, 126, 234, 0.1);
+        }
+        .action-btn-sub {
+            display: block;
+            color: #808080;
+            font-size: 0.8em;
+            font-weight: 400;
+            margin-top: 6px;
+        }
+        /* 代码框 */
+        .code-container {
+            background: rgba(15, 15, 25, 0.9);
+            border-radius: 16px;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            overflow: hidden;
+            margin-top: 20px;
+        }
+        .code-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 20px;
+            background: rgba(30, 30, 46, 0.8);
+            border-bottom: 1px solid rgba(102, 126, 234, 0.15);
+        }
+        .code-dots {
+            display: flex;
+            gap: 8px;
+        }
+        .code-dot {
+            width: 12px; height: 12px;
+            border-radius: 50%;
+        }
+        .code-dot:nth-child(1) { background: #ff5f57; }
+        .code-dot:nth-child(2) { background: #febc2e; }
+        .code-dot:nth-child(3) { background: #28c840; }
+        .code-label {
+            color: #808080;
+            font-size: 0.85em;
+            font-family: 'Fira Code', 'Consolas', monospace;
+        }
+        .code-block {
+            padding: 25px;
+            font-family: 'Fira Code', 'Consolas', 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.7;
+            color: #c0c0c0;
+            overflow-x: auto;
+            white-space: pre;
+            min-height: 200px;
+        }
+        .code-placeholder {
+            color: #505060;
+            font-style: italic;
+        }
+        /* 返回按钮 */
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 20px;
+            border: 1.5px solid rgba(102, 126, 234, 0.3);
+            color: #667eea;
+            text-decoration: none;
+            font-size: 0.9em;
+            transition: all 0.3s;
+            margin-bottom: 30px;
+        }
+        .back-btn:hover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+        /* 底部 */
+        .footer {
+            padding: 40px 20px;
+            text-align: center;
+            background: #0a0a0f;
+            border-top: 1px solid rgba(102, 126, 234, 0.2);
+        }
+        .footer-text { color: #808080; font-size: 0.95em; }
+        /* 视图切换 */
+        .view { display: none; }
+        .view.active { display: block; }
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .navbar { padding: 12px 20px; flex-wrap: wrap; gap: 10px; }
+            .nav-links { flex-wrap: wrap; justify-content: center; }
+            .page-title { font-size: 2em; }
+            .content-card { padding: 25px; }
+            .btn-group { flex-direction: column; align-items: center; }
+            .action-btn { max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <a href="../" class="nav-brand">CCW Extensions</a>
+        <div class="nav-links">
+            <a href="https://www.ccw.site/gandi/extension" class="nav-btn nav-btn-primary" id="navTry" target="_blank" rel="noopener noreferrer">立即尝试</a>
+            <a href="../" class="nav-btn" id="navDocs">打开文档</a>
+            <select class="lang-select" id="langSelect">
+                <option value="zh">🇨🇳 中文</option>
+                <option value="en">🇬🇧 English</option>
+                <option value="es">🇪🇸 Español</option>
+                <option value="hi">🇮🇳 हिन्दी</option>
+                <option value="ar">🇸🇦 العربية</option>
+            </select>
+        </div>
+    </nav>
+
+    <!-- 主内容 -->
+    <section class="main">
+        <div class="container">
+
+            <!-- 默认视图: CCW 特有内容 -->
+            <div class="view" id="viewDefault">
+                <h1 class="page-title" id="defaultTitle">CCW 扩展开发指南</h1>
+                <p class="page-subtitle" id="defaultSubtitle">了解 CCW 扩展注册方式与 Blocky 高度自定义化能力</p>
+
+                <div class="content-card">
+                    <h3 class="card-title" id="regTitle">
+                        <span class="card-title-icon">📋</span>
+                        <span id="regTitleText">扩展注册方式</span>
+                    </h3>
+                    <p class="card-text" id="regDesc">
+                        CCW 扩展通过唯一的扩展 ID 进行注册。每个扩展在加载时需要声明其 ID、名称、颜色方案以及积木定义。
+                        CCW 支持标准的 Scratch 扩展注册格式，同时提供了增强的 API 用于与平台深度集成，
+                        包括事件广播、变量监听、角色控制等高级功能。扩展可以通过 URL 加载或从扩展仓库直接引用。
+                    </p>
+                </div>
+
+                <div class="content-card">
+                    <h3 class="card-title" id="blockyTitle">
+                        <span class="card-title-icon">🧩</span>
+                        <span id="blockyTitleText">Blocky 的高度自定义化</span>
+                    </h3>
+                    <p class="card-text" id="blockyDesc">
+                        CCW 的 Blocky 系统提供了极高的积木自定义能力。你可以自由定义积木的形状、颜色、输入类型和参数结构。
+                        支持报告值积木、命令积木、C 型分支积木等多种类型。通过 Blocky 编辑器，
+                        你可以可视化地设计积木外观，定义输入参数的类型与默认值，甚至创建可扩展输入的动态积木，
+                        让扩展的交互体验更加灵活和强大。
+                    </p>
+                </div>
+
+                <div class="btn-group">
+                    <a href="#example1" class="action-btn" id="goExample1">
+                        📄 <span id="goExample1Text">普通扩展模板</span>
+                        <span class="action-btn-sub" id="goExample1Sub">查看基础扩展示例代码</span>
+                    </a>
+                    <a href="#example2" class="action-btn" id="goExample2">
+                        📝 <span id="goExample2Text">可扩展输入模版</span>
+                        <span class="action-btn-sub" id="goExample2Sub">查看可扩展输入示例代码</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Example1 视图 -->
+            <div class="view" id="viewExample1">
+                <a href="#" class="back-btn" id="backBtn1">← <span id="backText1">返回</span></a>
+                <h1 class="page-title" id="example1Title">普通扩展模板</h1>
+                <p class="page-subtitle" id="example1Subtitle">基础的 CCW 扩展开发模板代码</p>
+                <div class="code-container">
+                    <div class="code-header">
+                        <div class="code-dots">
+                            <span class="code-dot"></span>
+                            <span class="code-dot"></span>
+                            <span class="code-dot"></span>
+                        </div>
+                        <span class="code-label">extension.js</span>
+                    </div>
+                    <pre class="code-block"><span class="code-placeholder">// 在此编写你的普通扩展模板代码
+// Write your basic extension template code here
+</span></pre>
+                </div>
+            </div>
+
+            <!-- Example2 视图 -->
+            <div class="view" id="viewExample2">
+                <a href="#" class="back-btn" id="backBtn2">← <span id="backText2">返回</span></a>
+                <h1 class="page-title" id="example2Title">可扩展输入模版</h1>
+                <p class="page-subtitle" id="example2Subtitle">支持可扩展输入参数的扩展模板代码</p>
+                <div class="code-container">
+                    <div class="code-header">
+                        <div class="code-dots">
+                            <span class="code-dot"></span>
+                            <span class="code-dot"></span>
+                            <span class="code-dot"></span>
+                        </div>
+                        <span class="code-label">extension.js</span>
+                    </div>
+                    <pre class="code-block"><span class="code-placeholder">// 在此编写你的可扩展输入模板代码
+// Write your extensible input extension template code here
+</span></pre>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 底部 -->
+    <footer class="footer">
+        <p class="footer-text" id="footerText">© 2026 ༺ཌༀཉི Li Tom ༃ༀད༻. All rights reserved.</p>
+    </footer>
+
+    <script>
+        const translations = {
+            zh: {
+                navTry: '立即尝试', navDocs: '打开文档',
+                defaultTitle: 'CCW 扩展开发指南',
+                defaultSubtitle: '了解 CCW 扩展注册方式与 Blocky 高度自定义化能力',
+                regTitleText: '扩展注册方式',
+                regDesc: 'CCW 扩展通过唯一的扩展 ID 进行注册。每个扩展在加载时需要声明其 ID、名称、颜色方案以及积木定义。CCW 支持标准的 Scratch 扩展注册格式，同时提供了增强的 API 用于与平台深度集成，包括事件广播、变量监听、角色控制等高级功能。扩展可以通过 URL 加载或从扩展仓库直接引用。',
+                blockyTitleText: 'Blocky 的高度自定义化',
+                blockyDesc: 'CCW 的 Blocky 系统提供了极高的积木自定义能力。你可以自由定义积木的形状、颜色、输入类型和参数结构。支持报告值积木、命令积木、C 型分支积木等多种类型。通过 Blocky 编辑器，你可以可视化地设计积木外观，定义输入参数的类型与默认值，甚至创建可扩展输入的动态积木，让扩展的交互体验更加灵活和强大。',
+                goExample1Text: '普通扩展模板', goExample1Sub: '查看基础扩展示例代码',
+                goExample2Text: '可扩展输入模版', goExample2Sub: '查看可扩展输入示例代码',
+                example1Title: '普通扩展模板', example1Subtitle: '基础的 CCW 扩展开发模板代码',
+                example2Title: '可扩展输入模版', example2Subtitle: '支持可扩展输入参数的扩展模板代码',
+                backText1: '返回', backText2: '返回',
+                footerText: '© 2026 ༺ཌༀཉི 李 Tom ༃ༀད༻. 保留所有权利。'
+            },
+            en: {
+                navTry: 'Try Now', navDocs: 'Documentation',
+                defaultTitle: 'CCW Extension Development Guide',
+                defaultSubtitle: 'Learn about CCW extension registration and Blocky customization capabilities',
+                regTitleText: 'Extension Registration',
+                regDesc: 'CCW extensions are registered through unique extension IDs. Each extension must declare its ID, name, color scheme, and block definitions when loading. CCW supports standard Scratch extension registration format while providing enhanced APIs for deep platform integration, including event broadcasting, variable monitoring, sprite control and other advanced features. Extensions can be loaded via URL or referenced directly from the extension repository.',
+                blockyTitleText: 'Blocky Customization',
+                blockyDesc: 'CCW\'s Blocky system provides extensive block customization capabilities. You can freely define block shapes, colors, input types, and parameter structures. It supports reporter blocks, command blocks, C-shaped branch blocks and more. Through the Blocky editor, you can visually design block appearance, define input parameter types and defaults, and even create dynamic blocks with extensible inputs for flexible and powerful interaction.',
+                goExample1Text: 'Basic Extension Template', goExample1Sub: 'View basic extension example code',
+                goExample2Text: 'Extensible Input Template', goExample2Sub: 'View extensible input example code',
+                example1Title: 'Basic Extension Template', example1Subtitle: 'Basic CCW extension development template code',
+                example2Title: 'Extensible Input Template', example2Subtitle: 'Extension template with extensible input parameters',
+                backText1: 'Back', backText2: 'Back',
+                footerText: '© 2026 ༺ཌༀཉི Li Tom ༃ༀད༻. All rights reserved.'
+            },
+            es: {
+                navTry: 'Probar ahora', navDocs: 'Documentación',
+                defaultTitle: 'Guía de desarrollo de extensiones CCW',
+                defaultSubtitle: 'Conoce el registro de extensiones CCW y las capacidades de personalización de Blocky',
+                regTitleText: 'Registro de extensiones',
+                regDesc: 'Las extensiones CCW se registran mediante IDs únicos. Cada extensión debe declarar su ID, nombre, esquema de colores y definiciones de bloques. CCW admite el formato estándar de registro de extensiones de Scratch con APIs mejoradas para integración profunda con la plataforma.',
+                blockyTitleText: 'Personalización de Blocky',
+                blockyDesc: 'El sistema Blocky de CCW ofrece amplias capacidades de personalización de bloques. Puedes definir libremente formas, colores, tipos de entrada y estructuras de parámetros de bloques.',
+                goExample1Text: 'Plantilla básica', goExample1Sub: 'Ver código de ejemplo de extensión básica',
+                goExample2Text: 'Plantilla de entrada extensible', goExample2Sub: 'Ver código de ejemplo de entrada extensible',
+                example1Title: 'Plantilla de extensión básica', example1Subtitle: 'Código de plantilla de desarrollo de extensión CCW básica',
+                example2Title: 'Plantilla de entrada extensible', example2Subtitle: 'Plantilla con parámetros de entrada extensibles',
+                backText1: 'Volver', backText2: 'Volver',
+                footerText: '© 2026 ༺ཌༀཉི Li Tom ༃ༀད༻. Todos los derechos reservados.'
+            },
+            hi: {
+                navTry: 'अभी आज़माएं', navDocs: 'दस्तावेज़ीकरण',
+                defaultTitle: 'CCW एक्सटेंशन विकास गाइड',
+                defaultSubtitle: 'CCW एक्सटेंशन पंजीकरण और Blocky अनुकूलन क्षमताओं के बारे में जानें',
+                regTitleText: 'एक्सटेंशन पंजीकरण',
+                regDesc: 'CCW एक्सटेंशन अद्वितीय ID के माध्यम से पंजीकृत होते हैं। CCW मानक Scratch पंजीकरण प्रारूप का समर्थन करता है और प्लेटफ़ॉर्म एकीकरण के लिए उन्नत API प्रदान करता है।',
+                blockyTitleText: 'Blocky अनुकूलन',
+                blockyDesc: 'CCW का Blocky सिस्टम व्यापक ब्लॉक अनुकूलन क्षमताएं प्रदान करता है। आप ब्लॉक आकृतियाँ, रंग, इनपुट प्रकार और पैरामीटर संरचनाओं को स्वतंत्र रूप से परिभाषित कर सकते हैं।',
+                goExample1Text: 'बुनियादी टेम्पलेट', goExample1Sub: 'बुनियादी एक्सटेंशन उदाहरण कोड देखें',
+                goExample2Text: 'विस्तार योग्य इनपुट टेम्पलेट', goExample2Sub: 'विस्तार योग्य इनपुट उदाहरण कोड देखें',
+                example1Title: 'बुनियादी एक्सटेंशन टेम्पलेट', example1Subtitle: 'बुनियादी CCW एक्सटेंशन विकास टेम्पलेट कोड',
+                example2Title: 'विस्तार योग्य इनपुट टेम्पलेट', example2Subtitle: 'विस्तार योग्य इनपुट पैरामीटर के साथ टेम्पलेट',
+                backText1: 'वापस', backText2: 'वापस',
+                footerText: '© 2026 ༺ཌༀཉི Li Tom ༃ༀད༻. सर्वाधिकार सुरक्षित।'
+            },
+            ar: {
+                navTry: 'جرب الآن', navDocs: 'الوثائق',
+                defaultTitle: 'دليل تطوير امتدادات CCW',
+                defaultSubtitle: 'تعرف على تسجيل امتدادات CCW وقدرات تخصيص Blocky',
+                regTitleText: 'تسجيل الامتدادات',
+                regDesc: 'تُسجل امتدادات CCW من خلال معرفات فريدة. يدعم CCW تنسيق تسجيل امتدادات Scratch القياسي مع واجهات برمجة تطبيقات محسنة للتكامل العميق مع المنصة.',
+                blockyTitleText: 'تخصيص Blocky',
+                blockyDesc: 'يوفر نظام Blocky في CCW إمكانيات تخصيص واسعة للكتل. يمكنك تحديد أشكال الكتل وألوانها وأنواع المدخلات وهياكل المعلمات بحرية.',
+                goExample1Text: 'القالب الأساسي', goExample1Sub: 'عرض رمز مثال الامتداد الأساسي',
+                goExample2Text: 'قالب الإدخال القابل للتوسيع', goExample2Sub: 'عرض رمز مثال الإدخال القابل للتوسيع',
+                example1Title: 'قالب الامتداد الأساسي', example1Subtitle: 'رمز قالب تطوير امتداد CCW الأساسي',
+                example2Title: 'قالب الإدخال القابل للتوسيع', example2Subtitle: 'قالب بمعلمات إدخال قابلة للتوسيع',
+                backText1: 'رجوع', backText2: 'رجوع',
+                footerText: '© 2026 ༺ཌༀཉི Li Tom ༃ༀད༻. جميع الحقوق محفوظة.'
+            }
+        };
+
+        let currentLang = 'zh';
+
+        function switchLang(lang) {
+            currentLang = lang;
+            const t = translations[lang];
+            if (!t) return;
+            document.getElementById('navTry').textContent = t.navTry;
+            document.getElementById('navDocs').textContent = t.navDocs;
+            document.getElementById('defaultTitle').textContent = t.defaultTitle;
+            document.getElementById('defaultSubtitle').textContent = t.defaultSubtitle;
+            document.getElementById('regTitleText').textContent = t.regTitleText;
+            document.getElementById('regDesc').textContent = t.regDesc;
+            document.getElementById('blockyTitleText').textContent = t.blockyTitleText;
+            document.getElementById('blockyDesc').textContent = t.blockyDesc;
+            document.getElementById('goExample1Text').textContent = t.goExample1Text;
+            document.getElementById('goExample1Sub').textContent = t.goExample1Sub;
+            document.getElementById('goExample2Text').textContent = t.goExample2Text;
+            document.getElementById('goExample2Sub').textContent = t.goExample2Sub;
+            document.getElementById('example1Title').textContent = t.example1Title;
+            document.getElementById('example1Subtitle').textContent = t.example1Subtitle;
+            document.getElementById('example2Title').textContent = t.example2Title;
+            document.getElementById('example2Subtitle').textContent = t.example2Subtitle;
+            document.getElementById('backText1').textContent = t.backText1;
+            document.getElementById('backText2').textContent = t.backText2;
+            document.getElementById('footerText').textContent = t.footerText;
+            document.body.style.direction = lang === 'ar' ? 'rtl' : 'ltr';
+        }
+
+        // Hash 路由
+        function handleRoute() {
+            const hash = window.location.hash;
+            const views = document.querySelectorAll('.view');
+            views.forEach(v => v.classList.remove('active'));
+
+            if (hash === '#example1') {
+                document.getElementById('viewExample1').classList.add('active');
+            } else if (hash === '#example2') {
+                document.getElementById('viewExample2').classList.add('active');
+            } else {
+                document.getElementById('viewDefault').classList.add('active');
+            }
+        }
+
+        window.addEventListener('hashchange', handleRoute);
+        document.getElementById('langSelect').addEventListener('change', e => switchLang(e.target.value));
+
+        // 初始化
+        switchLang('zh');
+        handleRoute();
+    </script>
+</body>
+</html>
