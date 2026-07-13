@@ -266,6 +266,10 @@
                    class="btn btn-primary" target="_blank" rel="noopener noreferrer" id="btnDoc">
                     📖 查看文档
                 </a>
+                <a href="pathEditor/"
+                   class="btn btn-secondary" target="_blank" rel="noopener noreferrer" id="btnEditor">
+                    ✏️ 编辑轨迹
+                </a>
             </div>
         </div>
     </div>
@@ -311,7 +315,8 @@
                     '<strong>Group Control:</strong> Create sprite groups and use group motion blocks to control multiple sprites simultaneously'
                 ],
                 btnCCW: '🚀 View on CCW',
-                btnDoc: '📖 View Documentation'
+                btnDoc: '📖 View Documentation',
+                btnEditor: '✏️ Edit Trail'
             },
             zh: {
                 title: '更多运动',
@@ -352,7 +357,8 @@
                     '<strong>分组控制：</strong> 创建角色分组，使用组运动积木同时控制多个角色'
                 ],
                 btnCCW: '🚀 前往CCW查看',
-                btnDoc: '📖 查看文档'
+                btnDoc: '📖 查看文档',
+                btnEditor: '✏️ 编辑轨迹'
             },
             es: {
                 title: 'Motion +',
@@ -393,7 +399,8 @@
                     '<strong>Grupos:</strong> Crea grupos de sprites y usa bloques de movimiento grupal'
                 ],
                 btnCCW: '🚀 Ver en CCW',
-                btnDoc: '📖 Ver documentación'
+                btnDoc: '📖 Ver documentación',
+                btnEditor: '✏️ Editar trayectoria'
             },
             hi: {
                 title: 'Motion +',
@@ -434,7 +441,8 @@
                     '<strong>समूह:</strong> स्प्राइट समूह बनाएं और समूह गति ब्लॉक का उपयोग करें'
                 ],
                 btnCCW: '🚀 CCW पर देखें',
-                btnDoc: '📖 दस्तावेज़ देखें'
+                btnDoc: '📖 दस्तावेज़ देखें',
+                btnEditor: '✏️ पथ संपादित करें'
             },
             ar: {
                 title: 'Motion +',
@@ -475,7 +483,8 @@
                     '<strong>المجموعات:</strong> أنشئ مجموعات كائنات واستخدم كتل الحركة الجماعية'
                 ],
                 btnCCW: '🚀 عرض على CCW',
-                btnDoc: '📖 عرض الوثائق'
+                btnDoc: '📖 عرض الوثائق',
+                btnEditor: '✏️ تعديل المسار'
             }
         };
 
@@ -515,6 +524,7 @@
             });
             document.getElementById('btnCCW').textContent = t.btnCCW;
             document.getElementById('btnDoc').textContent = t.btnDoc;
+            document.getElementById('btnEditor').textContent = t.btnEditor;
             if (lang === 'ar') {
                 document.body.style.direction = 'rtl';
             } else {
