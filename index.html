@@ -452,6 +452,49 @@
             font-size: 0.9em;
         }
 
+        /* 扩展开发帮助区域 */
+        .dev-help {
+            padding: 100px 20px;
+            background: linear-gradient(180deg, #1a1a2e 0%, #0a0a0f 100%);
+            text-align: center;
+        }
+
+        .dev-help-buttons {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .dev-help-btn {
+            padding: 20px 40px;
+            border-radius: 15px;
+            background: rgba(30, 30, 46, 0.8);
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            color: #667eea;
+            font-size: 1.1em;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .dev-help-btn:hover {
+            transform: translateY(-5px);
+            border-color: rgba(102, 126, 234, 0.6);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.2);
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .dev-help-desc {
+            color: #808080;
+            font-size: 0.95em;
+            margin-top: 8px;
+        }
+
         /* 动画效果 */
         .fade-in {
             opacity: 0;
@@ -579,6 +622,22 @@
         </div>
     </section>
 
+    <!-- 扩展开发帮助区域 -->
+    <section class="dev-help" id="devHelp">
+        <h2 class="section-title" id="devHelpTitle">扩展开发帮助</h2>
+        <p class="extensions-desc" id="devHelpDesc">提供 Scratch 扩展开发模板，帮助你快速创建自定义扩展</p>
+        <div class="dev-help-buttons">
+            <a href="extension/docs/help/#example1" class="dev-help-btn" id="devHelpBtn1" target="_blank" rel="noopener noreferrer">
+                📄 普通扩展模版
+                <div class="dev-help-desc" id="devHelpDesc1">基础的 TurboWarp 扩展开发模板</div>
+            </a>
+            <a href="extension/docs/help/#example2" class="dev-help-btn" id="devHelpBtn2" target="_blank" rel="noopener noreferrer">
+                📝 可拓展输入框模板
+                <div class="dev-help-desc" id="devHelpDesc2">支持可扩展输入参数的扩展模板</div>
+            </a>
+        </div>
+    </section>
+
     <!-- 特性区域 -->
     <section class="features" id="features">
         <h2 class="section-title" id="featuresTitle">核心特性</h2>
@@ -675,6 +734,12 @@
                 ext3Title: 'Tom\'s Advanced Math',
                 ext3Desc: 'Advanced math support for Scratch, including comparison, power/log, hyperbolic functions, summation/product, high-precision trigonometry, expression engine, set operations, matrix integration and more',
                 ext3Btn: 'View Details',
+                devHelpTitle: 'Extension Development Help',
+                devHelpDesc: 'Provides Scratch extension development templates to help you quickly create custom extensions',
+                devHelpBtn1: '📄 Basic Extension Template',
+                devHelpDesc1: 'Basic TurboWarp extension development template',
+                devHelpBtn2: '📝 Extensible Input Template',
+                devHelpDesc2: 'Extension template with extensible input parameters',
                 featuresTitle: 'Core Features',
                 feature1Title: 'Visual Programming',
                 feature1Desc: 'Intuitive block-based programming interface, no need to memorize complex syntax, just drag and drop to create amazing works',
@@ -715,6 +780,12 @@
                 ext3Title: 'Tom 的高级数学',
                 ext3Desc: '为Scratch提供高级数学运算支持，包含比较运算、幂次对数、双曲函数、求和求积、高精度三角函数、表达式计算、集合运算、矩阵联动等',
                 ext3Btn: '查看详情',
+                devHelpTitle: '扩展开发帮助',
+                devHelpDesc: '提供 Scratch 扩展开发模板，帮助你快速创建自定义扩展',
+                devHelpBtn1: '📄 普通扩展模版',
+                devHelpDesc1: '基础的 TurboWarp 扩展开发模板',
+                devHelpBtn2: '📝 可拓展输入框模板',
+                devHelpDesc2: '支持可扩展输入参数的扩展模板',
                 featuresTitle: '核心特性',
                 feature1Title: '可视化编程',
                 feature1Desc: '基于积木的直观编程界面，无需记忆复杂语法，拖拽即可创建精彩作品',
@@ -755,6 +826,12 @@
                 ext3Title: 'Matemáticas avanzadas de Tom',
                 ext3Desc: 'Soporte matemático avanzado para Scratch, incluye comparación, potencia/log, funciones hiperbólicas, sumatoria/productoria, trigonometría de alta precisión, motor de expresiones, conjuntos, integración de matrices y más',
                 ext3Btn: 'Ver detalles',
+                devHelpTitle: 'Ayuda para desarrollo de extensiones',
+                devHelpDesc: 'Proporciona plantillas de desarrollo de extensiones para Scratch, ayudándote a crear extensiones personalizadas rápidamente',
+                devHelpBtn1: '📄 Plantilla de extensión básica',
+                devHelpDesc1: 'Plantilla básica de desarrollo de extensiones para TurboWarp',
+                devHelpBtn2: '📝 Plantilla de entrada extensible',
+                devHelpDesc2: 'Plantilla de extensión con parámetros de entrada extensibles',
                 featuresTitle: 'Características principales',
                 feature1Title: 'Programación visual',
                 feature1Desc: 'Interfaz de programación intuitiva basada en bloques, sin necesidad de memorizar sintaxis compleja, solo arrastra y suelta para crear obras increíbles',
@@ -795,6 +872,12 @@
                 ext3Title: 'टॉम का उन्नत गणित',
                 ext3Desc: 'Scratch के लिए उन्नत गणित समर्थन, तुलना, घात/लघुगणक, हाइपरबोलिक फ़ंक्शन, योग/गुणनफल, उच्च-परिशुद्धता त्रिकोणमिति, अभिव्यक्ति इंजन, सेट ऑपरेशन, मैट्रिक्स एकीकरण और अधिक शामिल',
                 ext3Btn: 'विवरण देखें',
+                devHelpTitle: 'एक्सटेंशन विकास सहायता',
+                devHelpDesc: 'Scratch एक्सटेंशन विकास टेम्पलेट प्रदान करता है, जो आपको कस्टम एक्सटेंशन जल्दी बनाने में मदद करता है',
+                devHelpBtn1: '📄 बुनियादी एक्सटेंशन टेम्पलेट',
+                devHelpDesc1: 'बुनियादी TurboWarp एक्सटेंशन विकास टेम्पलेट',
+                devHelpBtn2: '📝 विस्तार योग्य इनपुट टेम्पलेट',
+                devHelpDesc2: 'विस्तार योग्य इनपुट पैरामीटर के साथ एक्सटेंशन टेम्पलेट',
                 featuresTitle: 'मुख्य विशेषताएं',
                 feature1Title: 'विज़ुअल प्रोग्रामिंग',
                 feature1Desc: 'ब्लॉक-आधारित सहज प्रोग्रामिंग इंटरफेस, जटिल सिंटैक्स याद करने की आवश्यकता नहीं, बस ड्रैग एंड ड्रॉप करके अद्भुत कार्य बनाएं',
@@ -835,6 +918,12 @@
                 ext3Title: 'رياضيات توم المتقدمة',
                 ext3Desc: 'دعم رياضيات متقدمة لـ Scratch، يشمل المقارنة، الأس/اللوغاريتم، الدوال الزائدية، الجمع/الضرب، حساب المثلثات عالي الدقة، محرك التعبيرات، العمليات على المجموعات، تكامل المصفوفات والمزيد',
                 ext3Btn: 'عرض التفاصيل',
+                devHelpTitle: 'مساعدة تطوير الامتدادات',
+                devHelpDesc: 'يوفر قوالب تطوير امتدادات Scratch، تساعدك على إنشاء امتدادات مخصصة بسرعة',
+                devHelpBtn1: '📄 قالب الامتداد الأساسي',
+                devHelpDesc1: 'قالب تطوير امتدادات TurboWarp الأساسي',
+                devHelpBtn2: '📝 قالب الإدخال القابل للتوسيع',
+                devHelpDesc2: 'قالب امتداد مع معلمات إدخال قابلة للتوسيع',
                 featuresTitle: 'الميزات الرئيسية',
                 feature1Title: 'البرمجة المرئية',
                 feature1Desc: 'واجهة برمجة بديهية تعتمد على الكتل، لا حاجة لحفظ الصيغ المعقدة، فقط اسحب وأفلت لإنشاء أعمال مذهلة',
@@ -883,6 +972,12 @@
             document.getElementById('ext3Title').textContent = t.ext3Title;
             document.getElementById('ext3Desc').textContent = t.ext3Desc;
             document.getElementById('ext3Btn').textContent = t.ext3Btn;
+            document.getElementById('devHelpTitle').textContent = t.devHelpTitle;
+            document.getElementById('devHelpDesc').textContent = t.devHelpDesc;
+            document.getElementById('devHelpBtn1').childNodes[0].textContent = t.devHelpBtn1 + ' ';
+            document.getElementById('devHelpDesc1').textContent = t.devHelpDesc1;
+            document.getElementById('devHelpBtn2').childNodes[0].textContent = t.devHelpBtn2 + ' ';
+            document.getElementById('devHelpDesc2').textContent = t.devHelpDesc2;
             document.getElementById('featuresTitle').textContent = t.featuresTitle;
             
             for (let i = 1; i <= 6; i++) {
