@@ -79,10 +79,22 @@
             padding: 100px 20px 60px;
             min-height: 100vh;
             background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%);
+            position: relative;
+            overflow: hidden;
         }
+        /* 悬浮积木 */
+        .floating-blocks { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; }
+        .floating-block { position: absolute; opacity: 0.12; filter: drop-shadow(0 0 8px rgba(102,126,234,0.3)); }
+        .fb1, .fb2, .fb3, .fb4 { width: 70px; }
+        @keyframes fbFloat1 { 0%,100%{ transform: translateY(0) rotate(-5deg); } 50%{ transform: translateY(-18px) rotate(5deg); } }
+        @keyframes fbFloat2 { 0%,100%{ transform: translateY(0) rotate(3deg); } 50%{ transform: translateY(-22px) rotate(-6deg); } }
+        @keyframes fbFloat3 { 0%,100%{ transform: translateY(0) rotate(4deg); } 50%{ transform: translateY(-15px) rotate(-4deg); } }
+        @keyframes fbFloat4 { 0%,100%{ transform: translateY(0) rotate(-3deg); } 50%{ transform: translateY(-20px) rotate(6deg); } }
         .container {
             max-width: 900px;
             margin: 0 auto;
+            position: relative;
+            z-index: 1;
         }
         /* 页面标题 */
         .page-title {
@@ -280,6 +292,12 @@
 
     <!-- 主内容 -->
     <section class="main">
+        <div class="floating-blocks">
+            <img src="https://tomlct2015.github.io/block.svg" class="floating-block fb1" alt="">
+            <img src="https://tomlct2015.github.io/block1.svg" class="floating-block fb2" alt="">
+            <img src="https://tomlct2015.github.io/block2.svg" class="floating-block fb3" alt="">
+            <img src="https://tomlct2015.github.io/block3.svg" class="floating-block fb4" alt="">
+        </div>
         <div class="container">
 
             <!-- 默认视图: CCW 特有内容 -->
@@ -1619,6 +1637,24 @@ const getDynamicArgs = b;
         // 初始化
         switchLang('zh');
         handleRoute();
+        // 随机悬浮积木位置
+        (function(){
+            const blocks = document.querySelectorAll('.floating-block');
+            const zones = [
+                {top:'5%',left:'4%'},{top:'10%',right:'5%'},
+                {bottom:'15%',left:'8%'},{bottom:'8%',right:'6%'},
+                {top:'30%',left:'3%'},{top:'25%',right:'4%'},
+                {bottom:'35%',left:'5%'},{bottom:'30%',right:'3%'}
+            ];
+            const picked = zones.sort(()=>Math.random()-0.5).slice(0, blocks.length);
+            blocks.forEach((b,i)=>{
+                const z = picked[i];
+                Object.keys(z).forEach(k => b.style[k] = z[k]);
+                b.style.width = (55 + Math.random()*30) + 'px';
+                b.style.animationDuration = (6 + Math.random()*6) + 's';
+                b.style.animationDelay = (-Math.random()*5) + 's';
+            });
+        })();
     </script>
 </body>
 </html>
