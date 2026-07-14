@@ -145,14 +145,15 @@
             max-width: 400px;
             padding: 30px 35px;
             border-radius: 18px;
-            background: rgba(30, 30, 46, 0.8);
-            border: 2px solid rgba(102, 126, 234, 0.25);
+            background: rgba(30, 30, 46, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.12);
             color: #e0e0e0;
             text-decoration: none;
             transition: all 0.3s;
             text-align: center;
             position: relative;
             overflow: hidden;
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
         }
         .card-btn::before {
             content: '';
@@ -167,6 +168,7 @@
             transform: translateY(-8px);
             border-color: rgba(102, 126, 234, 0.5);
             box-shadow: 0 20px 40px rgba(102, 126, 234, 0.15);
+            background: rgba(30, 30, 46, 0.55);
         }
         .card-btn:hover::before { transform: scaleX(1); }
         .card-btn-icon { font-size: 2.5em; margin-bottom: 15px; }
@@ -368,8 +370,11 @@
                 const z = picked[i];
                 Object.keys(z).forEach(k => b.style[k] = z[k]);
                 b.style.width = (55 + Math.random()*30) + 'px';
+                b.style.animationName = 'fbFloat' + (i % 4 + 1);
                 b.style.animationDuration = (6 + Math.random()*6) + 's';
                 b.style.animationDelay = (-Math.random()*5) + 's';
+                b.style.animationTimingFunction = 'ease-in-out';
+                b.style.animationIterationCount = 'infinite';
             });
         })();
     </script>
