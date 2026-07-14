@@ -93,6 +93,14 @@
             animation: rotate 30s linear infinite;
         }
         @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        /* 悬浮积木 */
+        .floating-blocks { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; }
+        .floating-block { position: absolute; opacity: 0.12; filter: drop-shadow(0 0 8px rgba(102,126,234,0.3)); }
+        .fb1, .fb2, .fb3, .fb4 { width: 70px; }
+        @keyframes fbFloat1 { 0%,100%{ transform: translateY(0) rotate(-5deg); } 50%{ transform: translateY(-18px) rotate(5deg); } }
+        @keyframes fbFloat2 { 0%,100%{ transform: translateY(0) rotate(3deg); } 50%{ transform: translateY(-22px) rotate(-6deg); } }
+        @keyframes fbFloat3 { 0%,100%{ transform: translateY(0) rotate(4deg); } 50%{ transform: translateY(-15px) rotate(-4deg); } }
+        @keyframes fbFloat4 { 0%,100%{ transform: translateY(0) rotate(-3deg); } 50%{ transform: translateY(-20px) rotate(6deg); } }
         .hero-content { text-align: center; z-index: 1; max-width: 900px; }
         .hero-title {
             font-size: 3.5em; font-weight: bold;
@@ -208,6 +216,12 @@
 
     <!-- Hero -->
     <section class="hero">
+        <div class="floating-blocks">
+            <img src="https://tomlct2015.github.io/block.svg" class="floating-block fb1" alt="">
+            <img src="https://tomlct2015.github.io/block1.svg" class="floating-block fb2" alt="">
+            <img src="https://tomlct2015.github.io/block2.svg" class="floating-block fb3" alt="">
+            <img src="https://tomlct2015.github.io/block3.svg" class="floating-block fb4" alt="">
+        </div>
         <div class="hero-content">
             <h1 class="hero-title" id="heroTitle">CCW 扩展中心</h1>
             <p class="hero-subtitle" id="heroSubtitle">探索 CCW 扩展生态，获取开发模板与官方资源</p>
@@ -340,6 +354,24 @@
 
         document.getElementById('langSelect').addEventListener('change', e => switchLang(e.target.value));
         switchLang('zh');
+        // 随机悬浮积木位置
+        (function(){
+            const blocks = document.querySelectorAll('.floating-block');
+            const zones = [
+                {top:'5%',left:'4%'},{top:'10%',right:'5%'},
+                {bottom:'15%',left:'8%'},{bottom:'8%',right:'6%'},
+                {top:'30%',left:'3%'},{top:'25%',right:'4%'},
+                {bottom:'35%',left:'5%'},{bottom:'30%',right:'3%'}
+            ];
+            const picked = zones.sort(()=>Math.random()-0.5).slice(0, blocks.length);
+            blocks.forEach((b,i)=>{
+                const z = picked[i];
+                Object.keys(z).forEach(k => b.style[k] = z[k]);
+                b.style.width = (55 + Math.random()*30) + 'px';
+                b.style.animationDuration = (6 + Math.random()*6) + 's';
+                b.style.animationDelay = (-Math.random()*5) + 's';
+            });
+        })();
     </script>
 </body>
 </html>
