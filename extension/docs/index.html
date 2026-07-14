@@ -169,13 +169,14 @@
             margin: 0 auto;
         }
         .feature-card {
-            background: rgba(30, 30, 46, 0.6);
+            background: rgba(30, 30, 46, 0.4);
             padding: 40px;
             border-radius: 20px;
-            border: 1px solid rgba(102, 126, 234, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.12);
             transition: all 0.3s;
             position: relative;
             overflow: hidden;
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
         }
         .feature-card::before {
             content: '';
@@ -190,6 +191,7 @@
             transform: translateY(-8px);
             border-color: rgba(102, 126, 234, 0.5);
             box-shadow: 0 20px 40px rgba(102, 126, 234, 0.15);
+            background: rgba(30, 30, 46, 0.55);
         }
         .feature-card:hover::before { transform: scaleX(1); }
         .feature-icon { font-size: 3em; margin-bottom: 20px; }
@@ -381,8 +383,11 @@
                 const z = picked[i];
                 Object.keys(z).forEach(k => b.style[k] = z[k]);
                 b.style.width = (55 + Math.random()*30) + 'px';
+                b.style.animationName = 'fbFloat' + (i % 4 + 1);
                 b.style.animationDuration = (6 + Math.random()*6) + 's';
                 b.style.animationDelay = (-Math.random()*5) + 's';
+                b.style.animationTimingFunction = 'ease-in-out';
+                b.style.animationIterationCount = 'infinite';
             });
         })();
     </script>
