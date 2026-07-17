@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Popup 文件使用指南 - Better Popup</title>
+    <link rel="icon" href="../icon.svg">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh; padding: 20px; color: #e0e0e0;
+        }
+        .container {
+            max-width: 1000px; margin: 0 auto;
+            background: rgba(30, 30, 46, 0.95); border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(15,52,96,0.3);
+            overflow: hidden; backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; padding: 40px; text-align: center; position: relative; overflow: hidden;
+        }
+        .header::before {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+            pointer-events: none;
+        }
+        .header h1 { font-size: 2.5em; margin-bottom: 15px; position: relative; z-index: 1; }
+        .header p { opacity: 0.95; font-size: 1.2em; position: relative; z-index: 1; }
+        .content { padding: 40px; }
+        .section {
+            margin-bottom: 30px; padding: 25px;
+            background: rgba(40, 40, 58, 0.6); border-radius: 12px;
+            border-left: 4px solid #667eea;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .section h2 {
+            color: #667eea; margin-bottom: 15px; font-size: 1.5em;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .section p { line-height: 1.8; margin-bottom: 10px; color: #d0d0d0; }
+        .section ul, .section ol { margin-left: 25px; line-height: 1.8; color: #d0d0d0; }
+        .section li { margin-bottom: 8px; }
+
+        /* 代码块 */
+        .code-block {
+            background: #1e1e2e; border-radius: 10px; padding: 20px;
+            margin: 15px 0; overflow-x: auto; position: relative;
+            border: 1px solid rgba(255,255,255,0.1);
+            font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+            font-size: 0.9em; line-height: 1.7;
+        }
+        .code-block .lang-tag {
+            position: absolute; top: 8px; right: 12px;
+            background: rgba(102,126,234,0.3); color: #667eea;
+            padding: 2px 10px; border-radius: 4px; font-size: 0.75em;
+        }
+        .code-block code { color: #cdd6f4; white-space: pre; }
+        .tag { color: #89b4fa; }
+        .attr { color: #f9e2af; }
+        .str { color: #a6e3a1; }
+        .comment { color: #6c7086; font-style: italic; }
+        .text { color: #cdd6f4; }
+        .keyword { color: #cba6f7; }
+
+        /* 标签表格 */
+        .tag-table {
+            width: 100%; border-collapse: collapse; margin: 15px 0;
+            font-size: 0.95em;
+        }
+        .tag-table th {
+            background: rgba(102,126,234,0.2); color: #667eea;
+            padding: 12px 15px; text-align: left;
+            border-bottom: 2px solid rgba(102,126,234,0.3);
+        }
+        .tag-table td {
+            padding: 10px 15px; border-bottom: 1px solid rgba(255,255,255,0.05);
+            color: #d0d0d0;
+        }
+        .tag-table tr:hover td { background: rgba(102,126,234,0.05); }
+        .tag-table code {
+            background: rgba(102,126,234,0.15); color: #89b4fa;
+            padding: 2px 6px; border-radius: 4px; font-size: 0.9em;
+            font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+        }
+
+        /* 提示框 */
+        .tip {
+            background: rgba(166,227,161,0.1); border-left: 4px solid #a6e3a1;
+            padding: 15px 20px; border-radius: 0 8px 8px 0; margin: 15px 0;
+        }
+        .tip::before { content: '💡 '; }
+        .warning {
+            background: rgba(249,226,175,0.1); border-left: 4px solid #f9e2af;
+            padding: 15px 20px; border-radius: 0 8px 8px 0; margin: 15px 0;
+        }
+        .warning::before { content: '⚠️ '; }
+
+        /* 卡片网格 */
+        .card-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px; margin: 15px 0;
+        }
+        .card {
+            background: rgba(40,40,58,0.5); padding: 18px; border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.08); transition: all 0.3s;
+        }
+        .card:hover {
+            border-color: rgba(102,126,234,0.3);
+            box-shadow: 0 5px 15px rgba(102,126,234,0.15);
+        }
+        .card h4 { color: #89b4fa; margin-bottom: 8px; font-size: 1em; }
+        .card p { color: #b0b0b0; font-size: 0.9em; line-height: 1.5; }
+
+        .nav-link {
+            display: inline-flex; align-items: center; gap: 8px;
+            color: #667eea; text-decoration: none; padding: 8px 0;
+            transition: color 0.3s;
+        }
+        .nav-link:hover { color: #89b4fa; }
+
+        .step-num {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 28px; height: 28px; border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white; font-size: 0.85em; font-weight: bold;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>📄 Popup 文件使用指南</h1>
+        <p>用类 HTML 语法定义交互式弹窗，简洁高效</p>
+    </div>
+    <div class="content">
+
+        <!-- 简介 -->
+        <div class="section">
+            <h2>📌 什么是 Popup 文件？</h2>
+            <p>Popup 文件（<code>.popup</code>）是一种类似 HTML 的文本格式，用于定义交互式弹窗界面。所有 <code>&lt;&gt;</code> 标签都用于声明交互元素（输入框、选择器、按钮等），而非渲染为真实 HTML DOM。</p>
+            <p>文件在 Gandi 文件编辑器中创建和编辑，通过 Scratch 积木加载后解析为弹窗界面，用户操作完成后返回 JSON 格式的结果数据。</p>
+            <div class="tip">Popup 文件会在 Gandi 文件编辑器中获得语法高亮支持（标签、属性、注释等）。</div>
+        </div>
+
+        <!-- 快速开始 -->
+        <div class="section">
+            <h2>🚀 快速开始</h2>
+            <ol style="line-height: 2.2;">
+                <li><span class="step-num">1</span> 在 Gandi 文件编辑器中新建文件，命名为 <code>example.popup</code></li>
+                <li><span class="step-num">2</span> 编写 Popup 代码（见下方示例）</li>
+                <li><span class="step-num">3</span> 在 Scratch 中使用积木 <strong>「用Popup文件 [example.popup] 生成弹窗并返回」</strong></li>
+                <li><span class="step-num">4</span> 积木返回 JSON 字符串，包含用户输入的所有数据</li>
+            </ol>
+        </div>
+
+        <!-- 基础示例 -->
+        <div class="section">
+            <h2>📝 基础示例</h2>
+            <p>一个简单的用户信息收集表单：</p>
+            <div class="code-block">
+                <span class="lang-tag">example.popup</span>
+                <code><span class="comment">&lt;!-- 设置弹窗标题 --&gt;</span>
+<span class="tag">&lt;title&gt;</span><span class="text">用户信息表单</span><span class="tag">&lt;/title&gt;</span>
+
+<span class="comment">&lt;!-- 显示提示文字 --&gt;</span>
+<span class="tag">&lt;text&gt;</span><span class="text">请填写以下信息：</span><span class="tag">&lt;/text&gt;</span>
+
+<span class="comment">&lt;!-- 文本输入框 --&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">id</span>=<span class="str">"name"</span> <span class="attr">placeholder</span>=<span class="str">"请输入姓名"</span><span class="tag">&gt;</span>
+
+<span class="comment">&lt;!-- 数字输入框 --&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">id</span>=<span class="str">"age"</span> <span class="attr">type</span>=<span class="str">"number"</span> <span class="attr">placeholder</span>=<span class="str">"请输入年龄"</span><span class="tag">&gt;</span>
+
+<span class="comment">&lt;!-- 下拉选择 --&gt;</span>
+<span class="tag">&lt;select</span> <span class="attr">id</span>=<span class="str">"gender"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;option&gt;</span><span class="text">男</span><span class="tag">&lt;/option&gt;</span>
+  <span class="tag">&lt;option&gt;</span><span class="text">女</span><span class="tag">&lt;/option&gt;</span>
+<span class="tag">&lt;/select&gt;</span></code>
+            </div>
+            <p>返回结果：</p>
+            <div class="code-block">
+                <span class="lang-tag">JSON</span>
+                <code>{
+  <span class="attr">"name"</span>: <span class="str">"张三"</span>,
+  <span class="attr">"age"</span>: <span class="keyword">25</span>,
+  <span class="attr">"gender"</span>: <span class="str">"男"</span>
+}</code>
+            </div>
+        </div>
+
+        <!-- 完整示例 -->
+        <div class="section">
+            <h2>🎯 完整示例</h2>
+            <p>展示所有可用标签的完整弹窗：</p>
+            <div class="code-block">
+                <span class="lang-tag">full-demo.popup</span>
+                <code><span class="tag">&lt;title&gt;</span><span class="text">完整弹窗演示</span><span class="tag">&lt;/title&gt;</span>
+
+<span class="comment">&lt;!-- 文字内容 --&gt;</span>
+<span class="tag">&lt;text&gt;</span><span class="text">这是一个包含所有元素类型的弹窗</span><span class="tag">&lt;/text&gt;</span>
+
+<span class="comment">&lt;!-- 各种输入框 --&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">id</span>=<span class="str">"username"</span> <span class="attr">placeholder</span>=<span class="str">"用户名"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">id</span>=<span class="str">"password"</span> <span class="attr">type</span>=<span class="str">"password"</span> <span class="attr">placeholder</span>=<span class="str">"密码"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">id</span>=<span class="str">"score"</span> <span class="attr">type</span>=<span class="str">"number"</span> <span class="attr">placeholder</span>=<span class="str">"分数"</span><span class="tag">&gt;</span>
+
+<span class="comment">&lt;!-- 下拉选择 --&gt;</span>
+<span class="tag">&lt;select</span> <span class="attr">id</span>=<span class="str">"city"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;option&gt;</span><span class="text">北京</span><span class="tag">&lt;/option&gt;</span>
+  <span class="tag">&lt;option&gt;</span><span class="text">上海</span><span class="tag">&lt;/option&gt;</span>
+  <span class="tag">&lt;option&gt;</span><span class="text">广州</span><span class="tag">&lt;/option&gt;</span>
+<span class="tag">&lt;/select&gt;</span>
+
+<span class="comment">&lt;!-- 滑杆 --&gt;</span>
+<span class="tag">&lt;slider</span> <span class="attr">id</span>=<span class="str">"volume"</span> <span class="attr">min</span>=<span class="str">"0"</span> <span class="attr">max</span>=<span class="str">"100"</span> <span class="attr">value</span>=<span class="str">"50"</span><span class="tag">&gt;</span>
+
+<span class="comment">&lt;!-- 颜色选取 --&gt;</span>
+<span class="tag">&lt;color</span> <span class="attr">id</span>=<span class="str">"themeColor"</span> <span class="attr">value</span>=<span class="str">"#4c97ff"</span><span class="tag">&gt;</span>
+
+<span class="comment">&lt;!-- 文件导入 --&gt;</span>
+<span class="tag">&lt;file</span> <span class="attr">id</span>=<span class="str">"avatar"</span> <span class="attr">mode</span>=<span class="str">"both"</span><span class="tag">&gt;</span>
+
+<span class="comment">&lt;!-- 自定义 HTML --&gt;</span>
+<span class="tag">&lt;custom</span> <span class="attr">id</span>=<span class="str">"bio"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;textarea</span> <span class="attr">placeholder</span>=<span class="str">"自我介绍..."</span> <span class="attr">rows</span>=<span class="str">"3"</span><span class="tag">&gt;&lt;/textarea&gt;</span>
+<span class="tag">&lt;/custom&gt;</span>
+
+<span class="comment">&lt;!-- 按钮 --&gt;</span>
+<span class="tag">&lt;button</span> <span class="attr">label</span>=<span class="str">"✓ 提交"</span> <span class="attr">value</span>=<span class="str">"submit"</span> <span class="attr">color</span>=<span class="str">"#4CAF50"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;button</span> <span class="attr">label</span>=<span class="str">"✗ 取消"</span> <span class="attr">value</span>=<span class="str">"cancel"</span> <span class="attr">color</span>=<span class="str">"#ff6b6b"</span><span class="tag">&gt;</span></code>
+            </div>
+        </div>
+
+        <!-- 标签参考 -->
+        <div class="section">
+            <h2>📖 标签参考</h2>
+            <table class="tag-table">
+                <thead>
+                    <tr><th>标签</th><th>用途</th><th>关键属性</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>&lt;title&gt;</code></td>
+                        <td>弹窗标题</td>
+                        <td>—</td>
+                    </tr>
+                    <tr>
+                        <td><code>&lt;text&gt;</code></td>
+                        <td>显示文字（可多个）</td>
+                        <td>—</td>
+                    </tr>
+                    <tr>
+                        <td><code>&lt;input&gt;</code></td>
+                        <td>输入框</td>
+                        <td><code>id</code> <code>type</code> <code>placeholder</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>&lt;select&gt;</code></td>
+                        <td>下拉选择（内含 <code>&lt;option&gt;</code>）</td>
+                        <td><code>id</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>&lt;button&gt;</code></td>
+                        <td>按钮</td>
+                        <td><code>label</code> <code>value</code> <code>color</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>&lt;slider&gt;</code></td>
+                        <td>滑杆</td>
+                        <td><code>id</code> <code>min</code> <code>max</code> <code>value</code> <code>step</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>&lt;color&gt;</code></td>
+                        <td>颜色选取</td>
+                        <td><code>id</code> <code>value</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>&lt;file&gt;</code></td>
+                        <td>文件导入</td>
+                        <td><code>id</code> <code>mode</code>（both/drop/click）</td>
+                    </tr>
+                    <tr>
+                        <td><code>&lt;custom&gt;</code></td>
+                        <td>自定义 HTML 元素</td>
+                        <td><code>id</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>&lt;image&gt;</code></td>
+                        <td>图片展示</td>
+                        <td><code>id</code> <code>src</code> <code>width</code> <code>height</code></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- input type 参考 -->
+        <div class="section">
+            <h2>🔤 input 支持的 type</h2>
+            <table class="tag-table">
+                <thead>
+                    <tr><th>type 值</th><th>效果</th><th>示例</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>text</code>（默认）</td><td>文本输入框</td><td><code>&lt;input id="name" placeholder="姓名"&gt;</code></td></tr>
+                    <tr><td><code>number</code> / <code>int</code> / <code>float</code></td><td>数字输入框</td><td><code>&lt;input id="age" type="number"&gt;</code></td></tr>
+                    <tr><td><code>password</code></td><td>密码输入框</td><td><code>&lt;input id="pwd" type="password"&gt;</code></td></tr>
+                    <tr><td><code>email</code></td><td>邮箱输入框</td><td><code>&lt;input id="mail" type="email"&gt;</code></td></tr>
+                    <tr><td><code>url</code></td><td>网址输入框</td><td><code>&lt;input id="site" type="url"&gt;</code></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Scratch 中使用 -->
+        <div class="section">
+            <h2>🧩 在 Scratch 中使用</h2>
+            <p>使用积木 <strong>「用Popup文件 [FILE] 生成弹窗并返回」</strong>：</p>
+            <div class="card-grid">
+                <div class="card">
+                    <h4>📁 文件选择</h4>
+                    <p>下拉菜单会自动列出 Gandi 文件编辑器中所有 .popup 文件，也可以手动输入文件名。</p>
+                </div>
+                <div class="card">
+                    <h4>📦 返回值</h4>
+                    <p>弹窗关闭后返回 JSON 字符串，键名为标签中的 <code>id</code> 属性值，值为用户输入的内容。</p>
+                </div>
+                <div class="card">
+                    <h4>🔗 数据解析</h4>
+                    <p>配合 JavaScript 工具箱等扩展解析 JSON，获取各个字段的值进行后续处理。</p>
+                </div>
+            </div>
+            <div class="warning">每个交互元素必须有唯一的 <code>id</code> 属性，否则返回结果中该字段的值可能丢失。</div>
+        </div>
+
+        <!-- 注释语法 -->
+        <div class="section">
+            <h2>💬 注释语法</h2>
+            <p>Popup 文件支持 HTML 风格的注释，注释内容不会被解析：</p>
+            <div class="code-block">
+                <span class="lang-tag">注释示例</span>
+                <code><span class="comment">&lt;!-- 这是注释，不会被解析 --&gt;</span>
+<span class="tag">&lt;title&gt;</span><span class="text">标题</span><span class="tag">&lt;/title&gt;</span>
+<span class="comment">&lt;!-- &lt;input id="temp"&gt; 被注释掉的代码不会生效 --&gt;</span></code>
+            </div>
+        </div>
+
+        <!-- 返回导航 -->
+        <div class="section" style="text-align: center; border-left-color: #764ba2;">
+            <a href="../" class="nav-link">← 返回 Better Popup 主页</a>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>
