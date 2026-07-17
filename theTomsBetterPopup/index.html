@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Better Popup</title>
 
-    <链接 关系="图标" 类型="image/svg+xml" href="图标.svg">
-    <链接 关系="备用图标" 类型="image/png" href="icon.png">
+    <link rel="icon" type="image/svg+xml" href="icon.svg">
+    <link rel="alternate icon" type="image/png" href="icon.png">
     <link rel="shortcut icon" href="icon.svg" type="image/svg+xml">
     <style>
         * {
@@ -16,14 +16,14 @@
         }
 
         body {
-            字体族: -apple-system, BlinkMacSystemFont, ‘Segoe UI’, ‘PingFang SC’, ‘微软雅黑’, 无衬线字体;
-            : 线性渐变(135度, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-            最小高度: 100视口高度;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
             padding: 20px;
-            颜色: #e0e0e0;
+            color: #e0e0e0;
         }
 
-        .容器 {
+        .container {
             max-width: 1000px;
             margin: 0 auto;
             background: rgba(30, 30, 46, 0.95);
@@ -364,10 +364,16 @@
                     📖 查看文档
                 </a>
                 <a href="https://tomlct2015.github.io/theTomsBetterPopup/styleEditor/" 
-                   class="btn btn-secondary" 
+                   class="btn btn-secondary"
                    target="_blank"
                    rel="noopener noreferrer" id="btnEditor">
                     🎨 样式编辑器
+                </a>
+                <a href="how-to-use-Popup-file/" 
+                   class="btn btn-secondary"
+                   target="_blank"
+                   rel="noopener noreferrer" id="btnPopupGuide">
+                    📄 Popup文件使用方法
                 </a>
             </div>
         </div>
